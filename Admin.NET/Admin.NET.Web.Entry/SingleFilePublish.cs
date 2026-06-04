@@ -35,7 +35,7 @@ public class SingleFilePublish : ISingleFilePublish
         // 需要 Furion 框架扫描哪些程序集就写上去即可
         return new[]
         {
-            "Admin.NET.Application",
+            "Admin.NET.LvKong",
             "Admin.NET.Core",
             "Admin.NET.Web.Core",
         };

@@ -1,0 +1,164 @@
+﻿<script lang="ts" name="lkInspectionRecord" setup>
+import { ref, reactive, onMounted } from "vue";
+import { ElMessage } from "element-plus";
+import type { FormRules } from "element-plus";
+import { formatDate } from '/@/utils/formatTime';
+import { useLkInspectionRecordApi } from '/@/api/system/lkInspectionRecord';
+//父级传递来的函数，用于回调
+const emit = defineEmits(["reloadTable"]);
+const lkInspectionRecordApi = useLkInspectionRecordApi();
+const ruleFormRef = ref();
+
+const state = reactive({
+	title: '',
+	loading: false,
+	showDialog: false,
+	ruleForm: {} as any,
+	stores: {},
+	dropdownData: {} as any,
+});
+
+// 自行添加其他规则
+const rules = ref<FormRules>({
+  operator: [{required: true, message: '请选择操作员！', trigger: 'blur',},],
+  date: [{required: true, message: '请选择检测日期！', trigger: 'blur',},],
+  shiftId: [{required: true, message: '请选择班次ID！', trigger: 'blur',},],
+  pressure: [{required: true, message: '请选择压力值！', trigger: 'blur',},],
+  productTypeId: [{required: true, message: '请选择产品类型ID！', trigger: 'blur',},],
+  batchNumber: [{required: true, message: '请选择批次号！', trigger: 'blur',},],
+  specification: [{required: true, message: '请选择规格！', trigger: 'blur',},],
+  testResult: [{required: true, message: '请选择检测结果！', trigger: 'blur',},],
+  userId: [{required: true, message: '请选择用户ID！', trigger: 'blur',},],
+});
+
+// 页面加载时
+onMounted(async () => {
+});
+
+// 打开弹窗
+const openDialog = async (row: any, title: string) => {
+	state.title = title;
+	row = row ?? {  };
+	state.ruleForm = row.id ? await lkInspectionRecordApi.detail(row.id).then(res => res.data.result) : JSON.parse(JSON.stringify(row));
+	state.showDialog = true;
+};
+
+// 关闭弹窗
+const closeDialog = () => {
+	emit("reloadTable");
+	state.showDialog = false;
+};
+
+// 提交
+const submit = async () => {
+	ruleFormRef.value.validate(async (isValid: boolean, fields?: any) => {
+		if (isValid) {
+			let values = state.ruleForm;
+			await lkInspectionRecordApi[state.ruleForm.id ? 'update' : 'add'](values);
+			closeDialog();
+		} else {
+			ElMessage({
+				message: `表单有${Object.keys(fields).length}处验证失败，请修改后再提交`,
+				type: "error",
+			});
+		}
+	});
+};
+
+//将属性或者函数暴露给父组件
+defineExpose({ openDialog });
+</script>
+<template>
+	<div class="lkInspectionRecord-container">
+		<el-dialog v-model="state.showDialog" :width="800" draggable :close-on-click-modal="false">
+			<template #header>
+				<div style="color: #fff">
+					<span>{{ state.title }}</span>
+				</div>
+			</template>
+			<el-form :model="state.ruleForm" ref="ruleFormRef" label-width="auto" :rules="rules">
+				<el-row :gutter="35">
+					<el-form-item v-show="false">
+						<el-input v-model="state.ruleForm.id" />
+					</el-form-item>
+						<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12" class="mb20" >
+						<el-form-item label="操作员" prop="operator">
+							<el-input v-model="state.ruleForm.operator" placeholder="请输入操作员" maxlength="32" show-word-limit clearable />
+						</el-form-item>
+					</el-col>
+						<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12" class="mb20" >
+						<el-form-item label="检测日期" prop="date">
+							<el-input v-model="state.ruleForm.date" placeholder="请输入检测日期" maxlength="16" show-word-limit clearable />
+						</el-form-item>
+					</el-col>
+						<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12" class="mb20" >
+						<el-form-item label="班次ID" prop="shiftId">
+							<el-input v-model="state.ruleForm.shiftId" placeholder="请输入班次ID" show-word-limit clearable />
+						</el-form-item>
+					</el-col>
+						<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12" class="mb20" >
+						<el-form-item label="压力值" prop="pressure">
+							<el-input-number v-model="state.ruleForm.pressure" placeholder="请输入压力值" clearable />
+						</el-form-item>
+					</el-col>
+						<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12" class="mb20" >
+						<el-form-item label="产品类型ID" prop="productTypeId">
+							<el-input v-model="state.ruleForm.productTypeId" placeholder="请输入产品类型ID" show-word-limit clearable />
+						</el-form-item>
+					</el-col>
+						<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12" class="mb20" >
+						<el-form-item label="产品型号" prop="productModel">
+							<el-input v-model="state.ruleForm.productModel" placeholder="请输入产品型号" maxlength="64" show-word-limit clearable />
+						</el-form-item>
+					</el-col>
+						<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12" class="mb20" >
+						<el-form-item label="批次号" prop="batchNumber">
+							<el-input v-model="state.ruleForm.batchNumber" placeholder="请输入批次号" maxlength="64" show-word-limit clearable />
+						</el-form-item>
+					</el-col>
+						<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12" class="mb20" >
+						<el-form-item label="规格" prop="specification">
+							<el-input v-model="state.ruleForm.specification" placeholder="请输入规格" maxlength="64" show-word-limit clearable />
+						</el-form-item>
+					</el-col>
+						<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12" class="mb20" >
+						<el-form-item label="钢印号" prop="steelStamp">
+							<el-input v-model="state.ruleForm.steelStamp" placeholder="请输入钢印号" maxlength="64" show-word-limit clearable />
+						</el-form-item>
+					</el-col>
+						<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12" class="mb20" >
+						<el-form-item label="检测结果" prop="testResult">
+							<el-input v-model="state.ruleForm.testResult" placeholder="请输入检测结果" maxlength="8" show-word-limit clearable />
+						</el-form-item>
+					</el-col>
+						<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12" class="mb20" >
+						<el-form-item label="图片URL列表" prop="images">
+							<el-input v-model="state.ruleForm.images" placeholder="请输入图片URL列表" show-word-limit clearable />
+						</el-form-item>
+					</el-col>
+						<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12" class="mb20" >
+						<el-form-item label="用户ID" prop="userId">
+							<el-input v-model="state.ruleForm.userId" placeholder="请输入用户ID" show-word-limit clearable />
+						</el-form-item>
+					</el-col>
+						<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12" class="mb20" >
+						<el-form-item label="备注" prop="remarks">
+							<el-input v-model="state.ruleForm.remarks" placeholder="请输入备注" maxlength="512" show-word-limit clearable />
+						</el-form-item>
+					</el-col>
+				</el-row>
+			</el-form>
+			<template #footer>
+				<span class="dialog-footer">
+					<el-button @click="() => state.showDialog = false">取 消</el-button>
+					<el-button @click="submit" type="primary" v-reclick="1000">确 定</el-button>
+				</span>
+			</template>
+		</el-dialog>
+	</div>
+</template>
+<style lang="scss" scoped>
+:deep(.el-select), :deep(.el-input-number) {
+  width: 100%;
+}
+</style>

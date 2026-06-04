@@ -1,0 +1,1 @@
+7z a -t7z E:\projects\Admin.NET\Admin.NET.7z E:\projects\Admin.NET -xr@E:\projects\LK_FrontEnd\projects\LK_FrontEnd\exclude.txt

@@ -15,7 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Admin.NET.Application\Admin.NET.Application.csproj" />
+    <ProjectReference Include="..\Admin.NET.LvKong.Application\Admin.NET.LvKong.Application.csproj" />
   </ItemGroup>
 
 </Project>
