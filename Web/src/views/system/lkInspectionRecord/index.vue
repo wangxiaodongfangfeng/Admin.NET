@@ -184,7 +184,7 @@ handleQuery();
                 <el-button icon="ele-ZoomIn" @click="() => state.showAdvanceQueryUI = true" v-if="!state.showAdvanceQueryUI" style="margin-left:5px;"> 高级查询 </el-button>
                 <el-button icon="ele-ZoomOut" @click="() => state.showAdvanceQueryUI = false" v-if="state.showAdvanceQueryUI" style="margin-left:5px;"> 隐藏 </el-button>
                 <el-button type="danger" style="margin-left:5px;" icon="ele-Delete" @click="batchDelLkInspectionRecord" :disabled="state.selectData.length == 0" v-auth="'lkInspectionRecord:batchDelete'"> 删除 </el-button>
-                <el-button type="primary" style="margin-left:5px;" icon="ele-Plus" @click="editDialogRef.openDialog(null, '新增检测记录')" v-auth="'lkInspectionRecord:add'"> 新增 </el-button>
+                <el-button type="primary" style="margin-left:5px;" icon="ele-Plus" v-show="false"  @click="editDialogRef.openDialog(null, '新增检测记录')" v-auth="'lkInspectionRecord:add'"> 新增 </el-button>
                 <el-dropdown :show-timeout="70" :hide-timeout="50" @command="exportLkInspectionRecordCommand">
                   <el-button type="primary" style="margin-left:5px;" icon="ele-FolderOpened" v-reclick="20000" v-auth="'lkInspectionRecord:export'"> 导出 </el-button>
                   <template #dropdown>
@@ -195,7 +195,7 @@ handleQuery();
                     </el-dropdown-menu>
                   </template>
                 </el-dropdown>
-                <el-button type="warning" style="margin-left:5px;" icon="ele-MostlyCloudy" @click="importDataRef.openDialog()" v-auth="'lkInspectionRecord:import'"> 导入 </el-button>
+                <el-button type="warning" style="margin-left:5px;" v-show="false" icon="ele-MostlyCloudy" @click="importDataRef.openDialog()" v-auth="'lkInspectionRecord:import'"> 导入 </el-button>
               </el-button-group>
             </el-form-item>
           </el-col>
