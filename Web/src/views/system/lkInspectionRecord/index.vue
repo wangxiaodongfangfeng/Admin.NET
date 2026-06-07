@@ -34,6 +34,10 @@ const state = reactive({
 
 // 页面加载时
 onMounted(async () => {
+  const data = await lkInspectionRecordApi.getDropdownData(true).then(res => res.data.result) ?? {};
+  state.dropdownData.shiftId = data.shiftId;
+  state.dropdownData.productTypeId = data.productTypeId;
+  state.dropdownData.userId = data.userId;
 });
 
 // 查询操作
@@ -122,8 +126,10 @@ handleQuery();
             </el-form-item>
           </el-col>
           <el-col :xs="24" :sm="12" :md="12" :lg="8" :xl="4" class="mb10" v-if="state.showAdvanceQueryUI">
-            <el-form-item label="班次ID">
-              <el-input v-model="state.tableQueryParams.shiftId" clearable placeholder="请输入班次ID"/>
+            <el-form-item label="班次">
+              <el-select clearable filterable v-model="state.tableQueryParams.shiftId" placeholder="请选择班次">
+                <el-option v-for="(item,index) in state.dropdownData.shiftId ?? []" :key="index" :value="item.value" :label="item.label" />
+              </el-select>
             </el-form-item>
           </el-col>
           <el-col :xs="24" :sm="12" :md="12" :lg="8" :xl="4" class="mb10" v-if="state.showAdvanceQueryUI">
@@ -132,8 +138,10 @@ handleQuery();
             </el-form-item>
           </el-col>
           <el-col :xs="24" :sm="12" :md="12" :lg="8" :xl="4" class="mb10" v-if="state.showAdvanceQueryUI">
-            <el-form-item label="产品类型ID">
-              <el-input v-model="state.tableQueryParams.productTypeId" clearable placeholder="请输入产品类型ID"/>
+            <el-form-item label="产品类型">
+              <el-select clearable filterable v-model="state.tableQueryParams.productTypeId" placeholder="请选择产品类型">
+                <el-option v-for="(item,index) in state.dropdownData.productTypeId ?? []" :key="index" :value="item.value" :label="item.label" />
+              </el-select>
             </el-form-item>
           </el-col>
           <el-col :xs="24" :sm="12" :md="12" :lg="8" :xl="4" class="mb10" v-if="state.showAdvanceQueryUI">
@@ -162,13 +170,10 @@ handleQuery();
             </el-form-item>
           </el-col>
           <el-col :xs="24" :sm="12" :md="12" :lg="8" :xl="4" class="mb10" v-if="state.showAdvanceQueryUI">
-            <el-form-item label="图片URL列表">
-              <el-input v-model="state.tableQueryParams.images" clearable placeholder="请输入图片URL列表"/>
-            </el-form-item>
-          </el-col>
-          <el-col :xs="24" :sm="12" :md="12" :lg="8" :xl="4" class="mb10" v-if="state.showAdvanceQueryUI">
-            <el-form-item label="用户ID">
-              <el-input v-model="state.tableQueryParams.userId" clearable placeholder="请输入用户ID"/>
+            <el-form-item label="用户">
+              <el-select clearable filterable v-model="state.tableQueryParams.userId" placeholder="请选择用户">
+                <el-option v-for="(item,index) in state.dropdownData.userId ?? []" :key="index" :value="item.value" :label="item.label" />
+              </el-select>
             </el-form-item>
           </el-col>
           <el-col :xs="24" :sm="12" :md="12" :lg="8" :xl="4" class="mb10" v-if="state.showAdvanceQueryUI">
@@ -184,7 +189,7 @@ handleQuery();
                 <el-button icon="ele-ZoomIn" @click="() => state.showAdvanceQueryUI = true" v-if="!state.showAdvanceQueryUI" style="margin-left:5px;"> 高级查询 </el-button>
                 <el-button icon="ele-ZoomOut" @click="() => state.showAdvanceQueryUI = false" v-if="state.showAdvanceQueryUI" style="margin-left:5px;"> 隐藏 </el-button>
                 <el-button type="danger" style="margin-left:5px;" icon="ele-Delete" @click="batchDelLkInspectionRecord" :disabled="state.selectData.length == 0" v-auth="'lkInspectionRecord:batchDelete'"> 删除 </el-button>
-                <el-button type="primary" style="margin-left:5px;" icon="ele-Plus" v-show="false"  @click="editDialogRef.openDialog(null, '新增检测记录')" v-auth="'lkInspectionRecord:add'"> 新增 </el-button>
+                <el-button type="primary" style="margin-left:5px;" icon="ele-Plus" @click="editDialogRef.openDialog(null, '新增检测记录')" v-auth="'lkInspectionRecord:add'"> 新增 </el-button>
                 <el-dropdown :show-timeout="70" :hide-timeout="50" @command="exportLkInspectionRecordCommand">
                   <el-button type="primary" style="margin-left:5px;" icon="ele-FolderOpened" v-reclick="20000" v-auth="'lkInspectionRecord:export'"> 导出 </el-button>
                   <template #dropdown>
@@ -195,7 +200,7 @@ handleQuery();
                     </el-dropdown-menu>
                   </template>
                 </el-dropdown>
-                <el-button type="warning" style="margin-left:5px;" v-show="false" icon="ele-MostlyCloudy" @click="importDataRef.openDialog()" v-auth="'lkInspectionRecord:import'"> 导入 </el-button>
+                <el-button type="warning" style="margin-left:5px;" icon="ele-MostlyCloudy" @click="importDataRef.openDialog()" v-auth="'lkInspectionRecord:import'"> 导入 </el-button>
               </el-button-group>
             </el-form-item>
           </el-col>
@@ -208,16 +213,15 @@ handleQuery();
         <el-table-column type="index" label="序号" width="55" align="center"/>
         <el-table-column prop='operator' label='操作员' show-overflow-tooltip />
         <el-table-column prop='date' label='检测日期' show-overflow-tooltip />
-        <el-table-column prop='shiftId' label='班次ID' show-overflow-tooltip />
+        <el-table-column prop='shiftId' label='班次' :formatter="(row: any) => row.shiftFkDisplayName" show-overflow-tooltip />
         <el-table-column prop='pressure' label='压力值' show-overflow-tooltip />
-        <el-table-column prop='productTypeId' label='产品类型ID' show-overflow-tooltip />
+        <el-table-column prop='productTypeId' label='产品类型' :formatter="(row: any) => row.productTypeFkDisplayName" show-overflow-tooltip />
         <el-table-column prop='productModel' label='产品型号' show-overflow-tooltip />
         <el-table-column prop='batchNumber' label='批次号' show-overflow-tooltip />
         <el-table-column prop='specification' label='规格' show-overflow-tooltip />
         <el-table-column prop='steelStamp' label='钢印号' show-overflow-tooltip />
         <el-table-column prop='testResult' label='检测结果' show-overflow-tooltip />
-        <el-table-column prop='images' label='图片URL列表' show-overflow-tooltip />
-        <el-table-column prop='userId' label='用户ID' show-overflow-tooltip />
+        <el-table-column prop='userId' label='用户' :formatter="(row: any) => row.userFkDisplayName" show-overflow-tooltip />
         <el-table-column prop='remarks' label='备注' show-overflow-tooltip />
         <el-table-column label="修改记录" width="100" align="center" show-overflow-tooltip>
           <template #default="scope">

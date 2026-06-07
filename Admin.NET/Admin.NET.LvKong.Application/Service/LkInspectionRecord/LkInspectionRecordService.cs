@@ -42,7 +42,7 @@ public partial class LkInspectionRecordService : IDynamicApiController, ITransie
     {
         input.Keyword = input.Keyword?.Trim();
         var query = _lkInspectionRecordRep.AsQueryable()
-            .WhereIF(!string.IsNullOrWhiteSpace(input.Keyword), u => u.Operator.Contains(input.Keyword) || u.Date.Contains(input.Keyword) || u.ProductModel.Contains(input.Keyword) || u.BatchNumber.Contains(input.Keyword) || u.Specification.Contains(input.Keyword) || u.SteelStamp.Contains(input.Keyword) || u.TestResult.Contains(input.Keyword) || u.Images.Contains(input.Keyword) || u.Remarks.Contains(input.Keyword))
+            .WhereIF(!string.IsNullOrWhiteSpace(input.Keyword), u => u.Operator.Contains(input.Keyword) || u.Date.Contains(input.Keyword) || u.ProductModel.Contains(input.Keyword) || u.BatchNumber.Contains(input.Keyword) || u.Specification.Contains(input.Keyword) || u.SteelStamp.Contains(input.Keyword) || u.TestResult.Contains(input.Keyword) || u.Remarks.Contains(input.Keyword))
             .WhereIF(!string.IsNullOrWhiteSpace(input.Operator), u => u.Operator.Contains(input.Operator.Trim()))
             .WhereIF(!string.IsNullOrWhiteSpace(input.Date), u => u.Date.Contains(input.Date.Trim()))
             .WhereIF(!string.IsNullOrWhiteSpace(input.ProductModel), u => u.ProductModel.Contains(input.ProductModel.Trim()))
@@ -50,12 +50,39 @@ public partial class LkInspectionRecordService : IDynamicApiController, ITransie
             .WhereIF(!string.IsNullOrWhiteSpace(input.Specification), u => u.Specification.Contains(input.Specification.Trim()))
             .WhereIF(!string.IsNullOrWhiteSpace(input.SteelStamp), u => u.SteelStamp.Contains(input.SteelStamp.Trim()))
             .WhereIF(!string.IsNullOrWhiteSpace(input.TestResult), u => u.TestResult.Contains(input.TestResult.Trim()))
-            .WhereIF(!string.IsNullOrWhiteSpace(input.Images), u => u.Images.Contains(input.Images.Trim()))
             .WhereIF(!string.IsNullOrWhiteSpace(input.Remarks), u => u.Remarks.Contains(input.Remarks.Trim()))
             .WhereIF(input.ShiftId != null, u => u.ShiftId == input.ShiftId)
             .WhereIF(input.ProductTypeId != null, u => u.ProductTypeId == input.ProductTypeId)
             .WhereIF(input.UserId != null, u => u.UserId == input.UserId)
-            .Select<LkInspectionRecordOutput>();
+            .LeftJoin<LkShift>((u, shift) => u.ShiftId == shift.Id)
+            .LeftJoin<LkProductType>((u, shift, productType) => u.ProductTypeId == productType.Id)
+            .LeftJoin<SysUser>((u, shift, productType, user) => u.UserId == user.Id)
+            .Select((u, shift, productType, user) => new LkInspectionRecordOutput
+            {
+                Id = u.Id,
+                Operator = u.Operator,
+                Date = u.Date,
+                ShiftId = u.ShiftId,
+                ShiftFkDisplayName = $"{shift.Name}",
+                Pressure = u.Pressure,
+                ProductTypeId = u.ProductTypeId,
+                ProductTypeFkDisplayName = $"{productType.Name}",
+                ProductModel = u.ProductModel,
+                BatchNumber = u.BatchNumber,
+                Specification = u.Specification,
+                SteelStamp = u.SteelStamp,
+                TestResult = u.TestResult,
+                Images = u.Images,
+                UserId = u.UserId,
+                UserFkDisplayName = $"{user.RealName}",
+                CreateTime = u.CreateTime,
+                Remarks = u.Remarks,
+                UpdateTime = u.UpdateTime,
+                CreateUserId = u.CreateUserId,
+                CreateUserName = u.CreateUserName,
+                UpdateUserId = u.UpdateUserId,
+                UpdateUserName = u.UpdateUserName,
+            });
 		return await query.OrderBuilder(input).ToPagedListAsync(input.Page, input.PageSize);
     }
 
@@ -127,6 +154,40 @@ public partial class LkInspectionRecordService : IDynamicApiController, ITransie
     }
     
     /// <summary>
+    /// 获取下拉列表数据 🔖
+    /// </summary>
+    /// <returns></returns>
+    [DisplayName("获取下拉列表数据")]
+    [ApiDescriptionSettings(Name = "DropdownData"), HttpPost]
+    public async Task<Dictionary<string, dynamic>> DropdownData(DropdownDataLkInspectionRecordInput input)
+    {
+        var shiftIdData = await _lkInspectionRecordRep.Context.Queryable<LkShift>()
+            .InnerJoinIF<LkInspectionRecord>(input.FromPage, (u, r) => u.Id == r.ShiftId)
+            .Select(u => new {
+                Value = u.Id,
+                Label = $"{u.Name}"
+            }).ToListAsync();
+        var productTypeIdData = await _lkInspectionRecordRep.Context.Queryable<LkProductType>()
+            .InnerJoinIF<LkInspectionRecord>(input.FromPage, (u, r) => u.Id == r.ProductTypeId)
+            .Select(u => new {
+                Value = u.Id,
+                Label = $"{u.Name}"
+            }).ToListAsync();
+        var userIdData = await _lkInspectionRecordRep.Context.Queryable<SysUser>()
+            .InnerJoinIF<LkInspectionRecord>(input.FromPage, (u, r) => u.Id == r.UserId)
+            .Select(u => new {
+                Value = u.Id,
+                Label = $"{u.RealName}"
+            }).ToListAsync();
+        return new Dictionary<string, dynamic>
+        {
+            { "shiftId", shiftIdData },
+            { "productTypeId", productTypeIdData },
+            { "userId", userIdData },
+        };
+    }
+    
+    /// <summary>
     /// 导出检测记录记录 🔖
     /// </summary>
     /// <param name="input"></param>
@@ -148,7 +209,13 @@ public partial class LkInspectionRecordService : IDynamicApiController, ITransie
     [ApiDescriptionSettings(Name = "Import"), HttpGet, NonUnify]
     public IActionResult DownloadTemplate()
     {
-        return ExcelHelper.ExportTemplate(new List<ExportLkInspectionRecordOutput>(), "检测记录导入模板");
+        return ExcelHelper.ExportTemplate(new List<ExportLkInspectionRecordOutput>(), "检测记录导入模板", (_, info) =>
+        {
+            if (nameof(ExportLkInspectionRecordOutput.ShiftFkDisplayName) == info.Name) return _lkInspectionRecordRep.Context.Queryable<LkShift>().Select(u => $"{u.Name}").Distinct().ToList();
+            if (nameof(ExportLkInspectionRecordOutput.ProductTypeFkDisplayName) == info.Name) return _lkInspectionRecordRep.Context.Queryable<LkProductType>().Select(u => $"{u.Name}").Distinct().ToList();
+            if (nameof(ExportLkInspectionRecordOutput.UserFkDisplayName) == info.Name) return _lkInspectionRecordRep.Context.Queryable<SysUser>().Select(u => $"{u.RealName}").Distinct().ToList();
+            return null;
+        });
     }
     
     private static readonly object _lkInspectionRecordImportLock = new object();
@@ -166,20 +233,47 @@ public partial class LkInspectionRecordService : IDynamicApiController, ITransie
             {
                 _sqlSugarClient.Utilities.PageEach(list, 2048, pageItems =>
                 {
+                    // 链接 班次
+                    var shiftIdLabelList = pageItems.Where(x => x.ShiftFkDisplayName != null).Select(x => x.ShiftFkDisplayName).Distinct().ToList();
+                    if (shiftIdLabelList.Any()) {
+                        var shiftIdLinkMap = _lkInspectionRecordRep.Context.Queryable<LkShift>().Where(u => shiftIdLabelList.Contains($"{u.Name}")).ToList().ToDictionary(u => $"{u.Name}", u => u.Id  as long?);
+                        pageItems.ForEach(e => {
+                            e.ShiftId = shiftIdLinkMap.GetValueOrDefault(e.ShiftFkDisplayName ?? "");
+                            if (e.ShiftId == null) e.Error = "班次链接失败";
+                        });
+                    }
+                    // 链接 产品类型
+                    var productTypeIdLabelList = pageItems.Where(x => x.ProductTypeFkDisplayName != null).Select(x => x.ProductTypeFkDisplayName).Distinct().ToList();
+                    if (productTypeIdLabelList.Any()) {
+                        var productTypeIdLinkMap = _lkInspectionRecordRep.Context.Queryable<LkProductType>().Where(u => productTypeIdLabelList.Contains($"{u.Name}")).ToList().ToDictionary(u => $"{u.Name}", u => u.Id  as long?);
+                        pageItems.ForEach(e => {
+                            e.ProductTypeId = productTypeIdLinkMap.GetValueOrDefault(e.ProductTypeFkDisplayName ?? "");
+                            if (e.ProductTypeId == null) e.Error = "产品类型链接失败";
+                        });
+                    }
+                    // 链接 用户
+                    var userIdLabelList = pageItems.Where(x => x.UserFkDisplayName != null).Select(x => x.UserFkDisplayName).Distinct().ToList();
+                    if (userIdLabelList.Any()) {
+                        var userIdLinkMap = _lkInspectionRecordRep.Context.Queryable<SysUser>().Where(u => userIdLabelList.Contains($"{u.RealName}")).ToList().ToDictionary(u => $"{u.RealName}", u => u.Id  as long?);
+                        pageItems.ForEach(e => {
+                            e.UserId = userIdLinkMap.GetValueOrDefault(e.UserFkDisplayName ?? "");
+                            if (e.UserId == null) e.Error = "用户链接失败";
+                        });
+                    }
                     
                     // 校验并过滤必填基本类型为null的字段
                     var rows = pageItems.Where(x => {
                         if (!string.IsNullOrWhiteSpace(x.Error)) return false;
                         if (x.ShiftId == null){
-                            x.Error = "班次ID不能为空";
+                            x.Error = "班次不能为空";
                             return false;
                         }
                         if (x.ProductTypeId == null){
-                            x.Error = "产品类型ID不能为空";
+                            x.Error = "产品类型不能为空";
                             return false;
                         }
                         if (x.UserId == null){
-                            x.Error = "用户ID不能为空";
+                            x.Error = "用户不能为空";
                             return false;
                         }
                         return true;

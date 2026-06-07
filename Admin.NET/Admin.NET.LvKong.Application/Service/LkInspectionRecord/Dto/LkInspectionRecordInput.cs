@@ -34,9 +34,9 @@ public class LkInspectionRecordBaseInput
     public virtual string Date { get; set; }
     
     /// <summary>
-    /// 班次ID
+    /// 班次
     /// </summary>
-    [Required(ErrorMessage = "班次ID不能为空")]
+    [Required(ErrorMessage = "班次不能为空")]
     public virtual long? ShiftId { get; set; }
     
     /// <summary>
@@ -46,9 +46,9 @@ public class LkInspectionRecordBaseInput
     public virtual decimal? Pressure { get; set; }
     
     /// <summary>
-    /// 产品类型ID
+    /// 产品类型
     /// </summary>
-    [Required(ErrorMessage = "产品类型ID不能为空")]
+    [Required(ErrorMessage = "产品类型不能为空")]
     public virtual long? ProductTypeId { get; set; }
     
     /// <summary>
@@ -80,14 +80,14 @@ public class LkInspectionRecordBaseInput
     public virtual string TestResult { get; set; }
     
     /// <summary>
-    /// 图片URL列表
+    /// 图片
     /// </summary>
     public virtual string? Images { get; set; }
     
     /// <summary>
-    /// 用户ID
+    /// 用户
     /// </summary>
-    [Required(ErrorMessage = "用户ID不能为空")]
+    [Required(ErrorMessage = "用户不能为空")]
     public virtual long? UserId { get; set; }
     
     /// <summary>
@@ -113,7 +113,7 @@ public class PageLkInspectionRecordInput : BasePageInput
     public string Date { get; set; }
     
     /// <summary>
-    /// 班次ID
+    /// 班次
     /// </summary>
     public long? ShiftId { get; set; }
     
@@ -123,7 +123,7 @@ public class PageLkInspectionRecordInput : BasePageInput
     public decimal? Pressure { get; set; }
     
     /// <summary>
-    /// 产品类型ID
+    /// 产品类型
     /// </summary>
     public long? ProductTypeId { get; set; }
     
@@ -153,12 +153,7 @@ public class PageLkInspectionRecordInput : BasePageInput
     public string TestResult { get; set; }
     
     /// <summary>
-    /// 图片URL列表
-    /// </summary>
-    public string? Images { get; set; }
-    
-    /// <summary>
-    /// 用户ID
+    /// 用户
     /// </summary>
     public long? UserId { get; set; }
     
@@ -193,9 +188,9 @@ public class AddLkInspectionRecordInput
     public string Date { get; set; }
     
     /// <summary>
-    /// 班次ID
+    /// 班次
     /// </summary>
-    [Required(ErrorMessage = "班次ID不能为空")]
+    [Required(ErrorMessage = "班次不能为空")]
     public long? ShiftId { get; set; }
     
     /// <summary>
@@ -205,9 +200,9 @@ public class AddLkInspectionRecordInput
     public decimal? Pressure { get; set; }
     
     /// <summary>
-    /// 产品类型ID
+    /// 产品类型
     /// </summary>
-    [Required(ErrorMessage = "产品类型ID不能为空")]
+    [Required(ErrorMessage = "产品类型不能为空")]
     public long? ProductTypeId { get; set; }
     
     /// <summary>
@@ -244,14 +239,14 @@ public class AddLkInspectionRecordInput
     public string TestResult { get; set; }
     
     /// <summary>
-    /// 图片URL列表
+    /// 图片
     /// </summary>
     public string? Images { get; set; }
     
     /// <summary>
-    /// 用户ID
+    /// 用户
     /// </summary>
-    [Required(ErrorMessage = "用户ID不能为空")]
+    [Required(ErrorMessage = "用户不能为空")]
     public long? UserId { get; set; }
     
     /// <summary>
@@ -301,9 +296,9 @@ public class UpdateLkInspectionRecordInput
     public string Date { get; set; }
     
     /// <summary>
-    /// 班次ID
+    /// 班次
     /// </summary>    
-    [Required(ErrorMessage = "班次ID不能为空")]
+    [Required(ErrorMessage = "班次不能为空")]
     public long? ShiftId { get; set; }
     
     /// <summary>
@@ -313,9 +308,9 @@ public class UpdateLkInspectionRecordInput
     public decimal? Pressure { get; set; }
     
     /// <summary>
-    /// 产品类型ID
+    /// 产品类型
     /// </summary>    
-    [Required(ErrorMessage = "产品类型ID不能为空")]
+    [Required(ErrorMessage = "产品类型不能为空")]
     public long? ProductTypeId { get; set; }
     
     /// <summary>
@@ -352,14 +347,14 @@ public class UpdateLkInspectionRecordInput
     public string TestResult { get; set; }
     
     /// <summary>
-    /// 图片URL列表
+    /// 图片
     /// </summary>    
     public string? Images { get; set; }
     
     /// <summary>
-    /// 用户ID
+    /// 用户
     /// </summary>    
-    [Required(ErrorMessage = "用户ID不能为空")]
+    [Required(ErrorMessage = "用户不能为空")]
     public long? UserId { get; set; }
     
     /// <summary>
@@ -375,6 +370,17 @@ public class UpdateLkInspectionRecordInput
 /// </summary>
 public class QueryByIdLkInspectionRecordInput : DeleteLkInspectionRecordInput
 {
+}
+
+/// <summary>
+/// 下拉数据输入参数
+/// </summary>
+public class DropdownDataLkInspectionRecordInput
+{
+    /// <summary>
+    /// 是否用于分页查询
+    /// </summary>
+    public bool FromPage { get; set; }
 }
 
 /// <summary>
@@ -398,11 +404,18 @@ public class ImportLkInspectionRecordInput : BaseImportInput
     public string Date { get; set; }
     
     /// <summary>
-    /// 班次ID
+    /// 班次 关联值
     /// </summary>
-    [ImporterHeader(Name = "*班次ID")]
-    [ExporterHeader("*班次ID", Format = "", Width = 25, IsBold = true)]
+    [ImporterHeader(IsIgnore = true)]
+    [ExporterHeader(IsIgnore = true)]
     public long? ShiftId { get; set; }
+    
+    /// <summary>
+    /// 班次 文本
+    /// </summary>
+    [ImporterHeader(Name = "*班次")]
+    [ExporterHeader("*班次", Format = "", Width = 25, IsBold = true)]
+    public string ShiftFkDisplayName { get; set; }
     
     /// <summary>
     /// 压力值
@@ -412,11 +425,18 @@ public class ImportLkInspectionRecordInput : BaseImportInput
     public decimal? Pressure { get; set; }
     
     /// <summary>
-    /// 产品类型ID
+    /// 产品类型 关联值
     /// </summary>
-    [ImporterHeader(Name = "*产品类型ID")]
-    [ExporterHeader("*产品类型ID", Format = "", Width = 25, IsBold = true)]
+    [ImporterHeader(IsIgnore = true)]
+    [ExporterHeader(IsIgnore = true)]
     public long? ProductTypeId { get; set; }
+    
+    /// <summary>
+    /// 产品类型 文本
+    /// </summary>
+    [ImporterHeader(Name = "*产品类型")]
+    [ExporterHeader("*产品类型", Format = "", Width = 25, IsBold = true)]
+    public string ProductTypeFkDisplayName { get; set; }
     
     /// <summary>
     /// 产品型号
@@ -454,18 +474,25 @@ public class ImportLkInspectionRecordInput : BaseImportInput
     public string TestResult { get; set; }
     
     /// <summary>
-    /// 图片URL列表
+    /// 图片
     /// </summary>
-    [ImporterHeader(Name = "图片URL列表")]
-    [ExporterHeader("图片URL列表", Format = "", Width = 25, IsBold = true)]
+    [ImporterHeader(Name = "图片")]
+    [ExporterHeader("图片", Format = "", Width = 25, IsBold = true)]
     public string? Images { get; set; }
     
     /// <summary>
-    /// 用户ID
+    /// 用户 关联值
     /// </summary>
-    [ImporterHeader(Name = "*用户ID")]
-    [ExporterHeader("*用户ID", Format = "", Width = 25, IsBold = true)]
+    [ImporterHeader(IsIgnore = true)]
+    [ExporterHeader(IsIgnore = true)]
     public long? UserId { get; set; }
+    
+    /// <summary>
+    /// 用户 文本
+    /// </summary>
+    [ImporterHeader(Name = "*用户")]
+    [ExporterHeader("*用户", Format = "", Width = 25, IsBold = true)]
+    public string UserFkDisplayName { get; set; }
     
     /// <summary>
     /// 备注

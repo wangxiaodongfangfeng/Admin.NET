@@ -12,6 +12,21 @@ namespace Admin.NET.LvKong.Application;
 public class LkInspectionRecordDto
 {
     /// <summary>
+    /// 班次
+    /// </summary>
+    public string ShiftIdFkColumn { get; set; }
+    
+    /// <summary>
+    /// 产品类型
+    /// </summary>
+    public string ProductTypeIdFkColumn { get; set; }
+    
+    /// <summary>
+    /// 用户
+    /// </summary>
+    public string UserIdFkColumn { get; set; }
+    
+    /// <summary>
     /// 主键Id
     /// </summary>
     public long Id { get; set; }
@@ -27,7 +42,7 @@ public class LkInspectionRecordDto
     public string Date { get; set; }
     
     /// <summary>
-    /// 班次ID
+    /// 班次
     /// </summary>
     public long ShiftId { get; set; }
     
@@ -37,7 +52,7 @@ public class LkInspectionRecordDto
     public decimal Pressure { get; set; }
     
     /// <summary>
-    /// 产品类型ID
+    /// 产品类型
     /// </summary>
     public long ProductTypeId { get; set; }
     
@@ -67,12 +82,12 @@ public class LkInspectionRecordDto
     public string TestResult { get; set; }
     
     /// <summary>
-    /// 图片URL列表
+    /// 图片
     /// </summary>
     public string? Images { get; set; }
     
     /// <summary>
-    /// 用户ID
+    /// 用户
     /// </summary>
     public long UserId { get; set; }
     

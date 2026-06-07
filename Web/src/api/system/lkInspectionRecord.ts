@@ -22,6 +22,8 @@ export const useLkInspectionRecordApi = () => {
 		importData: baseApi.importData,
 		// 下载检测记录数据导入模板
 		downloadTemplate: baseApi.downloadTemplate,
+		// 获取下拉列表数据
+		getDropdownData: (fromPage: Boolean = false, cancel: boolean = false) => baseApi.dropdownData({ fromPage }, cancel),
 	}
 }
 
@@ -33,11 +35,11 @@ export interface LkInspectionRecord {
 	operator?: string;
 	// 检测日期
 	date?: string;
-	// 班次ID
+	// 班次
 	shiftId?: number;
 	// 压力值
 	pressure?: number;
-	// 产品类型ID
+	// 产品类型
 	productTypeId?: number;
 	// 产品型号
 	productModel: string;
@@ -49,9 +51,9 @@ export interface LkInspectionRecord {
 	steelStamp: string;
 	// 检测结果
 	testResult?: string;
-	// 图片URL列表
+	// 图片
 	images: string;
-	// 用户ID
+	// 用户
 	userId?: number;
 	// 创建时间
 	createTime?: string;

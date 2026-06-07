@@ -27,9 +27,14 @@ public class LkInspectionRecordOutput
     public string Date { get; set; }    
     
     /// <summary>
-    /// 班次ID
+    /// 班次
     /// </summary>
     public long ShiftId { get; set; }    
+    
+    /// <summary>
+    /// 班次 描述
+    /// </summary>
+    public string ShiftFkDisplayName { get; set; } 
     
     /// <summary>
     /// 压力值
@@ -37,9 +42,14 @@ public class LkInspectionRecordOutput
     public decimal Pressure { get; set; }    
     
     /// <summary>
-    /// 产品类型ID
+    /// 产品类型
     /// </summary>
     public long ProductTypeId { get; set; }    
+    
+    /// <summary>
+    /// 产品类型 描述
+    /// </summary>
+    public string ProductTypeFkDisplayName { get; set; } 
     
     /// <summary>
     /// 产品型号
@@ -67,14 +77,19 @@ public class LkInspectionRecordOutput
     public string TestResult { get; set; }    
     
     /// <summary>
-    /// 图片URL列表
+    /// 图片
     /// </summary>
     public string? Images { get; set; }    
     
     /// <summary>
-    /// 用户ID
+    /// 用户
     /// </summary>
     public long UserId { get; set; }    
+    
+    /// <summary>
+    /// 用户 描述
+    /// </summary>
+    public string UserFkDisplayName { get; set; } 
     
     /// <summary>
     /// 创建时间
