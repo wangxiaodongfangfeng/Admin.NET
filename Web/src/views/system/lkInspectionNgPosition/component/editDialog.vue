@@ -20,12 +20,16 @@ const state = reactive({
 
 // 自行添加其他规则
 const rules = ref<FormRules>({
-  inspectionId: [{required: true, message: '请选择检测记录ID！', trigger: 'blur',},],
-  positionId: [{required: true, message: '请选择NG位置ID！', trigger: 'blur',},],
+  inspectionId: [{required: true, message: '请选择检测记录！', trigger: 'blur',},],
+  positionId: [{required: true, message: '请选择NG位置！', trigger: 'blur',},],
 });
 
 // 页面加载时
 onMounted(async () => {
+  const data = await lkInspectionNgPositionApi.getDropdownData(false).then(res => res.data.result) ?? {};
+  state.dropdownData.inspectionId = data.inspectionId ?? [];
+  state.dropdownData.positionId = data.positionId ?? [];
+  state.dropdownData.leakageSeverityId = data.leakageSeverityId ?? [];
 });
 
 // 打开弹窗
@@ -75,13 +79,17 @@ defineExpose({ openDialog });
 						<el-input v-model="state.ruleForm.id" />
 					</el-form-item>
 						<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12" class="mb20" >
-						<el-form-item label="检测记录ID" prop="inspectionId">
-							<el-input v-model="state.ruleForm.inspectionId" placeholder="请输入检测记录ID" show-word-limit clearable />
+						<el-form-item label="检测记录" prop="inspectionId">
+							<el-select clearable filterable v-model="state.ruleForm.inspectionId" placeholder="请选择检测记录">
+								<el-option v-for="(item,index) in state.dropdownData.inspectionId" :key="index" :value="item.value" :label="item.label" />
+							</el-select>
 						</el-form-item>
 					</el-col>
 						<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12" class="mb20" >
-						<el-form-item label="NG位置ID" prop="positionId">
-							<el-input v-model="state.ruleForm.positionId" placeholder="请输入NG位置ID" show-word-limit clearable />
+						<el-form-item label="NG位置" prop="positionId">
+							<el-select clearable filterable v-model="state.ruleForm.positionId" placeholder="请选择NG位置">
+								<el-option v-for="(item,index) in state.dropdownData.positionId" :key="index" :value="item.value" :label="item.label" />
+							</el-select>
 						</el-form-item>
 					</el-col>
 						<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12" class="mb20" >
@@ -90,8 +98,10 @@ defineExpose({ openDialog });
 						</el-form-item>
 					</el-col>
 						<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12" class="mb20" >
-						<el-form-item label="泄露程度ID" prop="leakageSeverityId">
-							<el-input v-model="state.ruleForm.leakageSeverityId" placeholder="请输入泄露程度ID" show-word-limit clearable />
+						<el-form-item label="泄露程度" prop="leakageSeverityId">
+							<el-select clearable filterable v-model="state.ruleForm.leakageSeverityId" placeholder="请选择泄露程度">
+								<el-option v-for="(item,index) in state.dropdownData.leakageSeverityId" :key="index" :value="item.value" :label="item.label" />
+							</el-select>
 						</el-form-item>
 					</el-col>
 				</el-row>

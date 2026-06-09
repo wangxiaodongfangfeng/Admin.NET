@@ -12,17 +12,32 @@ namespace Admin.NET.LvKong.Application;
 public class LkInspectionNgPositionDto
 {
     /// <summary>
+    /// 检测记录
+    /// </summary>
+    public string InspectionIdFkColumn { get; set; }
+    
+    /// <summary>
+    /// NG位置
+    /// </summary>
+    public string PositionIdFkColumn { get; set; }
+    
+    /// <summary>
+    /// 泄露程度
+    /// </summary>
+    public string LeakageSeverityIdFkColumn { get; set; }
+    
+    /// <summary>
     /// 主键Id
     /// </summary>
     public long Id { get; set; }
     
     /// <summary>
-    /// 检测记录ID
+    /// 检测记录
     /// </summary>
     public long InspectionId { get; set; }
     
     /// <summary>
-    /// NG位置ID
+    /// NG位置
     /// </summary>
     public long PositionId { get; set; }
     
@@ -32,7 +47,7 @@ public class LkInspectionNgPositionDto
     public string? ImageUrl { get; set; }
     
     /// <summary>
-    /// 泄露程度ID
+    /// 泄露程度
     /// </summary>
     public long? LeakageSeverityId { get; set; }
     

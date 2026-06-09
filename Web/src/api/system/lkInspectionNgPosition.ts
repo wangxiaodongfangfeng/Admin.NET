@@ -22,6 +22,8 @@ export const useLkInspectionNgPositionApi = () => {
 		importData: baseApi.importData,
 		// 下载NG位置详情数据导入模板
 		downloadTemplate: baseApi.downloadTemplate,
+		// 获取下拉列表数据
+		getDropdownData: (fromPage: Boolean = false, cancel: boolean = false) => baseApi.dropdownData({ fromPage }, cancel),
 	}
 }
 
@@ -29,13 +31,13 @@ export const useLkInspectionNgPositionApi = () => {
 export interface LkInspectionNgPosition {
 	// 主键Id
 	id: number;
-	// 检测记录ID
+	// 检测记录
 	inspectionId?: number;
-	// NG位置ID
+	// NG位置
 	positionId?: number;
 	// 图片URL
 	imageUrl: string;
-	// 泄露程度ID
+	// 泄露程度
 	leakageSeverityId: number;
 	// 创建时间
 	createTime: string;

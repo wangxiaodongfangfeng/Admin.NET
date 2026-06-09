@@ -34,6 +34,10 @@ const state = reactive({
 
 // 页面加载时
 onMounted(async () => {
+  const data = await lkInspectionNgPositionApi.getDropdownData(true).then(res => res.data.result) ?? {};
+  state.dropdownData.inspectionId = data.inspectionId;
+  state.dropdownData.positionId = data.positionId;
+  state.dropdownData.leakageSeverityId = data.leakageSeverityId;
 });
 
 // 查询操作
@@ -112,13 +116,17 @@ handleQuery();
             </el-form-item>
           </el-col>
           <el-col :xs="24" :sm="12" :md="12" :lg="8" :xl="4" class="mb10" v-if="state.showAdvanceQueryUI">
-            <el-form-item label="检测记录ID">
-              <el-input v-model="state.tableQueryParams.inspectionId" clearable placeholder="请输入检测记录ID"/>
+            <el-form-item label="检测记录">
+              <el-select clearable filterable v-model="state.tableQueryParams.inspectionId" placeholder="请选择检测记录">
+                <el-option v-for="(item,index) in state.dropdownData.inspectionId ?? []" :key="index" :value="item.value" :label="item.label" />
+              </el-select>
             </el-form-item>
           </el-col>
           <el-col :xs="24" :sm="12" :md="12" :lg="8" :xl="4" class="mb10" v-if="state.showAdvanceQueryUI">
-            <el-form-item label="NG位置ID">
-              <el-input v-model="state.tableQueryParams.positionId" clearable placeholder="请输入NG位置ID"/>
+            <el-form-item label="NG位置">
+              <el-select clearable filterable v-model="state.tableQueryParams.positionId" placeholder="请选择NG位置">
+                <el-option v-for="(item,index) in state.dropdownData.positionId ?? []" :key="index" :value="item.value" :label="item.label" />
+              </el-select>
             </el-form-item>
           </el-col>
           <el-col :xs="24" :sm="12" :md="12" :lg="8" :xl="4" class="mb10" v-if="state.showAdvanceQueryUI">
@@ -127,8 +135,10 @@ handleQuery();
             </el-form-item>
           </el-col>
           <el-col :xs="24" :sm="12" :md="12" :lg="8" :xl="4" class="mb10" v-if="state.showAdvanceQueryUI">
-            <el-form-item label="泄露程度ID">
-              <el-input v-model="state.tableQueryParams.leakageSeverityId" clearable placeholder="请输入泄露程度ID"/>
+            <el-form-item label="泄露程度">
+              <el-select clearable filterable v-model="state.tableQueryParams.leakageSeverityId" placeholder="请选择泄露程度">
+                <el-option v-for="(item,index) in state.dropdownData.leakageSeverityId ?? []" :key="index" :value="item.value" :label="item.label" />
+              </el-select>
             </el-form-item>
           </el-col>
           <el-col :xs="24" :sm="12" :md="12" :lg="8" :xl="4" class="mb10">
@@ -161,10 +171,10 @@ handleQuery();
       <el-table :data="state.tableData" @selection-change="(val: any[]) => { state.selectData = val; }" style="width: 100%" v-loading="state.tableLoading" tooltip-effect="light" row-key="id" @sort-change="sortChange" border>
         <el-table-column type="selection" width="40" align="center" v-if="auth('lkInspectionNgPosition:batchDelete') || auth('lkInspectionNgPosition:export')" />
         <el-table-column type="index" label="序号" width="55" align="center"/>
-        <el-table-column prop='inspectionId' label='检测记录ID' show-overflow-tooltip />
-        <el-table-column prop='positionId' label='NG位置ID' show-overflow-tooltip />
+        <el-table-column prop='inspectionId' label='检测记录' :formatter="(row: any) => row.inspectionFkDisplayName" show-overflow-tooltip />
+        <el-table-column prop='positionId' label='NG位置' :formatter="(row: any) => row.positionFkDisplayName" show-overflow-tooltip />
         <el-table-column prop='imageUrl' label='图片URL' show-overflow-tooltip />
-        <el-table-column prop='leakageSeverityId' label='泄露程度ID' show-overflow-tooltip />
+        <el-table-column prop='leakageSeverityId' label='泄露程度' :formatter="(row: any) => row.leakageSeverityFkDisplayName" show-overflow-tooltip />
         <el-table-column label="修改记录" width="100" align="center" show-overflow-tooltip>
           <template #default="scope">
             <ModifyRecord :data="scope.row" />

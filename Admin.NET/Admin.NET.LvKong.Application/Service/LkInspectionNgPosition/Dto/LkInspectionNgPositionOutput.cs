@@ -17,14 +17,24 @@ public class LkInspectionNgPositionOutput
     public long Id { get; set; }    
     
     /// <summary>
-    /// 检测记录ID
+    /// 检测记录
     /// </summary>
     public long InspectionId { get; set; }    
     
     /// <summary>
-    /// NG位置ID
+    /// 检测记录 描述
+    /// </summary>
+    public string InspectionFkDisplayName { get; set; } 
+    
+    /// <summary>
+    /// NG位置
     /// </summary>
     public long PositionId { get; set; }    
+    
+    /// <summary>
+    /// NG位置 描述
+    /// </summary>
+    public string PositionFkDisplayName { get; set; } 
     
     /// <summary>
     /// 图片URL
@@ -32,9 +42,14 @@ public class LkInspectionNgPositionOutput
     public string? ImageUrl { get; set; }    
     
     /// <summary>
-    /// 泄露程度ID
+    /// 泄露程度
     /// </summary>
     public long? LeakageSeverityId { get; set; }    
+    
+    /// <summary>
+    /// 泄露程度 描述
+    /// </summary>
+    public string LeakageSeverityFkDisplayName { get; set; } 
     
     /// <summary>
     /// 创建时间

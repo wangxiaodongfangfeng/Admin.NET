@@ -22,15 +22,15 @@ public class LkInspectionNgPositionBaseInput
     public virtual long? Id { get; set; }
     
     /// <summary>
-    /// 检测记录ID
+    /// 检测记录
     /// </summary>
-    [Required(ErrorMessage = "检测记录ID不能为空")]
+    [Required(ErrorMessage = "检测记录不能为空")]
     public virtual long? InspectionId { get; set; }
     
     /// <summary>
-    /// NG位置ID
+    /// NG位置
     /// </summary>
-    [Required(ErrorMessage = "NG位置ID不能为空")]
+    [Required(ErrorMessage = "NG位置不能为空")]
     public virtual long? PositionId { get; set; }
     
     /// <summary>
@@ -39,7 +39,7 @@ public class LkInspectionNgPositionBaseInput
     public virtual string? ImageUrl { get; set; }
     
     /// <summary>
-    /// 泄露程度ID
+    /// 泄露程度
     /// </summary>
     public virtual long? LeakageSeverityId { get; set; }
     
@@ -51,12 +51,12 @@ public class LkInspectionNgPositionBaseInput
 public class PageLkInspectionNgPositionInput : BasePageInput
 {
     /// <summary>
-    /// 检测记录ID
+    /// 检测记录
     /// </summary>
     public long? InspectionId { get; set; }
     
     /// <summary>
-    /// NG位置ID
+    /// NG位置
     /// </summary>
     public long? PositionId { get; set; }
     
@@ -66,7 +66,7 @@ public class PageLkInspectionNgPositionInput : BasePageInput
     public string? ImageUrl { get; set; }
     
     /// <summary>
-    /// 泄露程度ID
+    /// 泄露程度
     /// </summary>
     public long? LeakageSeverityId { get; set; }
     
@@ -82,15 +82,15 @@ public class PageLkInspectionNgPositionInput : BasePageInput
 public class AddLkInspectionNgPositionInput
 {
     /// <summary>
-    /// 检测记录ID
+    /// 检测记录
     /// </summary>
-    [Required(ErrorMessage = "检测记录ID不能为空")]
+    [Required(ErrorMessage = "检测记录不能为空")]
     public long? InspectionId { get; set; }
     
     /// <summary>
-    /// NG位置ID
+    /// NG位置
     /// </summary>
-    [Required(ErrorMessage = "NG位置ID不能为空")]
+    [Required(ErrorMessage = "NG位置不能为空")]
     public long? PositionId { get; set; }
     
     /// <summary>
@@ -100,7 +100,7 @@ public class AddLkInspectionNgPositionInput
     public string? ImageUrl { get; set; }
     
     /// <summary>
-    /// 泄露程度ID
+    /// 泄露程度
     /// </summary>
     public long? LeakageSeverityId { get; set; }
     
@@ -131,15 +131,15 @@ public class UpdateLkInspectionNgPositionInput
     public long? Id { get; set; }
     
     /// <summary>
-    /// 检测记录ID
+    /// 检测记录
     /// </summary>    
-    [Required(ErrorMessage = "检测记录ID不能为空")]
+    [Required(ErrorMessage = "检测记录不能为空")]
     public long? InspectionId { get; set; }
     
     /// <summary>
-    /// NG位置ID
+    /// NG位置
     /// </summary>    
-    [Required(ErrorMessage = "NG位置ID不能为空")]
+    [Required(ErrorMessage = "NG位置不能为空")]
     public long? PositionId { get; set; }
     
     /// <summary>
@@ -149,7 +149,7 @@ public class UpdateLkInspectionNgPositionInput
     public string? ImageUrl { get; set; }
     
     /// <summary>
-    /// 泄露程度ID
+    /// 泄露程度
     /// </summary>    
     public long? LeakageSeverityId { get; set; }
     
@@ -163,24 +163,49 @@ public class QueryByIdLkInspectionNgPositionInput : DeleteLkInspectionNgPosition
 }
 
 /// <summary>
+/// 下拉数据输入参数
+/// </summary>
+public class DropdownDataLkInspectionNgPositionInput
+{
+    /// <summary>
+    /// 是否用于分页查询
+    /// </summary>
+    public bool FromPage { get; set; }
+}
+
+/// <summary>
 /// NG位置详情数据导入实体
 /// </summary>
 [ExcelImporter(SheetIndex = 1, IsOnlyErrorRows = true)]
 public class ImportLkInspectionNgPositionInput : BaseImportInput
 {
     /// <summary>
-    /// 检测记录ID
+    /// 检测记录 关联值
     /// </summary>
-    [ImporterHeader(Name = "*检测记录ID")]
-    [ExporterHeader("*检测记录ID", Format = "", Width = 25, IsBold = true)]
+    [ImporterHeader(IsIgnore = true)]
+    [ExporterHeader(IsIgnore = true)]
     public long? InspectionId { get; set; }
     
     /// <summary>
-    /// NG位置ID
+    /// 检测记录 文本
     /// </summary>
-    [ImporterHeader(Name = "*NG位置ID")]
-    [ExporterHeader("*NG位置ID", Format = "", Width = 25, IsBold = true)]
+    [ImporterHeader(Name = "*检测记录")]
+    [ExporterHeader("*检测记录", Format = "", Width = 25, IsBold = true)]
+    public string InspectionFkDisplayName { get; set; }
+    
+    /// <summary>
+    /// NG位置 关联值
+    /// </summary>
+    [ImporterHeader(IsIgnore = true)]
+    [ExporterHeader(IsIgnore = true)]
     public long? PositionId { get; set; }
+    
+    /// <summary>
+    /// NG位置 文本
+    /// </summary>
+    [ImporterHeader(Name = "*NG位置")]
+    [ExporterHeader("*NG位置", Format = "", Width = 25, IsBold = true)]
+    public string PositionFkDisplayName { get; set; }
     
     /// <summary>
     /// 图片URL
@@ -190,10 +215,17 @@ public class ImportLkInspectionNgPositionInput : BaseImportInput
     public string? ImageUrl { get; set; }
     
     /// <summary>
-    /// 泄露程度ID
+    /// 泄露程度 关联值
     /// </summary>
-    [ImporterHeader(Name = "泄露程度ID")]
-    [ExporterHeader("泄露程度ID", Format = "", Width = 25, IsBold = true)]
+    [ImporterHeader(IsIgnore = true)]
+    [ExporterHeader(IsIgnore = true)]
     public long? LeakageSeverityId { get; set; }
+    
+    /// <summary>
+    /// 泄露程度 文本
+    /// </summary>
+    [ImporterHeader(Name = "泄露程度")]
+    [ExporterHeader("泄露程度", Format = "", Width = 25, IsBold = true)]
+    public string LeakageSeverityFkDisplayName { get; set; }
     
 }

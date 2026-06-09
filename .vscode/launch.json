@@ -5,6 +5,12 @@
   "version": "0.2.0",
   "configurations": [
     {
+      "name": "C#: AdminNET Debug",
+      "type": "dotnet",
+      "request": "launch",
+      "projectPath": "${workspaceFolder}/Admin.NET/Admin.NET.Web.Entry/Admin.NET.Web.Entry.csproj",
+    },
+    {
       "name": "web",
       "command": "vite",
       "request": "launch",
@@ -16,7 +22,7 @@
       "type": "coreclr",
       "request": "launch",
       "preLaunchTask": "build",
-      "program": "${workspaceFolder}/Admin.NET/Admin.NET.Web.Entry/bin/Debug/net6.0/Admin.NET.Web.Entry.dll",
+      "program": "${workspaceFolder}/Admin.NET/Admin.NET.Web.Entry/bin/Debug/net8.0/Admin.NET.Web.Entry.dll",
       "args": [],
       "cwd": "${workspaceFolder}/Admin.NET/Admin.NET.Web.Entry",
       "stopAtEntry": false,
