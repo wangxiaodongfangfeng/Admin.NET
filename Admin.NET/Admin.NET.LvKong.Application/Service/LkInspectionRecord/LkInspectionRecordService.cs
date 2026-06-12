@@ -42,22 +42,27 @@ public partial class LkInspectionRecordService : IDynamicApiController, ITransie
     {
         input.Keyword = input.Keyword?.Trim();
         var query = _lkInspectionRecordRep.AsQueryable()
-            .WhereIF(!string.IsNullOrWhiteSpace(input.Keyword), u => u.Operator.Contains(input.Keyword) || u.Date.Contains(input.Keyword) || u.ProductModel.Contains(input.Keyword) || u.BatchNumber.Contains(input.Keyword) || u.Specification.Contains(input.Keyword) || u.SteelStamp.Contains(input.Keyword) || u.TestResult.Contains(input.Keyword) || u.Remarks.Contains(input.Keyword))
+            .WhereIF(!string.IsNullOrWhiteSpace(input.Keyword), u => u.Operator.Contains(input.Keyword) || u.Date.Contains(input.Keyword) || u.ProductModel.Contains(input.Keyword) || u.SteelStamp.Contains(input.Keyword) || u.TestResult.Contains(input.Keyword) || u.Images.Contains(input.Keyword) || u.Remarks.Contains(input.Keyword))
             .WhereIF(!string.IsNullOrWhiteSpace(input.Operator), u => u.Operator.Contains(input.Operator.Trim()))
             .WhereIF(!string.IsNullOrWhiteSpace(input.Date), u => u.Date.Contains(input.Date.Trim()))
             .WhereIF(!string.IsNullOrWhiteSpace(input.ProductModel), u => u.ProductModel.Contains(input.ProductModel.Trim()))
-            .WhereIF(!string.IsNullOrWhiteSpace(input.BatchNumber), u => u.BatchNumber.Contains(input.BatchNumber.Trim()))
-            .WhereIF(!string.IsNullOrWhiteSpace(input.Specification), u => u.Specification.Contains(input.Specification.Trim()))
             .WhereIF(!string.IsNullOrWhiteSpace(input.SteelStamp), u => u.SteelStamp.Contains(input.SteelStamp.Trim()))
             .WhereIF(!string.IsNullOrWhiteSpace(input.TestResult), u => u.TestResult.Contains(input.TestResult.Trim()))
+            .WhereIF(!string.IsNullOrWhiteSpace(input.Images), u => u.Images.Contains(input.Images.Trim()))
             .WhereIF(!string.IsNullOrWhiteSpace(input.Remarks), u => u.Remarks.Contains(input.Remarks.Trim()))
             .WhereIF(input.ShiftId != null, u => u.ShiftId == input.ShiftId)
             .WhereIF(input.ProductTypeId != null, u => u.ProductTypeId == input.ProductTypeId)
             .WhereIF(input.UserId != null, u => u.UserId == input.UserId)
+            .WhereIF(input.ProductStatusId != null, u => u.ProductStatusId == input.ProductStatusId)
+            .WhereIF(input.PartStatusId != null, u => u.PartStatusId == input.PartStatusId)
+            .WhereIF(input.NgPositionId != null, u => u.NgPositionId == input.NgPositionId)
             .LeftJoin<LkShift>((u, shift) => u.ShiftId == shift.Id)
             .LeftJoin<LkProductType>((u, shift, productType) => u.ProductTypeId == productType.Id)
             .LeftJoin<SysUser>((u, shift, productType, user) => u.UserId == user.Id)
-            .Select((u, shift, productType, user) => new LkInspectionRecordOutput
+            .LeftJoin<LkProductStatus>((u, shift, productType, user, productStatus) => u.ProductStatusId == productStatus.Id)
+            .LeftJoin<LkPartStatus>((u, shift, productType, user, productStatus, partStatus) => u.PartStatusId == partStatus.Id)
+            .LeftJoin<LkNgPosition>((u, shift, productType, user, productStatus, partStatus, ngPosition) => u.NgPositionId == ngPosition.Id)
+            .Select((u, shift, productType, user, productStatus, partStatus, ngPosition) => new LkInspectionRecordOutput
             {
                 Id = u.Id,
                 Operator = u.Operator,
@@ -68,8 +73,6 @@ public partial class LkInspectionRecordService : IDynamicApiController, ITransie
                 ProductTypeId = u.ProductTypeId,
                 ProductTypeFkDisplayName = $"{productType.Name}",
                 ProductModel = u.ProductModel,
-                BatchNumber = u.BatchNumber,
-                Specification = u.Specification,
                 SteelStamp = u.SteelStamp,
                 TestResult = u.TestResult,
                 Images = u.Images,
@@ -82,6 +85,13 @@ public partial class LkInspectionRecordService : IDynamicApiController, ITransie
                 CreateUserName = u.CreateUserName,
                 UpdateUserId = u.UpdateUserId,
                 UpdateUserName = u.UpdateUserName,
+                PressureHoldTime = u.PressureHoldTime,
+                ProductStatusId = u.ProductStatusId,
+                ProductStatusFkDisplayName = $"{productStatus.Name}",
+                PartStatusId = u.PartStatusId,
+                PartStatusFkDisplayName = $"{partStatus.Name}",
+                NgPositionId = u.NgPositionId,
+                NgPositionFkDisplayName = $"{ngPosition.Name}",
             });
 		return await query.OrderBuilder(input).ToPagedListAsync(input.Page, input.PageSize);
     }
@@ -179,11 +189,32 @@ public partial class LkInspectionRecordService : IDynamicApiController, ITransie
                 Value = u.Id,
                 Label = $"{u.RealName}"
             }).ToListAsync();
+        var productStatusIdData = await _lkInspectionRecordRep.Context.Queryable<LkProductStatus>()
+            .InnerJoinIF<LkInspectionRecord>(input.FromPage, (u, r) => u.Id == r.ProductStatusId)
+            .Select(u => new {
+                Value = u.Id,
+                Label = $"{u.Name}"
+            }).ToListAsync();
+        var partStatusIdData = await _lkInspectionRecordRep.Context.Queryable<LkPartStatus>()
+            .InnerJoinIF<LkInspectionRecord>(input.FromPage, (u, r) => u.Id == r.PartStatusId)
+            .Select(u => new {
+                Value = u.Id,
+                Label = $"{u.Name}"
+            }).ToListAsync();
+        var ngPositionIdData = await _lkInspectionRecordRep.Context.Queryable<LkNgPosition>()
+            .InnerJoinIF<LkInspectionRecord>(input.FromPage, (u, r) => u.Id == r.NgPositionId)
+            .Select(u => new {
+                Value = u.Id,
+                Label = $"{u.Name}"
+            }).ToListAsync();
         return new Dictionary<string, dynamic>
         {
             { "shiftId", shiftIdData },
             { "productTypeId", productTypeIdData },
             { "userId", userIdData },
+            { "productStatusId", productStatusIdData },
+            { "partStatusId", partStatusIdData },
+            { "ngPositionId", ngPositionIdData },
         };
     }
     
@@ -214,6 +245,9 @@ public partial class LkInspectionRecordService : IDynamicApiController, ITransie
             if (nameof(ExportLkInspectionRecordOutput.ShiftFkDisplayName) == info.Name) return _lkInspectionRecordRep.Context.Queryable<LkShift>().Select(u => $"{u.Name}").Distinct().ToList();
             if (nameof(ExportLkInspectionRecordOutput.ProductTypeFkDisplayName) == info.Name) return _lkInspectionRecordRep.Context.Queryable<LkProductType>().Select(u => $"{u.Name}").Distinct().ToList();
             if (nameof(ExportLkInspectionRecordOutput.UserFkDisplayName) == info.Name) return _lkInspectionRecordRep.Context.Queryable<SysUser>().Select(u => $"{u.RealName}").Distinct().ToList();
+            if (nameof(ExportLkInspectionRecordOutput.ProductStatusFkDisplayName) == info.Name) return _lkInspectionRecordRep.Context.Queryable<LkProductStatus>().Select(u => $"{u.Name}").Distinct().ToList();
+            if (nameof(ExportLkInspectionRecordOutput.PartStatusFkDisplayName) == info.Name) return _lkInspectionRecordRep.Context.Queryable<LkPartStatus>().Select(u => $"{u.Name}").Distinct().ToList();
+            if (nameof(ExportLkInspectionRecordOutput.NgPositionFkDisplayName) == info.Name) return _lkInspectionRecordRep.Context.Queryable<LkNgPosition>().Select(u => $"{u.Name}").Distinct().ToList();
             return null;
         });
     }
@@ -233,31 +267,58 @@ public partial class LkInspectionRecordService : IDynamicApiController, ITransie
             {
                 _sqlSugarClient.Utilities.PageEach(list, 2048, pageItems =>
                 {
-                    // 链接 班次
+                    // 链接 班次ID
                     var shiftIdLabelList = pageItems.Where(x => x.ShiftFkDisplayName != null).Select(x => x.ShiftFkDisplayName).Distinct().ToList();
                     if (shiftIdLabelList.Any()) {
                         var shiftIdLinkMap = _lkInspectionRecordRep.Context.Queryable<LkShift>().Where(u => shiftIdLabelList.Contains($"{u.Name}")).ToList().ToDictionary(u => $"{u.Name}", u => u.Id  as long?);
                         pageItems.ForEach(e => {
                             e.ShiftId = shiftIdLinkMap.GetValueOrDefault(e.ShiftFkDisplayName ?? "");
-                            if (e.ShiftId == null) e.Error = "班次链接失败";
+                            if (e.ShiftId == null) e.Error = "班次ID链接失败";
                         });
                     }
-                    // 链接 产品类型
+                    // 链接 产品类型ID
                     var productTypeIdLabelList = pageItems.Where(x => x.ProductTypeFkDisplayName != null).Select(x => x.ProductTypeFkDisplayName).Distinct().ToList();
                     if (productTypeIdLabelList.Any()) {
                         var productTypeIdLinkMap = _lkInspectionRecordRep.Context.Queryable<LkProductType>().Where(u => productTypeIdLabelList.Contains($"{u.Name}")).ToList().ToDictionary(u => $"{u.Name}", u => u.Id  as long?);
                         pageItems.ForEach(e => {
                             e.ProductTypeId = productTypeIdLinkMap.GetValueOrDefault(e.ProductTypeFkDisplayName ?? "");
-                            if (e.ProductTypeId == null) e.Error = "产品类型链接失败";
+                            if (e.ProductTypeId == null) e.Error = "产品类型ID链接失败";
                         });
                     }
-                    // 链接 用户
+                    // 链接 用户ID
                     var userIdLabelList = pageItems.Where(x => x.UserFkDisplayName != null).Select(x => x.UserFkDisplayName).Distinct().ToList();
                     if (userIdLabelList.Any()) {
                         var userIdLinkMap = _lkInspectionRecordRep.Context.Queryable<SysUser>().Where(u => userIdLabelList.Contains($"{u.RealName}")).ToList().ToDictionary(u => $"{u.RealName}", u => u.Id  as long?);
                         pageItems.ForEach(e => {
                             e.UserId = userIdLinkMap.GetValueOrDefault(e.UserFkDisplayName ?? "");
-                            if (e.UserId == null) e.Error = "用户链接失败";
+                            if (e.UserId == null) e.Error = "用户ID链接失败";
+                        });
+                    }
+                    // 链接 产品状态ID
+                    var productStatusIdLabelList = pageItems.Where(x => x.ProductStatusFkDisplayName != null).Select(x => x.ProductStatusFkDisplayName).Distinct().ToList();
+                    if (productStatusIdLabelList.Any()) {
+                        var productStatusIdLinkMap = _lkInspectionRecordRep.Context.Queryable<LkProductStatus>().Where(u => productStatusIdLabelList.Contains($"{u.Name}")).ToList().ToDictionary(u => $"{u.Name}", u => u.Id  as long?);
+                        pageItems.ForEach(e => {
+                            e.ProductStatusId = productStatusIdLinkMap.GetValueOrDefault(e.ProductStatusFkDisplayName ?? "");
+                            if (e.ProductStatusId == null) e.Error = "产品状态ID链接失败";
+                        });
+                    }
+                    // 链接 零件状态ID
+                    var partStatusIdLabelList = pageItems.Where(x => x.PartStatusFkDisplayName != null).Select(x => x.PartStatusFkDisplayName).Distinct().ToList();
+                    if (partStatusIdLabelList.Any()) {
+                        var partStatusIdLinkMap = _lkInspectionRecordRep.Context.Queryable<LkPartStatus>().Where(u => partStatusIdLabelList.Contains($"{u.Name}")).ToList().ToDictionary(u => $"{u.Name}", u => u.Id  as long?);
+                        pageItems.ForEach(e => {
+                            e.PartStatusId = partStatusIdLinkMap.GetValueOrDefault(e.PartStatusFkDisplayName ?? "");
+                            if (e.PartStatusId == null) e.Error = "零件状态ID链接失败";
+                        });
+                    }
+                    // 链接 Ng位置ID
+                    var ngPositionIdLabelList = pageItems.Where(x => x.NgPositionFkDisplayName != null).Select(x => x.NgPositionFkDisplayName).Distinct().ToList();
+                    if (ngPositionIdLabelList.Any()) {
+                        var ngPositionIdLinkMap = _lkInspectionRecordRep.Context.Queryable<LkNgPosition>().Where(u => ngPositionIdLabelList.Contains($"{u.Name}")).ToList().ToDictionary(u => $"{u.Name}", u => u.Id  as long?);
+                        pageItems.ForEach(e => {
+                            e.NgPositionId = ngPositionIdLinkMap.GetValueOrDefault(e.NgPositionFkDisplayName ?? "");
+                            if (e.NgPositionId == null) e.Error = "Ng位置ID链接失败";
                         });
                     }
                     
@@ -265,15 +326,15 @@ public partial class LkInspectionRecordService : IDynamicApiController, ITransie
                     var rows = pageItems.Where(x => {
                         if (!string.IsNullOrWhiteSpace(x.Error)) return false;
                         if (x.ShiftId == null){
-                            x.Error = "班次不能为空";
+                            x.Error = "班次ID不能为空";
                             return false;
                         }
                         if (x.ProductTypeId == null){
-                            x.Error = "产品类型不能为空";
+                            x.Error = "产品类型ID不能为空";
                             return false;
                         }
                         if (x.UserId == null){
-                            x.Error = "用户不能为空";
+                            x.Error = "用户ID不能为空";
                             return false;
                         }
                         return true;
@@ -285,10 +346,6 @@ public partial class LkInspectionRecordService : IDynamicApiController, ITransie
                         .SplitError(it => string.IsNullOrWhiteSpace(it.Item.Date), "检测日期不能为空")
                         .SplitError(it => it.Item.Date?.Length > 16, "检测日期长度不能超过16个字符")
                         .SplitError(it => it.Item.ProductModel?.Length > 64, "产品型号长度不能超过64个字符")
-                        .SplitError(it => string.IsNullOrWhiteSpace(it.Item.BatchNumber), "批次号不能为空")
-                        .SplitError(it => it.Item.BatchNumber?.Length > 64, "批次号长度不能超过64个字符")
-                        .SplitError(it => string.IsNullOrWhiteSpace(it.Item.Specification), "规格不能为空")
-                        .SplitError(it => it.Item.Specification?.Length > 64, "规格长度不能超过64个字符")
                         .SplitError(it => it.Item.SteelStamp?.Length > 64, "钢印号长度不能超过64个字符")
                         .SplitError(it => string.IsNullOrWhiteSpace(it.Item.TestResult), "检测结果不能为空")
                         .SplitError(it => it.Item.TestResult?.Length > 8, "检测结果长度不能超过8个字符")
@@ -305,13 +362,15 @@ public partial class LkInspectionRecordService : IDynamicApiController, ITransie
                         it.Pressure,
                         it.ProductTypeId,
                         it.ProductModel,
-                        it.BatchNumber,
-                        it.Specification,
                         it.SteelStamp,
                         it.TestResult,
                         it.Images,
                         it.UserId,
                         it.Remarks,
+                        it.PressureHoldTime,
+                        it.ProductStatusId,
+                        it.PartStatusId,
+                        it.NgPositionId,
                     }).ExecuteCommand();// 存在更新
                     
                     // 标记错误信息

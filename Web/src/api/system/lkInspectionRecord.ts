@@ -35,25 +35,21 @@ export interface LkInspectionRecord {
 	operator?: string;
 	// 检测日期
 	date?: string;
-	// 班次
+	// 班次ID
 	shiftId?: number;
-	// 压力值
+	// 气压值
 	pressure?: number;
-	// 产品类型
+	// 产品类型ID
 	productTypeId?: number;
 	// 产品型号
 	productModel: string;
-	// 批次号
-	batchNumber?: string;
-	// 规格
-	specification?: string;
 	// 钢印号
 	steelStamp: string;
 	// 检测结果
 	testResult?: string;
-	// 图片
+	// 图片URL列表
 	images: string;
-	// 用户
+	// 用户ID
 	userId?: number;
 	// 创建时间
 	createTime?: string;
@@ -69,4 +65,12 @@ export interface LkInspectionRecord {
 	updateUserId: number;
 	// 修改者姓名
 	updateUserName: string;
+	// 保压时间
+	pressureHoldTime: number;
+	// 产品状态ID
+	productStatusId: number;
+	// 零件状态ID
+	partStatusId: number;
+	// Ng位置ID
+	ngPositionId: number;
 }

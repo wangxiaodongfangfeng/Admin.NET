@@ -22,13 +22,11 @@ const state = reactive({
 const rules = ref<FormRules>({
   operator: [{required: true, message: '请选择操作员！', trigger: 'blur',},],
   date: [{required: true, message: '请选择检测日期！', trigger: 'blur',},],
-  shiftId: [{required: true, message: '请选择班次！', trigger: 'blur',},],
-  pressure: [{required: true, message: '请选择压力值！', trigger: 'blur',},],
-  productTypeId: [{required: true, message: '请选择产品类型！', trigger: 'blur',},],
-  batchNumber: [{required: true, message: '请选择批次号！', trigger: 'blur',},],
-  specification: [{required: true, message: '请选择规格！', trigger: 'blur',},],
+  shiftId: [{required: true, message: '请选择班次ID！', trigger: 'blur',},],
+  pressure: [{required: true, message: '请选择气压值！', trigger: 'blur',},],
+  productTypeId: [{required: true, message: '请选择产品类型ID！', trigger: 'blur',},],
   testResult: [{required: true, message: '请选择检测结果！', trigger: 'blur',},],
-  userId: [{required: true, message: '请选择用户！', trigger: 'blur',},],
+  userId: [{required: true, message: '请选择用户ID！', trigger: 'blur',},],
 });
 
 // 页面加载时
@@ -37,6 +35,9 @@ onMounted(async () => {
   state.dropdownData.shiftId = data.shiftId ?? [];
   state.dropdownData.productTypeId = data.productTypeId ?? [];
   state.dropdownData.userId = data.userId ?? [];
+  state.dropdownData.productStatusId = data.productStatusId ?? [];
+  state.dropdownData.partStatusId = data.partStatusId ?? [];
+  state.dropdownData.ngPositionId = data.ngPositionId ?? [];
 });
 
 // 打开弹窗
@@ -96,20 +97,20 @@ defineExpose({ openDialog });
 						</el-form-item>
 					</el-col>
 						<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12" class="mb20" >
-						<el-form-item label="班次" prop="shiftId">
-							<el-select clearable filterable v-model="state.ruleForm.shiftId" placeholder="请选择班次">
+						<el-form-item label="班次ID" prop="shiftId">
+							<el-select clearable filterable v-model="state.ruleForm.shiftId" placeholder="请选择班次ID">
 								<el-option v-for="(item,index) in state.dropdownData.shiftId" :key="index" :value="item.value" :label="item.label" />
 							</el-select>
 						</el-form-item>
 					</el-col>
 						<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12" class="mb20" >
-						<el-form-item label="压力值" prop="pressure">
-							<el-input-number v-model="state.ruleForm.pressure" placeholder="请输入压力值" clearable />
+						<el-form-item label="气压值" prop="pressure">
+							<el-input-number v-model="state.ruleForm.pressure" placeholder="请输入气压值" clearable />
 						</el-form-item>
 					</el-col>
 						<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12" class="mb20" >
-						<el-form-item label="产品类型" prop="productTypeId">
-							<el-select clearable filterable v-model="state.ruleForm.productTypeId" placeholder="请选择产品类型">
+						<el-form-item label="产品类型ID" prop="productTypeId">
+							<el-select clearable filterable v-model="state.ruleForm.productTypeId" placeholder="请选择产品类型ID">
 								<el-option v-for="(item,index) in state.dropdownData.productTypeId" :key="index" :value="item.value" :label="item.label" />
 							</el-select>
 						</el-form-item>
@@ -117,16 +118,6 @@ defineExpose({ openDialog });
 						<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12" class="mb20" >
 						<el-form-item label="产品型号" prop="productModel">
 							<el-input v-model="state.ruleForm.productModel" placeholder="请输入产品型号" maxlength="64" show-word-limit clearable />
-						</el-form-item>
-					</el-col>
-						<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12" class="mb20" >
-						<el-form-item label="批次号" prop="batchNumber">
-							<el-input v-model="state.ruleForm.batchNumber" placeholder="请输入批次号" maxlength="64" show-word-limit clearable />
-						</el-form-item>
-					</el-col>
-						<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12" class="mb20" >
-						<el-form-item label="规格" prop="specification">
-							<el-input v-model="state.ruleForm.specification" placeholder="请输入规格" maxlength="64" show-word-limit clearable />
 						</el-form-item>
 					</el-col>
 						<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12" class="mb20" >
@@ -140,13 +131,13 @@ defineExpose({ openDialog });
 						</el-form-item>
 					</el-col>
 						<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12" class="mb20" >
-						<el-form-item label="图片" prop="images">
-							<el-input v-model="state.ruleForm.images" placeholder="请输入图片" show-word-limit clearable />
+						<el-form-item label="图片URL列表" prop="images">
+							<el-input v-model="state.ruleForm.images" placeholder="请输入图片URL列表" show-word-limit clearable />
 						</el-form-item>
 					</el-col>
 						<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12" class="mb20" >
-						<el-form-item label="用户" prop="userId">
-							<el-select clearable filterable v-model="state.ruleForm.userId" placeholder="请选择用户">
+						<el-form-item label="用户ID" prop="userId">
+							<el-select clearable filterable v-model="state.ruleForm.userId" placeholder="请选择用户ID">
 								<el-option v-for="(item,index) in state.dropdownData.userId" :key="index" :value="item.value" :label="item.label" />
 							</el-select>
 						</el-form-item>
@@ -154,6 +145,32 @@ defineExpose({ openDialog });
 						<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12" class="mb20" >
 						<el-form-item label="备注" prop="remarks">
 							<el-input v-model="state.ruleForm.remarks" placeholder="请输入备注" maxlength="512" show-word-limit clearable />
+						</el-form-item>
+					</el-col>
+						<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12" class="mb20" >
+						<el-form-item label="保压时间" prop="pressureHoldTime">
+							<el-input-number v-model="state.ruleForm.pressureHoldTime" placeholder="请输入保压时间" clearable />
+						</el-form-item>
+					</el-col>
+						<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12" class="mb20" >
+						<el-form-item label="产品状态ID" prop="productStatusId">
+							<el-select clearable filterable v-model="state.ruleForm.productStatusId" placeholder="请选择产品状态ID">
+								<el-option v-for="(item,index) in state.dropdownData.productStatusId" :key="index" :value="item.value" :label="item.label" />
+							</el-select>
+						</el-form-item>
+					</el-col>
+						<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12" class="mb20" >
+						<el-form-item label="零件状态ID" prop="partStatusId">
+							<el-select clearable filterable v-model="state.ruleForm.partStatusId" placeholder="请选择零件状态ID">
+								<el-option v-for="(item,index) in state.dropdownData.partStatusId" :key="index" :value="item.value" :label="item.label" />
+							</el-select>
+						</el-form-item>
+					</el-col>
+						<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12" class="mb20" >
+						<el-form-item label="Ng位置ID" prop="ngPositionId">
+							<el-select clearable filterable v-model="state.ruleForm.ngPositionId" placeholder="请选择Ng位置ID">
+								<el-option v-for="(item,index) in state.dropdownData.ngPositionId" :key="index" :value="item.value" :label="item.label" />
+							</el-select>
 						</el-form-item>
 					</el-col>
 				</el-row>

@@ -34,39 +34,27 @@ public class LkInspectionRecordBaseInput
     public virtual string Date { get; set; }
     
     /// <summary>
-    /// 班次
+    /// 班次ID
     /// </summary>
-    [Required(ErrorMessage = "班次不能为空")]
+    [Required(ErrorMessage = "班次ID不能为空")]
     public virtual long? ShiftId { get; set; }
     
     /// <summary>
-    /// 压力值
+    /// 气压值
     /// </summary>
-    [Required(ErrorMessage = "压力值不能为空")]
+    [Required(ErrorMessage = "气压值不能为空")]
     public virtual decimal? Pressure { get; set; }
     
     /// <summary>
-    /// 产品类型
+    /// 产品类型ID
     /// </summary>
-    [Required(ErrorMessage = "产品类型不能为空")]
+    [Required(ErrorMessage = "产品类型ID不能为空")]
     public virtual long? ProductTypeId { get; set; }
     
     /// <summary>
     /// 产品型号
     /// </summary>
     public virtual string? ProductModel { get; set; }
-    
-    /// <summary>
-    /// 批次号
-    /// </summary>
-    [Required(ErrorMessage = "批次号不能为空")]
-    public virtual string BatchNumber { get; set; }
-    
-    /// <summary>
-    /// 规格
-    /// </summary>
-    [Required(ErrorMessage = "规格不能为空")]
-    public virtual string Specification { get; set; }
     
     /// <summary>
     /// 钢印号
@@ -80,20 +68,40 @@ public class LkInspectionRecordBaseInput
     public virtual string TestResult { get; set; }
     
     /// <summary>
-    /// 图片
+    /// 图片URL列表
     /// </summary>
     public virtual string? Images { get; set; }
     
     /// <summary>
-    /// 用户
+    /// 用户ID
     /// </summary>
-    [Required(ErrorMessage = "用户不能为空")]
+    [Required(ErrorMessage = "用户ID不能为空")]
     public virtual long? UserId { get; set; }
     
     /// <summary>
     /// 备注
     /// </summary>
     public virtual string? Remarks { get; set; }
+    
+    /// <summary>
+    /// 保压时间
+    /// </summary>
+    public virtual decimal? PressureHoldTime { get; set; }
+    
+    /// <summary>
+    /// 产品状态ID
+    /// </summary>
+    public virtual long? ProductStatusId { get; set; }
+    
+    /// <summary>
+    /// 零件状态ID
+    /// </summary>
+    public virtual long? PartStatusId { get; set; }
+    
+    /// <summary>
+    /// Ng位置ID
+    /// </summary>
+    public virtual long? NgPositionId { get; set; }
     
 }
 
@@ -113,17 +121,17 @@ public class PageLkInspectionRecordInput : BasePageInput
     public string Date { get; set; }
     
     /// <summary>
-    /// 班次
+    /// 班次ID
     /// </summary>
     public long? ShiftId { get; set; }
     
     /// <summary>
-    /// 压力值
+    /// 气压值
     /// </summary>
     public decimal? Pressure { get; set; }
     
     /// <summary>
-    /// 产品类型
+    /// 产品类型ID
     /// </summary>
     public long? ProductTypeId { get; set; }
     
@@ -131,16 +139,6 @@ public class PageLkInspectionRecordInput : BasePageInput
     /// 产品型号
     /// </summary>
     public string? ProductModel { get; set; }
-    
-    /// <summary>
-    /// 批次号
-    /// </summary>
-    public string BatchNumber { get; set; }
-    
-    /// <summary>
-    /// 规格
-    /// </summary>
-    public string Specification { get; set; }
     
     /// <summary>
     /// 钢印号
@@ -153,7 +151,12 @@ public class PageLkInspectionRecordInput : BasePageInput
     public string TestResult { get; set; }
     
     /// <summary>
-    /// 用户
+    /// 图片URL列表
+    /// </summary>
+    public string? Images { get; set; }
+    
+    /// <summary>
+    /// 用户ID
     /// </summary>
     public long? UserId { get; set; }
     
@@ -161,6 +164,26 @@ public class PageLkInspectionRecordInput : BasePageInput
     /// 备注
     /// </summary>
     public string? Remarks { get; set; }
+    
+    /// <summary>
+    /// 保压时间
+    /// </summary>
+    public decimal? PressureHoldTime { get; set; }
+    
+    /// <summary>
+    /// 产品状态ID
+    /// </summary>
+    public long? ProductStatusId { get; set; }
+    
+    /// <summary>
+    /// 零件状态ID
+    /// </summary>
+    public long? PartStatusId { get; set; }
+    
+    /// <summary>
+    /// Ng位置ID
+    /// </summary>
+    public long? NgPositionId { get; set; }
     
     /// <summary>
     /// 选中主键列表
@@ -188,21 +211,21 @@ public class AddLkInspectionRecordInput
     public string Date { get; set; }
     
     /// <summary>
-    /// 班次
+    /// 班次ID
     /// </summary>
-    [Required(ErrorMessage = "班次不能为空")]
+    [Required(ErrorMessage = "班次ID不能为空")]
     public long? ShiftId { get; set; }
     
     /// <summary>
-    /// 压力值
+    /// 气压值
     /// </summary>
-    [Required(ErrorMessage = "压力值不能为空")]
+    [Required(ErrorMessage = "气压值不能为空")]
     public decimal? Pressure { get; set; }
     
     /// <summary>
-    /// 产品类型
+    /// 产品类型ID
     /// </summary>
-    [Required(ErrorMessage = "产品类型不能为空")]
+    [Required(ErrorMessage = "产品类型ID不能为空")]
     public long? ProductTypeId { get; set; }
     
     /// <summary>
@@ -210,20 +233,6 @@ public class AddLkInspectionRecordInput
     /// </summary>
     [MaxLength(64, ErrorMessage = "产品型号字符长度不能超过64")]
     public string? ProductModel { get; set; }
-    
-    /// <summary>
-    /// 批次号
-    /// </summary>
-    [Required(ErrorMessage = "批次号不能为空")]
-    [MaxLength(64, ErrorMessage = "批次号字符长度不能超过64")]
-    public string BatchNumber { get; set; }
-    
-    /// <summary>
-    /// 规格
-    /// </summary>
-    [Required(ErrorMessage = "规格不能为空")]
-    [MaxLength(64, ErrorMessage = "规格字符长度不能超过64")]
-    public string Specification { get; set; }
     
     /// <summary>
     /// 钢印号
@@ -239,14 +248,14 @@ public class AddLkInspectionRecordInput
     public string TestResult { get; set; }
     
     /// <summary>
-    /// 图片
+    /// 图片URL列表
     /// </summary>
     public string? Images { get; set; }
     
     /// <summary>
-    /// 用户
+    /// 用户ID
     /// </summary>
-    [Required(ErrorMessage = "用户不能为空")]
+    [Required(ErrorMessage = "用户ID不能为空")]
     public long? UserId { get; set; }
     
     /// <summary>
@@ -254,6 +263,26 @@ public class AddLkInspectionRecordInput
     /// </summary>
     [MaxLength(512, ErrorMessage = "备注字符长度不能超过512")]
     public string? Remarks { get; set; }
+    
+    /// <summary>
+    /// 保压时间
+    /// </summary>
+    public decimal? PressureHoldTime { get; set; }
+    
+    /// <summary>
+    /// 产品状态ID
+    /// </summary>
+    public long? ProductStatusId { get; set; }
+    
+    /// <summary>
+    /// 零件状态ID
+    /// </summary>
+    public long? PartStatusId { get; set; }
+    
+    /// <summary>
+    /// Ng位置ID
+    /// </summary>
+    public long? NgPositionId { get; set; }
     
 }
 
@@ -296,21 +325,21 @@ public class UpdateLkInspectionRecordInput
     public string Date { get; set; }
     
     /// <summary>
-    /// 班次
+    /// 班次ID
     /// </summary>    
-    [Required(ErrorMessage = "班次不能为空")]
+    [Required(ErrorMessage = "班次ID不能为空")]
     public long? ShiftId { get; set; }
     
     /// <summary>
-    /// 压力值
+    /// 气压值
     /// </summary>    
-    [Required(ErrorMessage = "压力值不能为空")]
+    [Required(ErrorMessage = "气压值不能为空")]
     public decimal? Pressure { get; set; }
     
     /// <summary>
-    /// 产品类型
+    /// 产品类型ID
     /// </summary>    
-    [Required(ErrorMessage = "产品类型不能为空")]
+    [Required(ErrorMessage = "产品类型ID不能为空")]
     public long? ProductTypeId { get; set; }
     
     /// <summary>
@@ -318,20 +347,6 @@ public class UpdateLkInspectionRecordInput
     /// </summary>    
     [MaxLength(64, ErrorMessage = "产品型号字符长度不能超过64")]
     public string? ProductModel { get; set; }
-    
-    /// <summary>
-    /// 批次号
-    /// </summary>    
-    [Required(ErrorMessage = "批次号不能为空")]
-    [MaxLength(64, ErrorMessage = "批次号字符长度不能超过64")]
-    public string BatchNumber { get; set; }
-    
-    /// <summary>
-    /// 规格
-    /// </summary>    
-    [Required(ErrorMessage = "规格不能为空")]
-    [MaxLength(64, ErrorMessage = "规格字符长度不能超过64")]
-    public string Specification { get; set; }
     
     /// <summary>
     /// 钢印号
@@ -347,14 +362,14 @@ public class UpdateLkInspectionRecordInput
     public string TestResult { get; set; }
     
     /// <summary>
-    /// 图片
+    /// 图片URL列表
     /// </summary>    
     public string? Images { get; set; }
     
     /// <summary>
-    /// 用户
+    /// 用户ID
     /// </summary>    
-    [Required(ErrorMessage = "用户不能为空")]
+    [Required(ErrorMessage = "用户ID不能为空")]
     public long? UserId { get; set; }
     
     /// <summary>
@@ -362,6 +377,26 @@ public class UpdateLkInspectionRecordInput
     /// </summary>    
     [MaxLength(512, ErrorMessage = "备注字符长度不能超过512")]
     public string? Remarks { get; set; }
+    
+    /// <summary>
+    /// 保压时间
+    /// </summary>    
+    public decimal? PressureHoldTime { get; set; }
+    
+    /// <summary>
+    /// 产品状态ID
+    /// </summary>    
+    public long? ProductStatusId { get; set; }
+    
+    /// <summary>
+    /// 零件状态ID
+    /// </summary>    
+    public long? PartStatusId { get; set; }
+    
+    /// <summary>
+    /// Ng位置ID
+    /// </summary>    
+    public long? NgPositionId { get; set; }
     
 }
 
@@ -404,38 +439,38 @@ public class ImportLkInspectionRecordInput : BaseImportInput
     public string Date { get; set; }
     
     /// <summary>
-    /// 班次 关联值
+    /// 班次ID 关联值
     /// </summary>
     [ImporterHeader(IsIgnore = true)]
     [ExporterHeader(IsIgnore = true)]
     public long? ShiftId { get; set; }
     
     /// <summary>
-    /// 班次 文本
+    /// 班次ID 文本
     /// </summary>
-    [ImporterHeader(Name = "*班次")]
-    [ExporterHeader("*班次", Format = "", Width = 25, IsBold = true)]
+    [ImporterHeader(Name = "*班次ID")]
+    [ExporterHeader("*班次ID", Format = "", Width = 25, IsBold = true)]
     public string ShiftFkDisplayName { get; set; }
     
     /// <summary>
-    /// 压力值
+    /// 气压值
     /// </summary>
-    [ImporterHeader(Name = "*压力值")]
-    [ExporterHeader("*压力值", Format = "", Width = 25, IsBold = true)]
+    [ImporterHeader(Name = "*气压值")]
+    [ExporterHeader("*气压值", Format = "", Width = 25, IsBold = true)]
     public decimal? Pressure { get; set; }
     
     /// <summary>
-    /// 产品类型 关联值
+    /// 产品类型ID 关联值
     /// </summary>
     [ImporterHeader(IsIgnore = true)]
     [ExporterHeader(IsIgnore = true)]
     public long? ProductTypeId { get; set; }
     
     /// <summary>
-    /// 产品类型 文本
+    /// 产品类型ID 文本
     /// </summary>
-    [ImporterHeader(Name = "*产品类型")]
-    [ExporterHeader("*产品类型", Format = "", Width = 25, IsBold = true)]
+    [ImporterHeader(Name = "*产品类型ID")]
+    [ExporterHeader("*产品类型ID", Format = "", Width = 25, IsBold = true)]
     public string ProductTypeFkDisplayName { get; set; }
     
     /// <summary>
@@ -444,20 +479,6 @@ public class ImportLkInspectionRecordInput : BaseImportInput
     [ImporterHeader(Name = "产品型号")]
     [ExporterHeader("产品型号", Format = "", Width = 25, IsBold = true)]
     public string? ProductModel { get; set; }
-    
-    /// <summary>
-    /// 批次号
-    /// </summary>
-    [ImporterHeader(Name = "*批次号")]
-    [ExporterHeader("*批次号", Format = "", Width = 25, IsBold = true)]
-    public string BatchNumber { get; set; }
-    
-    /// <summary>
-    /// 规格
-    /// </summary>
-    [ImporterHeader(Name = "*规格")]
-    [ExporterHeader("*规格", Format = "", Width = 25, IsBold = true)]
-    public string Specification { get; set; }
     
     /// <summary>
     /// 钢印号
@@ -474,24 +495,24 @@ public class ImportLkInspectionRecordInput : BaseImportInput
     public string TestResult { get; set; }
     
     /// <summary>
-    /// 图片
+    /// 图片URL列表
     /// </summary>
-    [ImporterHeader(Name = "图片")]
-    [ExporterHeader("图片", Format = "", Width = 25, IsBold = true)]
+    [ImporterHeader(Name = "图片URL列表")]
+    [ExporterHeader("图片URL列表", Format = "", Width = 25, IsBold = true)]
     public string? Images { get; set; }
     
     /// <summary>
-    /// 用户 关联值
+    /// 用户ID 关联值
     /// </summary>
     [ImporterHeader(IsIgnore = true)]
     [ExporterHeader(IsIgnore = true)]
     public long? UserId { get; set; }
     
     /// <summary>
-    /// 用户 文本
+    /// 用户ID 文本
     /// </summary>
-    [ImporterHeader(Name = "*用户")]
-    [ExporterHeader("*用户", Format = "", Width = 25, IsBold = true)]
+    [ImporterHeader(Name = "*用户ID")]
+    [ExporterHeader("*用户ID", Format = "", Width = 25, IsBold = true)]
     public string UserFkDisplayName { get; set; }
     
     /// <summary>
@@ -500,5 +521,54 @@ public class ImportLkInspectionRecordInput : BaseImportInput
     [ImporterHeader(Name = "备注")]
     [ExporterHeader("备注", Format = "", Width = 25, IsBold = true)]
     public string? Remarks { get; set; }
+    
+    /// <summary>
+    /// 保压时间
+    /// </summary>
+    [ImporterHeader(Name = "保压时间")]
+    [ExporterHeader("保压时间", Format = "", Width = 25, IsBold = true)]
+    public decimal? PressureHoldTime { get; set; }
+    
+    /// <summary>
+    /// 产品状态ID 关联值
+    /// </summary>
+    [ImporterHeader(IsIgnore = true)]
+    [ExporterHeader(IsIgnore = true)]
+    public long? ProductStatusId { get; set; }
+    
+    /// <summary>
+    /// 产品状态ID 文本
+    /// </summary>
+    [ImporterHeader(Name = "产品状态ID")]
+    [ExporterHeader("产品状态ID", Format = "", Width = 25, IsBold = true)]
+    public string ProductStatusFkDisplayName { get; set; }
+    
+    /// <summary>
+    /// 零件状态ID 关联值
+    /// </summary>
+    [ImporterHeader(IsIgnore = true)]
+    [ExporterHeader(IsIgnore = true)]
+    public long? PartStatusId { get; set; }
+    
+    /// <summary>
+    /// 零件状态ID 文本
+    /// </summary>
+    [ImporterHeader(Name = "零件状态ID")]
+    [ExporterHeader("零件状态ID", Format = "", Width = 25, IsBold = true)]
+    public string PartStatusFkDisplayName { get; set; }
+    
+    /// <summary>
+    /// Ng位置ID 关联值
+    /// </summary>
+    [ImporterHeader(IsIgnore = true)]
+    [ExporterHeader(IsIgnore = true)]
+    public long? NgPositionId { get; set; }
+    
+    /// <summary>
+    /// Ng位置ID 文本
+    /// </summary>
+    [ImporterHeader(Name = "Ng位置ID")]
+    [ExporterHeader("Ng位置ID", Format = "", Width = 25, IsBold = true)]
+    public string NgPositionFkDisplayName { get; set; }
     
 }

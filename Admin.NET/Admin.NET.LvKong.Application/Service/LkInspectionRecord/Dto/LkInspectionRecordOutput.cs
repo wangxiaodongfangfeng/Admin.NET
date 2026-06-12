@@ -27,27 +27,27 @@ public class LkInspectionRecordOutput
     public string Date { get; set; }    
     
     /// <summary>
-    /// 班次
+    /// 班次ID
     /// </summary>
     public long ShiftId { get; set; }    
     
     /// <summary>
-    /// 班次 描述
+    /// 班次ID 描述
     /// </summary>
     public string ShiftFkDisplayName { get; set; } 
     
     /// <summary>
-    /// 压力值
+    /// 气压值
     /// </summary>
     public decimal Pressure { get; set; }    
     
     /// <summary>
-    /// 产品类型
+    /// 产品类型ID
     /// </summary>
     public long ProductTypeId { get; set; }    
     
     /// <summary>
-    /// 产品类型 描述
+    /// 产品类型ID 描述
     /// </summary>
     public string ProductTypeFkDisplayName { get; set; } 
     
@@ -55,16 +55,6 @@ public class LkInspectionRecordOutput
     /// 产品型号
     /// </summary>
     public string? ProductModel { get; set; }    
-    
-    /// <summary>
-    /// 批次号
-    /// </summary>
-    public string BatchNumber { get; set; }    
-    
-    /// <summary>
-    /// 规格
-    /// </summary>
-    public string Specification { get; set; }    
     
     /// <summary>
     /// 钢印号
@@ -77,17 +67,17 @@ public class LkInspectionRecordOutput
     public string TestResult { get; set; }    
     
     /// <summary>
-    /// 图片
+    /// 图片URL列表
     /// </summary>
     public string? Images { get; set; }    
     
     /// <summary>
-    /// 用户
+    /// 用户ID
     /// </summary>
     public long UserId { get; set; }    
     
     /// <summary>
-    /// 用户 描述
+    /// 用户ID 描述
     /// </summary>
     public string UserFkDisplayName { get; set; } 
     
@@ -125,6 +115,41 @@ public class LkInspectionRecordOutput
     /// 修改者姓名
     /// </summary>
     public string? UpdateUserName { get; set; }    
+    
+    /// <summary>
+    /// 保压时间
+    /// </summary>
+    public decimal? PressureHoldTime { get; set; }    
+    
+    /// <summary>
+    /// 产品状态ID
+    /// </summary>
+    public long? ProductStatusId { get; set; }    
+    
+    /// <summary>
+    /// 产品状态ID 描述
+    /// </summary>
+    public string ProductStatusFkDisplayName { get; set; } 
+    
+    /// <summary>
+    /// 零件状态ID
+    /// </summary>
+    public long? PartStatusId { get; set; }    
+    
+    /// <summary>
+    /// 零件状态ID 描述
+    /// </summary>
+    public string PartStatusFkDisplayName { get; set; } 
+    
+    /// <summary>
+    /// Ng位置ID
+    /// </summary>
+    public long? NgPositionId { get; set; }    
+    
+    /// <summary>
+    /// Ng位置ID 描述
+    /// </summary>
+    public string NgPositionFkDisplayName { get; set; } 
     
 }
 

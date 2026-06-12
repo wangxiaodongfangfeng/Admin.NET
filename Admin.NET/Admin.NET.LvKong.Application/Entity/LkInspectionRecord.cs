@@ -39,11 +39,17 @@ public partial class LkInspectionRecord : EntityBase
     public virtual long ShiftId { get; set; }
 
     /// <summary>
+    /// 保压时间(Min)
+    /// </summary>
+    [SugarColumn(ColumnName = "PressureHoldTime", ColumnDescription = "保压时间", DecimalDigits = 2)]
+    public virtual decimal PressureHoldTime { get; set; }
+
+    /// <summary>
     /// 压力值(MPa)
     /// </summary>
-    [SugarColumn(ColumnName = "Pressure", ColumnDescription = "压力值", DecimalDigits = 2)]
+    [SugarColumn(ColumnName = "Pressure", ColumnDescription = "气压值", DecimalDigits = 2)]
     public virtual decimal Pressure { get; set; }
-
+    
     /// <summary>
     /// 产品类型ID
     /// </summary>
@@ -51,23 +57,30 @@ public partial class LkInspectionRecord : EntityBase
     public virtual long ProductTypeId { get; set; }
 
     /// <summary>
+    /// 产品类型ID
+    /// </summary>
+    [SugarColumn(ColumnName = "ProductStatusId", ColumnDescription = "产品状态ID")]
+    public virtual long ProductStatusId { get; set; }
+    
+    /// <summary>
+    /// 产品类型ID
+    /// </summary>
+    [SugarColumn(ColumnName = "PartStatusId", ColumnDescription = "零件状态ID")]
+    public virtual long PartStatusId { get; set; }
+    
+    /// <summary>
+    /// NG位置ID
+    /// </summary>
+    [SugarColumn(ColumnName = "NgPositionId", ColumnDescription = "Ng位置ID")]
+    public virtual long NgPositionId { get; set; } 
+
+    
+    /// <summary>
     /// 产品型号
     /// </summary>
     [SugarColumn(ColumnName = "ProductModel", ColumnDescription = "产品型号", Length = 64, IsNullable = true)]
     public virtual string? ProductModel { get; set; }
-
-    /// <summary>
-    /// 批次号
-    /// </summary>
-    [SugarColumn(ColumnName = "BatchNumber", ColumnDescription = "批次号", Length = 64)]
-    public virtual string BatchNumber { get; set; }
-
-    /// <summary>
-    /// 规格
-    /// </summary>
-    [SugarColumn(ColumnName = "Specification", ColumnDescription = "规格", Length = 64)]
-    public virtual string Specification { get; set; }
-
+    
     /// <summary>
     /// 钢印号
     /// </summary>
@@ -119,10 +132,20 @@ public partial class LkInspectionRecord : EntityBase
     public virtual LkProductType ProductType { get; set; }
 
     /// <summary>
-    /// NG位置详情列表
+    /// 产品状态信息
     /// </summary>
-    [Navigate(NavigateType.OneToMany, nameof(LkInspectionNgPosition.InspectionId))]
-    public virtual List<LkInspectionNgPosition> NgPositions { get; set; }
-
+    [Navigate(NavigateType.OneToOne, nameof(ProductStatusId))]
+    public virtual LkProductStatus ProductStatus { get; set; }
+    
+    /// <summary>
+    /// 零件状态信息
+    /// </summary>
+    [Navigate(NavigateType.OneToOne, nameof(PartStatusId))]
+    public virtual LkPartStatus PartStatus { get; set; }
+    /// <summary>
+    /// NG位置信息
+    /// </summary>
+    [Navigate(NavigateType.OneToOne, nameof(NgPositionId))]
+    public virtual LkNgPosition LkNgPosition { get; set; }
     #endregion
 }

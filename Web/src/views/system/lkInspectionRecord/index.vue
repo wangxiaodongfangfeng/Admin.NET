@@ -38,6 +38,9 @@ onMounted(async () => {
   state.dropdownData.shiftId = data.shiftId;
   state.dropdownData.productTypeId = data.productTypeId;
   state.dropdownData.userId = data.userId;
+  state.dropdownData.productStatusId = data.productStatusId;
+  state.dropdownData.partStatusId = data.partStatusId;
+  state.dropdownData.ngPositionId = data.ngPositionId;
 });
 
 // 查询操作
@@ -126,20 +129,20 @@ handleQuery();
             </el-form-item>
           </el-col>
           <el-col :xs="24" :sm="12" :md="12" :lg="8" :xl="4" class="mb10" v-if="state.showAdvanceQueryUI">
-            <el-form-item label="班次">
-              <el-select clearable filterable v-model="state.tableQueryParams.shiftId" placeholder="请选择班次">
+            <el-form-item label="班次ID">
+              <el-select clearable filterable v-model="state.tableQueryParams.shiftId" placeholder="请选择班次ID">
                 <el-option v-for="(item,index) in state.dropdownData.shiftId ?? []" :key="index" :value="item.value" :label="item.label" />
               </el-select>
             </el-form-item>
           </el-col>
           <el-col :xs="24" :sm="12" :md="12" :lg="8" :xl="4" class="mb10" v-if="state.showAdvanceQueryUI">
-            <el-form-item label="压力值">
-              <el-input-number v-model="state.tableQueryParams.pressure"  clearable placeholder="请输入压力值"/>
+            <el-form-item label="气压值">
+              <el-input-number v-model="state.tableQueryParams.pressure"  clearable placeholder="请输入气压值"/>
             </el-form-item>
           </el-col>
           <el-col :xs="24" :sm="12" :md="12" :lg="8" :xl="4" class="mb10" v-if="state.showAdvanceQueryUI">
-            <el-form-item label="产品类型">
-              <el-select clearable filterable v-model="state.tableQueryParams.productTypeId" placeholder="请选择产品类型">
+            <el-form-item label="产品类型ID">
+              <el-select clearable filterable v-model="state.tableQueryParams.productTypeId" placeholder="请选择产品类型ID">
                 <el-option v-for="(item,index) in state.dropdownData.productTypeId ?? []" :key="index" :value="item.value" :label="item.label" />
               </el-select>
             </el-form-item>
@@ -147,16 +150,6 @@ handleQuery();
           <el-col :xs="24" :sm="12" :md="12" :lg="8" :xl="4" class="mb10" v-if="state.showAdvanceQueryUI">
             <el-form-item label="产品型号">
               <el-input v-model="state.tableQueryParams.productModel" clearable placeholder="请输入产品型号"/>
-            </el-form-item>
-          </el-col>
-          <el-col :xs="24" :sm="12" :md="12" :lg="8" :xl="4" class="mb10" v-if="state.showAdvanceQueryUI">
-            <el-form-item label="批次号">
-              <el-input v-model="state.tableQueryParams.batchNumber" clearable placeholder="请输入批次号"/>
-            </el-form-item>
-          </el-col>
-          <el-col :xs="24" :sm="12" :md="12" :lg="8" :xl="4" class="mb10" v-if="state.showAdvanceQueryUI">
-            <el-form-item label="规格">
-              <el-input v-model="state.tableQueryParams.specification" clearable placeholder="请输入规格"/>
             </el-form-item>
           </el-col>
           <el-col :xs="24" :sm="12" :md="12" :lg="8" :xl="4" class="mb10" v-if="state.showAdvanceQueryUI">
@@ -170,8 +163,13 @@ handleQuery();
             </el-form-item>
           </el-col>
           <el-col :xs="24" :sm="12" :md="12" :lg="8" :xl="4" class="mb10" v-if="state.showAdvanceQueryUI">
-            <el-form-item label="用户">
-              <el-select clearable filterable v-model="state.tableQueryParams.userId" placeholder="请选择用户">
+            <el-form-item label="图片URL列表">
+              <el-input v-model="state.tableQueryParams.images" clearable placeholder="请输入图片URL列表"/>
+            </el-form-item>
+          </el-col>
+          <el-col :xs="24" :sm="12" :md="12" :lg="8" :xl="4" class="mb10" v-if="state.showAdvanceQueryUI">
+            <el-form-item label="用户ID">
+              <el-select clearable filterable v-model="state.tableQueryParams.userId" placeholder="请选择用户ID">
                 <el-option v-for="(item,index) in state.dropdownData.userId ?? []" :key="index" :value="item.value" :label="item.label" />
               </el-select>
             </el-form-item>
@@ -179,6 +177,32 @@ handleQuery();
           <el-col :xs="24" :sm="12" :md="12" :lg="8" :xl="4" class="mb10" v-if="state.showAdvanceQueryUI">
             <el-form-item label="备注">
               <el-input v-model="state.tableQueryParams.remarks" clearable placeholder="请输入备注"/>
+            </el-form-item>
+          </el-col>
+          <el-col :xs="24" :sm="12" :md="12" :lg="8" :xl="4" class="mb10" v-if="state.showAdvanceQueryUI">
+            <el-form-item label="保压时间">
+              <el-input-number v-model="state.tableQueryParams.pressureHoldTime"  clearable placeholder="请输入保压时间"/>
+            </el-form-item>
+          </el-col>
+          <el-col :xs="24" :sm="12" :md="12" :lg="8" :xl="4" class="mb10" v-if="state.showAdvanceQueryUI">
+            <el-form-item label="产品状态ID">
+              <el-select clearable filterable v-model="state.tableQueryParams.productStatusId" placeholder="请选择产品状态ID">
+                <el-option v-for="(item,index) in state.dropdownData.productStatusId ?? []" :key="index" :value="item.value" :label="item.label" />
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :xs="24" :sm="12" :md="12" :lg="8" :xl="4" class="mb10" v-if="state.showAdvanceQueryUI">
+            <el-form-item label="零件状态ID">
+              <el-select clearable filterable v-model="state.tableQueryParams.partStatusId" placeholder="请选择零件状态ID">
+                <el-option v-for="(item,index) in state.dropdownData.partStatusId ?? []" :key="index" :value="item.value" :label="item.label" />
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :xs="24" :sm="12" :md="12" :lg="8" :xl="4" class="mb10" v-if="state.showAdvanceQueryUI">
+            <el-form-item label="Ng位置ID">
+              <el-select clearable filterable v-model="state.tableQueryParams.ngPositionId" placeholder="请选择Ng位置ID">
+                <el-option v-for="(item,index) in state.dropdownData.ngPositionId ?? []" :key="index" :value="item.value" :label="item.label" />
+              </el-select>
             </el-form-item>
           </el-col>
           <el-col :xs="24" :sm="12" :md="12" :lg="8" :xl="4" class="mb10">
@@ -213,16 +237,19 @@ handleQuery();
         <el-table-column type="index" label="序号" width="55" align="center"/>
         <el-table-column prop='operator' label='操作员' show-overflow-tooltip />
         <el-table-column prop='date' label='检测日期' show-overflow-tooltip />
-        <el-table-column prop='shiftId' label='班次' :formatter="(row: any) => row.shiftFkDisplayName" show-overflow-tooltip />
-        <el-table-column prop='pressure' label='压力值' show-overflow-tooltip />
-        <el-table-column prop='productTypeId' label='产品类型' :formatter="(row: any) => row.productTypeFkDisplayName" show-overflow-tooltip />
+        <el-table-column prop='shiftId' label='班次ID' :formatter="(row: any) => row.shiftFkDisplayName" show-overflow-tooltip />
+        <el-table-column prop='pressure' label='气压值' show-overflow-tooltip />
+        <el-table-column prop='productTypeId' label='产品类型ID' :formatter="(row: any) => row.productTypeFkDisplayName" show-overflow-tooltip />
         <el-table-column prop='productModel' label='产品型号' show-overflow-tooltip />
-        <el-table-column prop='batchNumber' label='批次号' show-overflow-tooltip />
-        <el-table-column prop='specification' label='规格' show-overflow-tooltip />
         <el-table-column prop='steelStamp' label='钢印号' show-overflow-tooltip />
         <el-table-column prop='testResult' label='检测结果' show-overflow-tooltip />
-        <el-table-column prop='userId' label='用户' :formatter="(row: any) => row.userFkDisplayName" show-overflow-tooltip />
+        <el-table-column prop='images' label='图片URL列表' show-overflow-tooltip />
+        <el-table-column prop='userId' label='用户ID' :formatter="(row: any) => row.userFkDisplayName" show-overflow-tooltip />
         <el-table-column prop='remarks' label='备注' show-overflow-tooltip />
+        <el-table-column prop='pressureHoldTime' label='保压时间' show-overflow-tooltip />
+        <el-table-column prop='productStatusId' label='产品状态ID' :formatter="(row: any) => row.productStatusFkDisplayName" show-overflow-tooltip />
+        <el-table-column prop='partStatusId' label='零件状态ID' :formatter="(row: any) => row.partStatusFkDisplayName" show-overflow-tooltip />
+        <el-table-column prop='ngPositionId' label='Ng位置ID' :formatter="(row: any) => row.ngPositionFkDisplayName" show-overflow-tooltip />
         <el-table-column label="修改记录" width="100" align="center" show-overflow-tooltip>
           <template #default="scope">
             <ModifyRecord :data="scope.row" />
