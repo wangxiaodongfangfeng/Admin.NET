@@ -106,12 +106,6 @@ public partial class LkInspectionRecord : EntityBase
     public virtual long UserId { get; set; }
 
     /// <summary>
-    /// 创建时间（时分秒）
-    /// </summary>
-    [SugarColumn(ColumnName = "CreateTime", ColumnDescription = "创建时间", Length = 16)]
-    public virtual string CreateTime { get; set; }
-
-    /// <summary>
     /// 备注
     /// </summary>
     [SugarColumn(ColumnName = "Remarks", ColumnDescription = "备注", Length = 512, IsNullable = true)]
