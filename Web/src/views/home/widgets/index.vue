@@ -188,7 +188,7 @@ const availableCompsList = computed(() => {
 });
 
 const myCompsList = computed(() => {
-	const myGrid = Local.get('DASHBOARDGRID') || ['welcome', 'myapp', 'version', 'timer', 'echarts', 'about', 'commit', 'schedule'];
+	const myGrid = Local.get('DASHBOARDGRID') || ['welcome', 'myapp', 'version', 'timer', 'echarts', 'about', 'commit', 'schedule','monthlyProductStat'];
 	return availableCompsList.value.filter((comp) => !comp.disabled && myGrid.includes(comp.key));
 });
 
