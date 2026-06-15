@@ -32,7 +32,7 @@
 								<el-tab-pane label="账号登录" name="account" v-if="state.tabsActiveName != 'register'">
 									<Account :tenant-info="tenantInfo" />
 								</el-tab-pane>
-								<el-tab-pane label="手机号登录" name="mobile" v-if="state.tabsActiveName != 'register'">
+								<el-tab-pane label="手机号登录" name="mobile" v-if="state.tabsActiveName != 'register' && getThemeConfig.enableMobileLogin">
 									<Mobile :tenant-info="tenantInfo" />
 								</el-tab-pane>
 								<el-tab-pane label="用户注册" name="register" v-if="state.tabsActiveName == 'register'">
@@ -41,7 +41,7 @@
 							</el-tabs>
 						</div>
 						<Scan v-if="state.isScan" :tenant-info="tenantInfo" />
-						<div class="login-content-main-scan" @click="state.isScan = !state.isScan">
+						<div class="login-content-main-scan" v-if="getThemeConfig.enableScanLogin" @click="state.isScan = !state.isScan">
 							<i class="iconfont" :class="state.isScan ? 'icon-diannao1' : 'icon-barcode-qr'"></i>
 							<div class="login-content-main-scan-delta"></div>
 						</div>

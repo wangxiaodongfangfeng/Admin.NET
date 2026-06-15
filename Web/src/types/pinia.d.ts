@@ -120,5 +120,7 @@ declare interface ThemeConfigState {
 		hideTenantForLogin: boolean; // 登陆时隐藏租户
 		captcha: boolean; // 是否开启验证码
 		isLoaded: boolean; // 是否加载完成
+		enableScanLogin: boolean; // 是否开启扫码登录
+		enableMobileLogin: boolean; // 是否开启手机登录
 	};
 }

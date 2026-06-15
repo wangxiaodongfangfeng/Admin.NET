@@ -163,6 +163,10 @@ export const useThemeConfig = defineStore('themeConfig', {
 			captcha: false,
 			// 是否加载完成
 			isLoaded: false,
+			//开启扫码登录
+			enableScanLogin: false,
+			//开启手机登录
+			enableMobileLogin: false,
 		},
 	}),
 	actions: {
