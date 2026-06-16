@@ -1,8 +1,6 @@
-version: "3"
-
 services:
   web-builder:
-     image: node:22-alpine  # 官方Node.js v22镜像（Alpine版仅约180MB）:ml-citation{ref="3,4" data="citationList"}
+     image: x19gm8q11gamnt0y97.xuanyuan.run/node:22  # 官方Node.js v22镜像（Alpine版仅约180MB）:ml-citation{ref="3,4" data="citationList"}
      volumes:
        - ../Web/:/app         # 挂载项目代码目录
        - ./.env.production:/app/.env.production
@@ -11,7 +9,7 @@ services:
        NODE_ENV: development
      command: sh -c "npm install --legacy-peer-deps --registry=https://registry.npmmirror.com && npm run build"
   net-builder:
-    image: mcr.microsoft.com/dotnet/sdk:9.0
+    image: mcr.microsoft.com/dotnet/sdk:10.0
     volumes:
       - ../Admin.NET/:/app
     working_dir: /app

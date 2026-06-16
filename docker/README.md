@@ -1,4 +1,4 @@
-# 启动前准备
+docker# 启动前准备
 
 *   安装 docker、docker-compose 环境
 *   使用 docker-compose -f docker-compose-builder.yml up  命令编译结果会直接被 docker-compose up使用  发布编译结果跟项目运行全部在linux docker环境 不再需要vs发布编译

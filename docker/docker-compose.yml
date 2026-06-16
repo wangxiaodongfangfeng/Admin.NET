@@ -92,13 +92,13 @@ services:
 
 
   adminNet:
-    image: mcr.microsoft.com/dotnet/aspnet:9.0
+    image: mcr.microsoft.com/dotnet/aspnet:10.0
     ports:
-      - "9102:5050"
+      - "9102:5005"
     environment:
       - TZ=Asia/Shanghai
     volumes:
-      - ../Admin.NET/Admin.NET.Web.Entry/bin/Release/net9.0/:/app
+      - ../Admin.NET/Admin.NET.Web.Entry/bin/Release/net10.0/:/app
       - ./app/Configuration/:/app/Configuration/
       - ./app/wait-for-it.sh:/app/wait-for-it.sh
     working_dir: /app
