@@ -117,6 +117,14 @@ handleQuery();
             </el-form-item>
           </el-col>
           <el-col :xs="24" :sm="12" :md="12" :lg="8" :xl="4" class="mb10" v-if="state.showAdvanceQueryUI">
+            <el-form-item label="是否默认">
+                  <el-select clearable filterable v-model="state.tableQueryParams.isDefault" placeholder="请选择是否默认"> 
+                    <el-option     value="true" label="是" /> 
+                    <el-option     value="false" label="否" />  
+                  </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :xs="24" :sm="12" :md="12" :lg="8" :xl="4" class="mb10" v-if="state.showAdvanceQueryUI">
             <el-form-item label="描述">
               <el-input v-model="state.tableQueryParams.description" clearable placeholder="请输入描述"/>
             </el-form-item>
@@ -152,6 +160,12 @@ handleQuery();
         <el-table-column type="selection" width="40" align="center" v-if="auth('lkPartStatus:batchDelete') || auth('lkPartStatus:export')" />
         <el-table-column type="index" label="序号" width="55" align="center"/>
         <el-table-column prop='name' label='零件状态名称' show-overflow-tooltip />
+        <el-table-column prop='isDefault' label='是否默认' show-overflow-tooltip>
+          <template #default="scope">
+            <el-tag v-if="scope.row.isDefault"> 是 </el-tag>
+            <el-tag type="danger" v-else> 否 </el-tag>
+          </template>
+        </el-table-column>
         <el-table-column prop='description' label='描述' show-overflow-tooltip />
         <el-table-column label="修改记录" width="100" align="center" show-overflow-tooltip>
           <template #default="scope">

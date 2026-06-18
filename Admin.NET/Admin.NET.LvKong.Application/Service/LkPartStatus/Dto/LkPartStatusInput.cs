@@ -28,6 +28,12 @@ public class LkPartStatusBaseInput
     public virtual string Name { get; set; }
     
     /// <summary>
+    /// 是否默认
+    /// </summary>
+    [Required(ErrorMessage = "是否默认不能为空")]
+    public virtual bool? IsDefault { get; set; }
+    
+    /// <summary>
     /// 描述
     /// </summary>
     public virtual string? Description { get; set; }
@@ -43,6 +49,11 @@ public class PageLkPartStatusInput : BasePageInput
     /// 零件状态名称
     /// </summary>
     public string Name { get; set; }
+    
+    /// <summary>
+    /// 是否默认
+    /// </summary>
+    public bool? IsDefault { get; set; }
     
     /// <summary>
     /// 描述
@@ -66,6 +77,12 @@ public class AddLkPartStatusInput
     [Required(ErrorMessage = "零件状态名称不能为空")]
     [MaxLength(64, ErrorMessage = "零件状态名称字符长度不能超过64")]
     public string Name { get; set; }
+    
+    /// <summary>
+    /// 是否默认
+    /// </summary>
+    [Required(ErrorMessage = "是否默认不能为空")]
+    public bool? IsDefault { get; set; }
     
     /// <summary>
     /// 描述
@@ -107,6 +124,12 @@ public class UpdateLkPartStatusInput
     public string Name { get; set; }
     
     /// <summary>
+    /// 是否默认
+    /// </summary>    
+    [Required(ErrorMessage = "是否默认不能为空")]
+    public bool? IsDefault { get; set; }
+    
+    /// <summary>
     /// 描述
     /// </summary>    
     [MaxLength(256, ErrorMessage = "描述字符长度不能超过256")]
@@ -133,6 +156,13 @@ public class ImportLkPartStatusInput : BaseImportInput
     [ImporterHeader(Name = "*零件状态名称")]
     [ExporterHeader("*零件状态名称", Format = "", Width = 25, IsBold = true)]
     public string Name { get; set; }
+    
+    /// <summary>
+    /// 是否默认
+    /// </summary>
+    [ImporterHeader(Name = "*是否默认")]
+    [ExporterHeader("*是否默认", Format = "", Width = 25, IsBold = true)]
+    public bool? IsDefault { get; set; }
     
     /// <summary>
     /// 描述

@@ -31,6 +31,8 @@ export interface LkPartStatus {
 	id: number;
 	// 零件状态名称
 	name?: string;
+	// 是否默认
+	isDefault?: boolean;
 	// 描述
 	description: string;
 	// 创建时间

@@ -49,6 +49,12 @@ public partial class LkDictionary : EntityBase
     public virtual int SortOrder { get; set; } = 0;
 
     /// <summary>
+    /// 是否默认
+    /// </summary>
+    [SugarColumn(ColumnName = "IsDefault", ColumnDescription = "是否默认",DefaultValue = "False")]
+    public virtual bool IsDefault { get; set; }
+
+    /// <summary>
     /// 是否启用
     /// </summary>
     [SugarColumn(ColumnName = "IsActive", ColumnDescription = "是否启用")]

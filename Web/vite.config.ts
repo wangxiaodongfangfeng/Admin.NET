@@ -26,10 +26,10 @@ const viteConfig = defineConfig((mode: ConfigEnv) => {
 	return {
 		plugins: [
 			visualizer({ open: false }), // 开启可视化分析页面
-			CodeInspectorPlugin({
-				bundler: 'vite',
-				hotKeys: ['shiftKey'],
-			}),
+			// CodeInspectorPlugin({
+			// 	bundler: 'vite',
+			// 	hotKeys: ['shiftKey'],
+			// }),
 			vue(),
 			vueJsx(),
 			webUpdateNotice({

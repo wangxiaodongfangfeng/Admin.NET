@@ -23,6 +23,12 @@ public partial class LkProductType : EntityBase
     public virtual string Name { get; set; }
 
     /// <summary>
+    /// 是否默认
+    /// </summary>
+    [SugarColumn(ColumnName = "IsDefault", ColumnDescription = "是否默认",DefaultValue = "False")]
+    public virtual bool IsDefault { get; set; }
+
+    /// <summary>
     /// 描述
     /// </summary>
     [SugarColumn(ColumnName = "Description", ColumnDescription = "描述", Length = 256, IsNullable = true)]

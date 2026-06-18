@@ -21,7 +21,11 @@ public partial class LkPartStatus : EntityBase
     /// </summary>
     [SugarColumn(ColumnName = "Name", ColumnDescription = "零件状态名称", Length = 64)]
     public virtual string Name { get; set; }
-
+    /// <summary>
+    /// 是否默认
+    /// </summary>
+    [SugarColumn(ColumnName = "IsDefault", ColumnDescription = "是否默认",DefaultValue = "False")]
+    public virtual bool IsDefault { get; set; }
     /// <summary>
     /// 描述
     /// </summary>

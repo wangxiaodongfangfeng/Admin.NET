@@ -22,6 +22,11 @@ public class LkNgPositionDto
     public string Name { get; set; }
     
     /// <summary>
+    /// 是否默认
+    /// </summary>
+    public bool IsDefault { get; set; }
+    
+    /// <summary>
     /// 描述
     /// </summary>
     public string? Description { get; set; }

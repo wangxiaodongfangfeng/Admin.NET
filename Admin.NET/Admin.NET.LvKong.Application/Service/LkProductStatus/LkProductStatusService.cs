@@ -45,6 +45,7 @@ public partial class LkProductStatusService : IDynamicApiController, ITransient
             .WhereIF(!string.IsNullOrWhiteSpace(input.Keyword), u => u.Name.Contains(input.Keyword) || u.Description.Contains(input.Keyword))
             .WhereIF(!string.IsNullOrWhiteSpace(input.Name), u => u.Name.Contains(input.Name.Trim()))
             .WhereIF(!string.IsNullOrWhiteSpace(input.Description), u => u.Description.Contains(input.Description.Trim()))
+            .WhereIF(input.IsDefault.HasValue, u => u.IsDefault == input.IsDefault)
             .Select<LkProductStatusOutput>();
 		return await query.OrderBuilder(input).ToPagedListAsync(input.Page, input.PageSize);
     }
@@ -160,6 +161,10 @@ public partial class LkProductStatusService : IDynamicApiController, ITransient
                     // 校验并过滤必填基本类型为null的字段
                     var rows = pageItems.Where(x => {
                         if (!string.IsNullOrWhiteSpace(x.Error)) return false;
+                        if (x.IsDefault == null){
+                            x.Error = "是否默认不能为空";
+                            return false;
+                        }
                         return true;
                     }).Adapt<List<LkProductStatus>>();
                     
@@ -174,6 +179,7 @@ public partial class LkProductStatusService : IDynamicApiController, ITransient
                     storageable.AsUpdateable.UpdateColumns(it => new
                     {
                         it.Name,
+                        it.IsDefault,
                         it.Description,
                     }).ExecuteCommand();// 存在更新
                     
