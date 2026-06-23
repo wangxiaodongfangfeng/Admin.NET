@@ -15,7 +15,11 @@ public class WebComponent : IWebComponent
         {
             return !new[] { "Microsoft.Hosting", "Microsoft.AspNetCore" }.Any(u => category.StartsWith(u)) && logLevel >= LogLevel.Information;
         });
-
+        builder.Host.UseWindowsService(option =>
+        {
+            option.ServiceName = "Admin.NET.Service";
+        });
+        
         // 设置接口超时时间和上传大小-Kestrel
         builder.WebHost.ConfigureKestrel(u =>
         {

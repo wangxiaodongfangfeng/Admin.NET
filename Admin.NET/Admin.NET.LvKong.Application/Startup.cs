@@ -7,7 +7,7 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 
-namespace Admin.NET.LvKong;
+namespace Admin.NET.LvKong.Application;
 
 [AppStartup(100)]
 public class Startup : AppStartup
