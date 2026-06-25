@@ -34,9 +34,9 @@ public class LkInspectionRecordBaseInput
     public virtual string Date { get; set; }
     
     /// <summary>
-    /// 班次ID
+    /// 班次
     /// </summary>
-    [Required(ErrorMessage = "班次ID不能为空")]
+    [Required(ErrorMessage = "班次不能为空")]
     public virtual long? ShiftId { get; set; }
     
     /// <summary>
@@ -52,27 +52,26 @@ public class LkInspectionRecordBaseInput
     public virtual decimal? Pressure { get; set; }
     
     /// <summary>
-    /// 产品类型ID
+    /// 产品类型
     /// </summary>
-    [Required(ErrorMessage = "产品类型ID不能为空")]
+    [Required(ErrorMessage = "产品类型不能为空")]
     public virtual long? ProductTypeId { get; set; }
     
     /// <summary>
-    /// 产品状态ID
+    /// 产品状态
     /// </summary>
-    [Required(ErrorMessage = "产品状态ID不能为空")]
+    [Required(ErrorMessage = "产品状态不能为空")]
     public virtual long? ProductStatusId { get; set; }
     
     /// <summary>
-    /// 零件状态ID
+    /// 零件状态
     /// </summary>
-    [Required(ErrorMessage = "零件状态ID不能为空")]
+    [Required(ErrorMessage = "零件状态不能为空")]
     public virtual long? PartStatusId { get; set; }
     
     /// <summary>
-    /// Ng位置ID
+    /// Ng位置
     /// </summary>
-    [Required(ErrorMessage = "Ng位置ID不能为空")]
     public virtual long? NgPositionId { get; set; }
     
     /// <summary>
@@ -130,7 +129,7 @@ public class PageLkInspectionRecordInput : BasePageInput
     public string Date { get; set; }
     
     /// <summary>
-    /// 班次ID
+    /// 班次
     /// </summary>
     public long? ShiftId { get; set; }
     
@@ -145,22 +144,22 @@ public class PageLkInspectionRecordInput : BasePageInput
     public decimal? Pressure { get; set; }
     
     /// <summary>
-    /// 产品类型ID
+    /// 产品类型
     /// </summary>
     public long? ProductTypeId { get; set; }
     
     /// <summary>
-    /// 产品状态ID
+    /// 产品状态
     /// </summary>
     public long? ProductStatusId { get; set; }
     
     /// <summary>
-    /// 零件状态ID
+    /// 零件状态
     /// </summary>
     public long? PartStatusId { get; set; }
     
     /// <summary>
-    /// Ng位置ID
+    /// Ng位置
     /// </summary>
     public long? NgPositionId { get; set; }
     
@@ -178,11 +177,6 @@ public class PageLkInspectionRecordInput : BasePageInput
     /// 检测结果
     /// </summary>
     public string TestResult { get; set; }
-    
-    /// <summary>
-    /// 泄露值
-    /// </summary>
-    public decimal? Leakage { get; set; }
     
     /// <summary>
     /// 图片URL列表
@@ -225,9 +219,9 @@ public class AddLkInspectionRecordInput
     public string Date { get; set; }
     
     /// <summary>
-    /// 班次ID
+    /// 班次
     /// </summary>
-    [Required(ErrorMessage = "班次ID不能为空")]
+    [Required(ErrorMessage = "班次不能为空")]
     public long? ShiftId { get; set; }
     
     /// <summary>
@@ -243,27 +237,26 @@ public class AddLkInspectionRecordInput
     public decimal? Pressure { get; set; }
     
     /// <summary>
-    /// 产品类型ID
+    /// 产品类型
     /// </summary>
-    [Required(ErrorMessage = "产品类型ID不能为空")]
+    [Required(ErrorMessage = "产品类型不能为空")]
     public long? ProductTypeId { get; set; }
     
     /// <summary>
-    /// 产品状态ID
+    /// 产品状态
     /// </summary>
-    [Required(ErrorMessage = "产品状态ID不能为空")]
+    [Required(ErrorMessage = "产品状态不能为空")]
     public long? ProductStatusId { get; set; }
     
     /// <summary>
-    /// 零件状态ID
+    /// 零件状态
     /// </summary>
-    [Required(ErrorMessage = "零件状态ID不能为空")]
+    [Required(ErrorMessage = "零件状态不能为空")]
     public long? PartStatusId { get; set; }
     
     /// <summary>
-    /// Ng位置ID
+    /// Ng位置
     /// </summary>
-    [Required(ErrorMessage = "Ng位置ID不能为空")]
     public long? NgPositionId { get; set; }
     
     /// <summary>
@@ -348,9 +341,9 @@ public class UpdateLkInspectionRecordInput
     public string Date { get; set; }
     
     /// <summary>
-    /// 班次ID
+    /// 班次
     /// </summary>    
-    [Required(ErrorMessage = "班次ID不能为空")]
+    [Required(ErrorMessage = "班次不能为空")]
     public long? ShiftId { get; set; }
     
     /// <summary>
@@ -366,27 +359,26 @@ public class UpdateLkInspectionRecordInput
     public decimal? Pressure { get; set; }
     
     /// <summary>
-    /// 产品类型ID
+    /// 产品类型
     /// </summary>    
-    [Required(ErrorMessage = "产品类型ID不能为空")]
+    [Required(ErrorMessage = "产品类型不能为空")]
     public long? ProductTypeId { get; set; }
     
     /// <summary>
-    /// 产品状态ID
+    /// 产品状态
     /// </summary>    
-    [Required(ErrorMessage = "产品状态ID不能为空")]
+    [Required(ErrorMessage = "产品状态不能为空")]
     public long? ProductStatusId { get; set; }
     
     /// <summary>
-    /// 零件状态ID
+    /// 零件状态
     /// </summary>    
-    [Required(ErrorMessage = "零件状态ID不能为空")]
+    [Required(ErrorMessage = "零件状态不能为空")]
     public long? PartStatusId { get; set; }
     
     /// <summary>
-    /// Ng位置ID
+    /// Ng位置
     /// </summary>    
-    [Required(ErrorMessage = "Ng位置ID不能为空")]
     public long? NgPositionId { get; set; }
     
     /// <summary>
@@ -471,17 +463,17 @@ public class ImportLkInspectionRecordInput : BaseImportInput
     public string Date { get; set; }
     
     /// <summary>
-    /// 班次ID 关联值
+    /// 班次 关联值
     /// </summary>
     [ImporterHeader(IsIgnore = true)]
     [ExporterHeader(IsIgnore = true)]
     public long? ShiftId { get; set; }
     
     /// <summary>
-    /// 班次ID 文本
+    /// 班次 文本
     /// </summary>
-    [ImporterHeader(Name = "*班次ID")]
-    [ExporterHeader("*班次ID", Format = "", Width = 25, IsBold = true)]
+    [ImporterHeader(Name = "*班次")]
+    [ExporterHeader("*班次", Format = "", Width = 25, IsBold = true)]
     public string ShiftFkDisplayName { get; set; }
     
     /// <summary>
@@ -499,59 +491,59 @@ public class ImportLkInspectionRecordInput : BaseImportInput
     public decimal? Pressure { get; set; }
     
     /// <summary>
-    /// 产品类型ID 关联值
+    /// 产品类型 关联值
     /// </summary>
     [ImporterHeader(IsIgnore = true)]
     [ExporterHeader(IsIgnore = true)]
     public long? ProductTypeId { get; set; }
     
     /// <summary>
-    /// 产品类型ID 文本
+    /// 产品类型 文本
     /// </summary>
-    [ImporterHeader(Name = "*产品类型ID")]
-    [ExporterHeader("*产品类型ID", Format = "", Width = 25, IsBold = true)]
+    [ImporterHeader(Name = "*产品类型")]
+    [ExporterHeader("*产品类型", Format = "", Width = 25, IsBold = true)]
     public string ProductTypeFkDisplayName { get; set; }
     
     /// <summary>
-    /// 产品状态ID 关联值
+    /// 产品状态 关联值
     /// </summary>
     [ImporterHeader(IsIgnore = true)]
     [ExporterHeader(IsIgnore = true)]
     public long? ProductStatusId { get; set; }
     
     /// <summary>
-    /// 产品状态ID 文本
+    /// 产品状态 文本
     /// </summary>
-    [ImporterHeader(Name = "*产品状态ID")]
-    [ExporterHeader("*产品状态ID", Format = "", Width = 25, IsBold = true)]
+    [ImporterHeader(Name = "*产品状态")]
+    [ExporterHeader("*产品状态", Format = "", Width = 25, IsBold = true)]
     public string ProductStatusFkDisplayName { get; set; }
     
     /// <summary>
-    /// 零件状态ID 关联值
+    /// 零件状态 关联值
     /// </summary>
     [ImporterHeader(IsIgnore = true)]
     [ExporterHeader(IsIgnore = true)]
     public long? PartStatusId { get; set; }
     
     /// <summary>
-    /// 零件状态ID 文本
+    /// 零件状态 文本
     /// </summary>
-    [ImporterHeader(Name = "*零件状态ID")]
-    [ExporterHeader("*零件状态ID", Format = "", Width = 25, IsBold = true)]
+    [ImporterHeader(Name = "*零件状态")]
+    [ExporterHeader("*零件状态", Format = "", Width = 25, IsBold = true)]
     public string PartStatusFkDisplayName { get; set; }
     
     /// <summary>
-    /// Ng位置ID 关联值
+    /// Ng位置 关联值
     /// </summary>
     [ImporterHeader(IsIgnore = true)]
     [ExporterHeader(IsIgnore = true)]
     public long? NgPositionId { get; set; }
     
     /// <summary>
-    /// Ng位置ID 文本
+    /// Ng位置 文本
     /// </summary>
-    [ImporterHeader(Name = "*Ng位置ID")]
-    [ExporterHeader("*Ng位置ID", Format = "", Width = 25, IsBold = true)]
+    [ImporterHeader(Name = "Ng位置")]
+    [ExporterHeader("Ng位置", Format = "", Width = 25, IsBold = true)]
     public string NgPositionFkDisplayName { get; set; }
     
     /// <summary>

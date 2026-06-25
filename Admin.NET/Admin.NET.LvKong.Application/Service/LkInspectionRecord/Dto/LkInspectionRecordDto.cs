@@ -12,27 +12,27 @@ namespace Admin.NET.LvKong.Application;
 public class LkInspectionRecordDto
 {
     /// <summary>
-    /// 班次ID
+    /// 班次
     /// </summary>
     public string ShiftIdFkColumn { get; set; }
     
     /// <summary>
-    /// 产品类型ID
+    /// 产品类型
     /// </summary>
     public string ProductTypeIdFkColumn { get; set; }
     
     /// <summary>
-    /// 产品状态ID
+    /// 产品状态
     /// </summary>
     public string ProductStatusIdFkColumn { get; set; }
     
     /// <summary>
-    /// 零件状态ID
+    /// 零件状态
     /// </summary>
     public string PartStatusIdFkColumn { get; set; }
     
     /// <summary>
-    /// Ng位置ID
+    /// Ng位置
     /// </summary>
     public string NgPositionIdFkColumn { get; set; }
     
@@ -57,7 +57,7 @@ public class LkInspectionRecordDto
     public string Date { get; set; }
     
     /// <summary>
-    /// 班次ID
+    /// 班次
     /// </summary>
     public long ShiftId { get; set; }
     
@@ -72,22 +72,22 @@ public class LkInspectionRecordDto
     public decimal Pressure { get; set; }
     
     /// <summary>
-    /// 产品类型ID
+    /// 产品类型
     /// </summary>
     public long ProductTypeId { get; set; }
     
     /// <summary>
-    /// 产品状态ID
+    /// 产品状态
     /// </summary>
     public long ProductStatusId { get; set; }
     
     /// <summary>
-    /// 零件状态ID
+    /// 零件状态
     /// </summary>
     public long PartStatusId { get; set; }
     
     /// <summary>
-    /// Ng位置ID
+    /// Ng位置
     /// </summary>
     public long NgPositionId { get; set; }
     

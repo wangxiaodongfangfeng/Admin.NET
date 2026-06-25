@@ -268,49 +268,49 @@ public partial class LkInspectionRecordService : IDynamicApiController, ITransie
             {
                 _sqlSugarClient.Utilities.PageEach(list, 2048, pageItems =>
                 {
-                    // 链接 班次ID
+                    // 链接 班次
                     var shiftIdLabelList = pageItems.Where(x => x.ShiftFkDisplayName != null).Select(x => x.ShiftFkDisplayName).Distinct().ToList();
                     if (shiftIdLabelList.Any()) {
                         var shiftIdLinkMap = _lkInspectionRecordRep.Context.Queryable<LkShift>().Where(u => shiftIdLabelList.Contains($"{u.Name}")).ToList().ToDictionary(u => $"{u.Name}", u => u.Id  as long?);
                         pageItems.ForEach(e => {
                             e.ShiftId = shiftIdLinkMap.GetValueOrDefault(e.ShiftFkDisplayName ?? "");
-                            if (e.ShiftId == null) e.Error = "班次ID链接失败";
+                            if (e.ShiftId == null) e.Error = "班次链接失败";
                         });
                     }
-                    // 链接 产品类型ID
+                    // 链接 产品类型
                     var productTypeIdLabelList = pageItems.Where(x => x.ProductTypeFkDisplayName != null).Select(x => x.ProductTypeFkDisplayName).Distinct().ToList();
                     if (productTypeIdLabelList.Any()) {
                         var productTypeIdLinkMap = _lkInspectionRecordRep.Context.Queryable<LkProductType>().Where(u => productTypeIdLabelList.Contains($"{u.Name}")).ToList().ToDictionary(u => $"{u.Name}", u => u.Id  as long?);
                         pageItems.ForEach(e => {
                             e.ProductTypeId = productTypeIdLinkMap.GetValueOrDefault(e.ProductTypeFkDisplayName ?? "");
-                            if (e.ProductTypeId == null) e.Error = "产品类型ID链接失败";
+                            if (e.ProductTypeId == null) e.Error = "产品类型链接失败";
                         });
                     }
-                    // 链接 产品状态ID
+                    // 链接 产品状态
                     var productStatusIdLabelList = pageItems.Where(x => x.ProductStatusFkDisplayName != null).Select(x => x.ProductStatusFkDisplayName).Distinct().ToList();
                     if (productStatusIdLabelList.Any()) {
                         var productStatusIdLinkMap = _lkInspectionRecordRep.Context.Queryable<LkProductStatus>().Where(u => productStatusIdLabelList.Contains($"{u.Name}")).ToList().ToDictionary(u => $"{u.Name}", u => u.Id  as long?);
                         pageItems.ForEach(e => {
                             e.ProductStatusId = productStatusIdLinkMap.GetValueOrDefault(e.ProductStatusFkDisplayName ?? "");
-                            if (e.ProductStatusId == null) e.Error = "产品状态ID链接失败";
+                            if (e.ProductStatusId == null) e.Error = "产品状态链接失败";
                         });
                     }
-                    // 链接 零件状态ID
+                    // 链接 零件状态
                     var partStatusIdLabelList = pageItems.Where(x => x.PartStatusFkDisplayName != null).Select(x => x.PartStatusFkDisplayName).Distinct().ToList();
                     if (partStatusIdLabelList.Any()) {
                         var partStatusIdLinkMap = _lkInspectionRecordRep.Context.Queryable<LkPartStatus>().Where(u => partStatusIdLabelList.Contains($"{u.Name}")).ToList().ToDictionary(u => $"{u.Name}", u => u.Id  as long?);
                         pageItems.ForEach(e => {
                             e.PartStatusId = partStatusIdLinkMap.GetValueOrDefault(e.PartStatusFkDisplayName ?? "");
-                            if (e.PartStatusId == null) e.Error = "零件状态ID链接失败";
+                            if (e.PartStatusId == null) e.Error = "零件状态链接失败";
                         });
                     }
-                    // 链接 Ng位置ID
+                    // 链接 Ng位置
                     var ngPositionIdLabelList = pageItems.Where(x => x.NgPositionFkDisplayName != null).Select(x => x.NgPositionFkDisplayName).Distinct().ToList();
                     if (ngPositionIdLabelList.Any()) {
                         var ngPositionIdLinkMap = _lkInspectionRecordRep.Context.Queryable<LkNgPosition>().Where(u => ngPositionIdLabelList.Contains($"{u.Name}")).ToList().ToDictionary(u => $"{u.Name}", u => u.Id  as long?);
                         pageItems.ForEach(e => {
                             e.NgPositionId = ngPositionIdLinkMap.GetValueOrDefault(e.NgPositionFkDisplayName ?? "");
-                            if (e.NgPositionId == null) e.Error = "Ng位置ID链接失败";
+                            if (e.NgPositionId == null) e.Error = "Ng位置链接失败";
                         });
                     }
                     // 链接 用户ID
@@ -327,23 +327,19 @@ public partial class LkInspectionRecordService : IDynamicApiController, ITransie
                     var rows = pageItems.Where(x => {
                         if (!string.IsNullOrWhiteSpace(x.Error)) return false;
                         if (x.ShiftId == null){
-                            x.Error = "班次ID不能为空";
+                            x.Error = "班次不能为空";
                             return false;
                         }
                         if (x.ProductTypeId == null){
-                            x.Error = "产品类型ID不能为空";
+                            x.Error = "产品类型不能为空";
                             return false;
                         }
                         if (x.ProductStatusId == null){
-                            x.Error = "产品状态ID不能为空";
+                            x.Error = "产品状态不能为空";
                             return false;
                         }
                         if (x.PartStatusId == null){
-                            x.Error = "零件状态ID不能为空";
-                            return false;
-                        }
-                        if (x.NgPositionId == null){
-                            x.Error = "Ng位置ID不能为空";
+                            x.Error = "零件状态不能为空";
                             return false;
                         }
                         if (x.UserId == null){

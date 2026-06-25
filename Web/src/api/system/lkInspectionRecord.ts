@@ -35,20 +35,20 @@ export interface LkInspectionRecord {
 	operator?: string;
 	// 检测日期
 	date?: string;
-	// 班次ID
+	// 班次
 	shiftId?: number;
 	// 保压时间
 	pressureHoldTime?: number;
 	// 气压值
 	pressure?: number;
-	// 产品类型ID
+	// 产品类型
 	productTypeId?: number;
-	// 产品状态ID
+	// 产品状态
 	productStatusId?: number;
-	// 零件状态ID
+	// 零件状态
 	partStatusId?: number;
-	// Ng位置ID
-	ngPositionId?: number;
+	// Ng位置
+	ngPositionId: number;
 	// 二维码
 	productModel: string;
 	// 钢印号

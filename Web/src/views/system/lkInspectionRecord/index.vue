@@ -146,8 +146,8 @@ handleQuery();
             </el-form-item>
           </el-col>
           <el-col :xs="24" :sm="12" :md="12" :lg="8" :xl="4" class="mb10" v-if="state.showAdvanceQueryUI">
-            <el-form-item label="产品类型ID">
-              <el-select clearable filterable v-model="state.tableQueryParams.productTypeId" placeholder="请选择产品类型ID">
+            <el-form-item label="产品类型">
+              <el-select clearable filterable v-model="state.tableQueryParams.productTypeId" placeholder="请选择产品类型">
                 <el-option v-for="(item,index) in state.dropdownData.productTypeId ?? []" :key="index" :value="item.value" :label="item.label" />
               </el-select>
             </el-form-item>
@@ -186,11 +186,6 @@ handleQuery();
           <el-col :xs="24" :sm="12" :md="12" :lg="8" :xl="4" class="mb10" v-if="state.showAdvanceQueryUI">
             <el-form-item label="检测结果">
               <el-input v-model="state.tableQueryParams.testResult" clearable placeholder="请输入检测结果"/>
-            </el-form-item>
-          </el-col>
-          <el-col :xs="24" :sm="12" :md="12" :lg="8" :xl="4" class="mb10" v-if="state.showAdvanceQueryUI">
-            <el-form-item label="泄露值">
-              <el-input-number v-model="state.tableQueryParams.leakage"  clearable placeholder="请输入泄露值"/>
             </el-form-item>
           </el-col>
           <el-col :xs="24" :sm="12" :md="12" :lg="8" :xl="4" class="mb10" v-if="state.showAdvanceQueryUI">

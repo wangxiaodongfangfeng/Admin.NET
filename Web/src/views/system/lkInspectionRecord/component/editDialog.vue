@@ -28,7 +28,6 @@ const rules = ref<FormRules>({
   productTypeId: [{required: true, message: '请选择产品类型！', trigger: 'blur',},],
   productStatusId: [{required: true, message: '请选择产品状态！', trigger: 'blur',},],
   partStatusId: [{required: true, message: '请选择零件状态！', trigger: 'blur',},],
-  ngPositionId: [{required: true, message: '请选择Ng位置！', trigger: 'blur',},],
   testResult: [{required: true, message: '请选择检测结果！', trigger: 'blur',},],
   userId: [{required: true, message: '请选择用户！', trigger: 'blur',},],
 });

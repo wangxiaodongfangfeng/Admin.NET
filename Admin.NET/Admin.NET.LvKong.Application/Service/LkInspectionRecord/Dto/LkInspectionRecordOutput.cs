@@ -27,12 +27,12 @@ public class LkInspectionRecordOutput
     public string Date { get; set; }    
     
     /// <summary>
-    /// 班次ID
+    /// 班次
     /// </summary>
     public long ShiftId { get; set; }    
     
     /// <summary>
-    /// 班次ID 描述
+    /// 班次 描述
     /// </summary>
     public string ShiftFkDisplayName { get; set; } 
     
@@ -47,42 +47,42 @@ public class LkInspectionRecordOutput
     public decimal Pressure { get; set; }    
     
     /// <summary>
-    /// 产品类型ID
+    /// 产品类型
     /// </summary>
     public long ProductTypeId { get; set; }    
     
     /// <summary>
-    /// 产品类型ID 描述
+    /// 产品类型 描述
     /// </summary>
     public string ProductTypeFkDisplayName { get; set; } 
     
     /// <summary>
-    /// 产品状态ID
+    /// 产品状态
     /// </summary>
     public long ProductStatusId { get; set; }    
     
     /// <summary>
-    /// 产品状态ID 描述
+    /// 产品状态 描述
     /// </summary>
     public string ProductStatusFkDisplayName { get; set; } 
     
     /// <summary>
-    /// 零件状态ID
+    /// 零件状态
     /// </summary>
     public long PartStatusId { get; set; }    
     
     /// <summary>
-    /// 零件状态ID 描述
+    /// 零件状态 描述
     /// </summary>
     public string PartStatusFkDisplayName { get; set; } 
     
     /// <summary>
-    /// Ng位置ID
+    /// Ng位置
     /// </summary>
     public long NgPositionId { get; set; }    
     
     /// <summary>
-    /// Ng位置ID 描述
+    /// Ng位置 描述
     /// </summary>
     public string NgPositionFkDisplayName { get; set; } 
     
