@@ -94,6 +94,12 @@ public partial class LkInspectionRecord : EntityBase
     public virtual string TestResult { get; set; }
 
     /// <summary>
+    /// 泄露值(ml/min)
+    /// </summary>
+    [SugarColumn(ColumnName = "Leakage", ColumnDescription = "泄露值", DecimalDigits = 2)]
+    public virtual decimal Leakage { get; set; }
+
+    /// <summary>
     /// 图片URL列表(JSON数组)
     /// </summary>
     [SugarColumn(ColumnName = "Images", ColumnDescription = "图片URL列表", ColumnDataType = "text", IsNullable = true)]

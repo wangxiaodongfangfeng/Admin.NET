@@ -23,8 +23,12 @@ const rules = ref<FormRules>({
   operator: [{required: true, message: '请选择操作员！', trigger: 'blur',},],
   date: [{required: true, message: '请选择检测日期！', trigger: 'blur',},],
   shiftId: [{required: true, message: '请选择班次！', trigger: 'blur',},],
+  pressureHoldTime: [{required: true, message: '请选择保压时间！', trigger: 'blur',},],
   pressure: [{required: true, message: '请选择气压值！', trigger: 'blur',},],
   productTypeId: [{required: true, message: '请选择产品类型！', trigger: 'blur',},],
+  productStatusId: [{required: true, message: '请选择产品状态！', trigger: 'blur',},],
+  partStatusId: [{required: true, message: '请选择零件状态！', trigger: 'blur',},],
+  ngPositionId: [{required: true, message: '请选择Ng位置！', trigger: 'blur',},],
   testResult: [{required: true, message: '请选择检测结果！', trigger: 'blur',},],
   userId: [{required: true, message: '请选择用户！', trigger: 'blur',},],
 });
@@ -34,10 +38,10 @@ onMounted(async () => {
   const data = await lkInspectionRecordApi.getDropdownData(false).then(res => res.data.result) ?? {};
   state.dropdownData.shiftId = data.shiftId ?? [];
   state.dropdownData.productTypeId = data.productTypeId ?? [];
-  state.dropdownData.userId = data.userId ?? [];
   state.dropdownData.productStatusId = data.productStatusId ?? [];
   state.dropdownData.partStatusId = data.partStatusId ?? [];
   state.dropdownData.ngPositionId = data.ngPositionId ?? [];
+  state.dropdownData.userId = data.userId ?? [];
 });
 
 // 打开弹窗
@@ -104,6 +108,11 @@ defineExpose({ openDialog });
 						</el-form-item>
 					</el-col>
 						<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12" class="mb20" >
+						<el-form-item label="保压时间" prop="pressureHoldTime">
+							<el-input-number v-model="state.ruleForm.pressureHoldTime" placeholder="请输入保压时间" clearable />
+						</el-form-item>
+					</el-col>
+						<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12" class="mb20" >
 						<el-form-item label="气压值" prop="pressure">
 							<el-input-number v-model="state.ruleForm.pressure" placeholder="请输入气压值" clearable />
 						</el-form-item>
@@ -113,43 +122,6 @@ defineExpose({ openDialog });
 							<el-select clearable filterable v-model="state.ruleForm.productTypeId" placeholder="请选择产品类型">
 								<el-option v-for="(item,index) in state.dropdownData.productTypeId" :key="index" :value="item.value" :label="item.label" />
 							</el-select>
-						</el-form-item>
-					</el-col>
-						<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12" class="mb20" >
-						<el-form-item label="工件号" prop="productModel">
-							<el-input v-model="state.ruleForm.productModel" placeholder="请输入工件号" maxlength="64" show-word-limit clearable />
-						</el-form-item>
-					</el-col>
-						<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12" class="mb20" >
-						<el-form-item label="钢印号" prop="steelStamp">
-							<el-input v-model="state.ruleForm.steelStamp" placeholder="请输入钢印号" maxlength="64" show-word-limit clearable />
-						</el-form-item>
-					</el-col>
-						<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12" class="mb20" >
-						<el-form-item label="检测结果" prop="testResult">
-							<el-input v-model="state.ruleForm.testResult" placeholder="请输入检测结果" maxlength="8" show-word-limit clearable />
-						</el-form-item>
-					</el-col>
-						<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12" class="mb20" >
-						<el-form-item label="图片URL列表" prop="images">
-							<el-input v-model="state.ruleForm.images" placeholder="请输入图片URL列表" show-word-limit clearable />
-						</el-form-item>
-					</el-col>
-						<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12" class="mb20" >
-						<el-form-item label="用户" prop="userId">
-							<el-select clearable filterable v-model="state.ruleForm.userId" placeholder="请选择用户">
-								<el-option v-for="(item,index) in state.dropdownData.userId" :key="index" :value="item.value" :label="item.label" />
-							</el-select>
-						</el-form-item>
-					</el-col>
-						<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12" class="mb20" >
-						<el-form-item label="备注" prop="remarks">
-							<el-input v-model="state.ruleForm.remarks" placeholder="请输入备注" maxlength="512" show-word-limit clearable />
-						</el-form-item>
-					</el-col>
-						<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12" class="mb20" >
-						<el-form-item label="保压时间" prop="pressureHoldTime">
-							<el-input-number v-model="state.ruleForm.pressureHoldTime" placeholder="请输入保压时间" clearable />
 						</el-form-item>
 					</el-col>
 						<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12" class="mb20" >
@@ -171,6 +143,43 @@ defineExpose({ openDialog });
 							<el-select clearable filterable v-model="state.ruleForm.ngPositionId" placeholder="请选择Ng位置">
 								<el-option v-for="(item,index) in state.dropdownData.ngPositionId" :key="index" :value="item.value" :label="item.label" />
 							</el-select>
+						</el-form-item>
+					</el-col>
+						<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12" class="mb20" >
+						<el-form-item label="二维码" prop="productModel">
+							<el-input v-model="state.ruleForm.productModel" placeholder="请输入二维码" maxlength="64" show-word-limit clearable />
+						</el-form-item>
+					</el-col>
+						<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12" class="mb20" >
+						<el-form-item label="钢印号" prop="steelStamp">
+							<el-input v-model="state.ruleForm.steelStamp" placeholder="请输入钢印号" maxlength="64" show-word-limit clearable />
+						</el-form-item>
+					</el-col>
+						<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12" class="mb20" >
+						<el-form-item label="检测结果" prop="testResult">
+							<el-input v-model="state.ruleForm.testResult" placeholder="请输入检测结果" maxlength="8" show-word-limit clearable />
+						</el-form-item>
+					</el-col>
+						<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12" class="mb20" >
+						<el-form-item label="泄露值" prop="leakage">
+							<el-input-number v-model="state.ruleForm.leakage" placeholder="请输入泄露值" clearable />
+						</el-form-item>
+					</el-col>
+						<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12" class="mb20" >
+						<el-form-item label="图片URL列表" prop="images">
+							<el-input v-model="state.ruleForm.images" placeholder="请输入图片URL列表" show-word-limit clearable />
+						</el-form-item>
+					</el-col>
+						<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12" class="mb20" >
+						<el-form-item label="用户" prop="userId">
+							<el-select clearable filterable v-model="state.ruleForm.userId" placeholder="请选择用户">
+								<el-option v-for="(item,index) in state.dropdownData.userId" :key="index" :value="item.value" :label="item.label" />
+							</el-select>
+						</el-form-item>
+					</el-col>
+						<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12" class="mb20" >
+						<el-form-item label="备注" prop="remarks">
+							<el-input v-model="state.ruleForm.remarks" placeholder="请输入备注" maxlength="512" show-word-limit clearable />
 						</el-form-item>
 					</el-col>
 				</el-row>

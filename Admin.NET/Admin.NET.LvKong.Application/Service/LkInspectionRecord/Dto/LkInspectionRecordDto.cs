@@ -22,11 +22,6 @@ public class LkInspectionRecordDto
     public string ProductTypeIdFkColumn { get; set; }
     
     /// <summary>
-    /// 用户ID
-    /// </summary>
-    public string UserIdFkColumn { get; set; }
-    
-    /// <summary>
     /// 产品状态ID
     /// </summary>
     public string ProductStatusIdFkColumn { get; set; }
@@ -40,6 +35,11 @@ public class LkInspectionRecordDto
     /// Ng位置ID
     /// </summary>
     public string NgPositionIdFkColumn { get; set; }
+    
+    /// <summary>
+    /// 用户ID
+    /// </summary>
+    public string UserIdFkColumn { get; set; }
     
     /// <summary>
     /// 主键Id
@@ -62,6 +62,11 @@ public class LkInspectionRecordDto
     public long ShiftId { get; set; }
     
     /// <summary>
+    /// 保压时间
+    /// </summary>
+    public decimal PressureHoldTime { get; set; }
+    
+    /// <summary>
     /// 气压值
     /// </summary>
     public decimal Pressure { get; set; }
@@ -72,7 +77,22 @@ public class LkInspectionRecordDto
     public long ProductTypeId { get; set; }
     
     /// <summary>
-    /// 产品型号
+    /// 产品状态ID
+    /// </summary>
+    public long ProductStatusId { get; set; }
+    
+    /// <summary>
+    /// 零件状态ID
+    /// </summary>
+    public long PartStatusId { get; set; }
+    
+    /// <summary>
+    /// Ng位置ID
+    /// </summary>
+    public long NgPositionId { get; set; }
+    
+    /// <summary>
+    /// 二维码
     /// </summary>
     public string? ProductModel { get; set; }
     
@@ -87,6 +107,11 @@ public class LkInspectionRecordDto
     public string TestResult { get; set; }
     
     /// <summary>
+    /// 泄露值
+    /// </summary>
+    public decimal? Leakage { get; set; }
+    
+    /// <summary>
     /// 图片URL列表
     /// </summary>
     public string? Images { get; set; }
@@ -97,14 +122,14 @@ public class LkInspectionRecordDto
     public long UserId { get; set; }
     
     /// <summary>
-    /// 创建时间
-    /// </summary>
-    public string CreateTime { get; set; }
-    
-    /// <summary>
     /// 备注
     /// </summary>
     public string? Remarks { get; set; }
+    
+    /// <summary>
+    /// 创建时间
+    /// </summary>
+    public DateTime? CreateTime { get; set; }
     
     /// <summary>
     /// 更新时间
@@ -130,25 +155,5 @@ public class LkInspectionRecordDto
     /// 修改者姓名
     /// </summary>
     public string? UpdateUserName { get; set; }
-    
-    /// <summary>
-    /// 保压时间
-    /// </summary>
-    public decimal? PressureHoldTime { get; set; }
-    
-    /// <summary>
-    /// 产品状态ID
-    /// </summary>
-    public long? ProductStatusId { get; set; }
-    
-    /// <summary>
-    /// 零件状态ID
-    /// </summary>
-    public long? PartStatusId { get; set; }
-    
-    /// <summary>
-    /// Ng位置ID
-    /// </summary>
-    public long? NgPositionId { get; set; }
     
 }

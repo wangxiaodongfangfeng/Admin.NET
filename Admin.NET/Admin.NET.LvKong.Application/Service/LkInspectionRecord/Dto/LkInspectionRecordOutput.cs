@@ -37,6 +37,11 @@ public class LkInspectionRecordOutput
     public string ShiftFkDisplayName { get; set; } 
     
     /// <summary>
+    /// 保压时间
+    /// </summary>
+    public decimal PressureHoldTime { get; set; }    
+    
+    /// <summary>
     /// 气压值
     /// </summary>
     public decimal Pressure { get; set; }    
@@ -52,7 +57,37 @@ public class LkInspectionRecordOutput
     public string ProductTypeFkDisplayName { get; set; } 
     
     /// <summary>
-    /// 产品型号
+    /// 产品状态ID
+    /// </summary>
+    public long ProductStatusId { get; set; }    
+    
+    /// <summary>
+    /// 产品状态ID 描述
+    /// </summary>
+    public string ProductStatusFkDisplayName { get; set; } 
+    
+    /// <summary>
+    /// 零件状态ID
+    /// </summary>
+    public long PartStatusId { get; set; }    
+    
+    /// <summary>
+    /// 零件状态ID 描述
+    /// </summary>
+    public string PartStatusFkDisplayName { get; set; } 
+    
+    /// <summary>
+    /// Ng位置ID
+    /// </summary>
+    public long NgPositionId { get; set; }    
+    
+    /// <summary>
+    /// Ng位置ID 描述
+    /// </summary>
+    public string NgPositionFkDisplayName { get; set; } 
+    
+    /// <summary>
+    /// 二维码
     /// </summary>
     public string? ProductModel { get; set; }    
     
@@ -65,6 +100,11 @@ public class LkInspectionRecordOutput
     /// 检测结果
     /// </summary>
     public string TestResult { get; set; }    
+    
+    /// <summary>
+    /// 泄露值
+    /// </summary>
+    public decimal? Leakage { get; set; }    
     
     /// <summary>
     /// 图片URL列表
@@ -82,14 +122,14 @@ public class LkInspectionRecordOutput
     public string UserFkDisplayName { get; set; } 
     
     /// <summary>
-    /// 创建时间
-    /// </summary>
-    public DateTime? CreateTime { get; set; }    
-    
-    /// <summary>
     /// 备注
     /// </summary>
     public string? Remarks { get; set; }    
+    
+    /// <summary>
+    /// 创建时间
+    /// </summary>
+    public DateTime? CreateTime { get; set; }    
     
     /// <summary>
     /// 更新时间
@@ -115,41 +155,6 @@ public class LkInspectionRecordOutput
     /// 修改者姓名
     /// </summary>
     public string? UpdateUserName { get; set; }    
-    
-    /// <summary>
-    /// 保压时间
-    /// </summary>
-    public decimal? PressureHoldTime { get; set; }    
-    
-    /// <summary>
-    /// 产品状态ID
-    /// </summary>
-    public long? ProductStatusId { get; set; }    
-    
-    /// <summary>
-    /// 产品状态ID 描述
-    /// </summary>
-    public string ProductStatusFkDisplayName { get; set; } 
-    
-    /// <summary>
-    /// 零件状态ID
-    /// </summary>
-    public long? PartStatusId { get; set; }    
-    
-    /// <summary>
-    /// 零件状态ID 描述
-    /// </summary>
-    public string PartStatusFkDisplayName { get; set; } 
-    
-    /// <summary>
-    /// Ng位置ID
-    /// </summary>
-    public long? NgPositionId { get; set; }    
-    
-    /// <summary>
-    /// Ng位置ID 描述
-    /// </summary>
-    public string NgPositionFkDisplayName { get; set; } 
     
 }
 
