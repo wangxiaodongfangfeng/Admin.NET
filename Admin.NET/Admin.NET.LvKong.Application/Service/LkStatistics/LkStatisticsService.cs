@@ -182,10 +182,6 @@ public class LkStatisticsService : IDynamicApiController, ITransient
 
     /// <summary>
     /// 按人员统计指定年月的检测总数、OK 数、NG 数及合格率 🔖
-    /// <remarks>
-    /// 月度统计天以每天 08:30 为起点、次日 08:30 为终点。
-    /// 归属月份以统计天的起始日期（即 Date 当 Time>=08:30 时为当天，Time&lt;08:30 时为前一天）所在月为准。
-    /// </remarks>
     /// </summary>
     /// <param name="input"></param>
     /// <returns></returns>
@@ -195,48 +191,18 @@ public class LkStatisticsService : IDynamicApiController, ITransient
     {
         var monthPrefix = $"{input.Year:D4}-{input.Month:D2}";
 
-        // 查询范围需覆盖边界跨天情况：
-        //   - 上月最后一天 08:30 后的记录可能归属本月第一个统计天
-        //   - 本月最后一天 08:30 后的记录归属本月最后一个统计天，但次月1日 08:30 前的记录也属于它
-        var firstDayOfMonth  = new DateTime(input.Year, input.Month, 1);
-        var prevMonthLastDay = firstDayOfMonth.AddDays(-1).ToString("yyyy-MM-dd");
-        var nextMonthFirstDay = firstDayOfMonth.AddMonths(1).ToString("yyyy-MM-dd");
-        var cutTime = "08:30:00";
-
-        // 拉取所有可能属于本统计月的记录（含上月最后一天和次月第一天的边界记录）
-        // 字符串 yyyy-MM-dd 格式按字典序比较等同于按日期比较
-        var candidates = await _lkInspectionRecordRep.AsQueryable()
-            .Where(u => u.Date.CompareTo(prevMonthLastDay) >= 0
-                     && u.Date.CompareTo(nextMonthFirstDay) <= 0)
+        // 直接按自然月过滤，Date 字段格式为 yyyy-MM-dd，StartsWith 即可精确匹配
+        var records = await _lkInspectionRecordRep.AsQueryable()
+            .Where(u => u.Date.StartsWith(monthPrefix))
             .LeftJoin<SysUser>((u, user) => u.UserId == user.Id)
             .Select((u, user) => new
             {
                 u.UserId,
                 UserName = user.RealName,
-                u.Date,
-                u.Time,
                 u.TestResult,
             })
             .ToListAsync();
 
-        // 内存中精确归属：
-        //   Time >= 08:30 → 统计天起点 = 当天 Date，归属月 = Date 的月份
-        //   Time <  08:30 → 统计天起点 = 前一天，归属月 = (Date - 1天) 的月份
-        var records = candidates.Where(r =>
-        {
-            var dateStr = r.Date?.Length >= 10 ? r.Date[..10] : r.Date ?? "";
-            var timeStr = r.Time ?? "00:00:00";
-
-            if (!DateTime.TryParse(dateStr, out var recordDate)) return false;
-
-            var statDayStart = string.Compare(timeStr, cutTime, StringComparison.Ordinal) >= 0
-                ? recordDate
-                : recordDate.AddDays(-1);
-
-            return statDayStart.Year == input.Year && statDayStart.Month == input.Month;
-        }).ToList();
-
-        // 按用户分组汇总
         var result = records
             .GroupBy(r => new { r.UserId, r.UserName })
             .Select(g =>
