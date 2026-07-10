@@ -35,6 +35,8 @@ export interface LkInspectionRecord {
 	operator?: string;
 	// 检测日期
 	date?: string;
+	// 检测时间
+	time?: string;
 	// 班次
 	shiftId?: number;
 	// 保压时间
@@ -47,19 +49,19 @@ export interface LkInspectionRecord {
 	productStatusId?: number;
 	// 零件状态
 	partStatusId?: number;
-	// Ng位置
-	ngPositionId: number;
-	// 二维码
+	// 二码码
 	productModel: string;
 	// 钢印号
 	steelStamp: string;
 	// 检测结果
 	testResult?: string;
+	// Ng位置
+	ngPositionId: number;
 	// 泄露值
 	leakage: number;
 	// 图片URL列表
 	images: string;
-	// 用户ID
+	// 用户
 	userId?: number;
 	// 备注
 	remarks: string;

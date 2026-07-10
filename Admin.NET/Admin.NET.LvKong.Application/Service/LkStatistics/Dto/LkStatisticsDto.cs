@@ -45,6 +45,63 @@ public class LkMonthlyProductTypeStatInput
 }
 
 /// <summary>
+/// 按人员月度检测统计 - 查询参数
+/// </summary>
+public class LkMonthlyUserStatInput
+{
+    /// <summary>
+    /// 年份，例如 2025
+    /// </summary>
+    public int Year { get; set; }
+
+    /// <summary>
+    /// 月份，1-12
+    /// </summary>
+    public int Month { get; set; }
+}
+
+/// <summary>
+/// 单个人员的月度检测统计结果
+/// </summary>
+public class LkUserMonthlyStatOutput
+{
+    /// <summary>
+    /// 用户ID
+    /// </summary>
+    public long UserId { get; set; }
+
+    /// <summary>
+    /// 用户姓名
+    /// </summary>
+    public string UserName { get; set; }
+
+    /// <summary>
+    /// 统计年月，格式 yyyy-MM
+    /// </summary>
+    public string YearMonth { get; set; }
+
+    /// <summary>
+    /// 检测总数
+    /// </summary>
+    public int Total { get; set; }
+
+    /// <summary>
+    /// OK 数量
+    /// </summary>
+    public int OkCount { get; set; }
+
+    /// <summary>
+    /// NG 数量
+    /// </summary>
+    public int NgCount { get; set; }
+
+    /// <summary>
+    /// 合格率（保留4位小数，例如 0.9523 表示 95.23%）
+    /// </summary>
+    public decimal PassRate { get; set; }
+}
+
+/// <summary>
 /// 单个产品类型的月度检测统计结果
 /// </summary>
 public class LkProductTypeMonthlyStatOutput

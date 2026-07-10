@@ -129,6 +129,11 @@ handleQuery();
             </el-form-item>
           </el-col>
           <el-col :xs="24" :sm="12" :md="12" :lg="8" :xl="4" class="mb10" v-if="state.showAdvanceQueryUI">
+            <el-form-item label="检测时间">
+              <el-input v-model="state.tableQueryParams.time" clearable placeholder="请输入检测时间"/>
+            </el-form-item>
+          </el-col>
+          <el-col :xs="24" :sm="12" :md="12" :lg="8" :xl="4" class="mb10" v-if="state.showAdvanceQueryUI">
             <el-form-item label="班次">
               <el-select clearable filterable v-model="state.tableQueryParams.shiftId" placeholder="请选择班次">
                 <el-option v-for="(item,index) in state.dropdownData.shiftId ?? []" :key="index" :value="item.value" :label="item.label" />
@@ -167,15 +172,8 @@ handleQuery();
             </el-form-item>
           </el-col>
           <el-col :xs="24" :sm="12" :md="12" :lg="8" :xl="4" class="mb10" v-if="state.showAdvanceQueryUI">
-            <el-form-item label="Ng位置">
-              <el-select clearable filterable v-model="state.tableQueryParams.ngPositionId" placeholder="请选择Ng位置">
-                <el-option v-for="(item,index) in state.dropdownData.ngPositionId ?? []" :key="index" :value="item.value" :label="item.label" />
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :xs="24" :sm="12" :md="12" :lg="8" :xl="4" class="mb10" v-if="state.showAdvanceQueryUI">
-            <el-form-item label="二维码">
-              <el-input v-model="state.tableQueryParams.productModel" clearable placeholder="请输入二维码"/>
+            <el-form-item label="二码码">
+              <el-input v-model="state.tableQueryParams.productModel" clearable placeholder="请输入二码码"/>
             </el-form-item>
           </el-col>
           <el-col :xs="24" :sm="12" :md="12" :lg="8" :xl="4" class="mb10" v-if="state.showAdvanceQueryUI">
@@ -186,6 +184,18 @@ handleQuery();
           <el-col :xs="24" :sm="12" :md="12" :lg="8" :xl="4" class="mb10" v-if="state.showAdvanceQueryUI">
             <el-form-item label="检测结果">
               <el-input v-model="state.tableQueryParams.testResult" clearable placeholder="请输入检测结果"/>
+            </el-form-item>
+          </el-col>
+          <el-col :xs="24" :sm="12" :md="12" :lg="8" :xl="4" class="mb10" v-if="state.showAdvanceQueryUI">
+            <el-form-item label="Ng位置">
+              <el-select clearable filterable v-model="state.tableQueryParams.ngPositionId" placeholder="请选择Ng位置">
+                <el-option v-for="(item,index) in state.dropdownData.ngPositionId ?? []" :key="index" :value="item.value" :label="item.label" />
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :xs="24" :sm="12" :md="12" :lg="8" :xl="4" class="mb10" v-if="state.showAdvanceQueryUI">
+            <el-form-item label="泄露值">
+              <el-input-number v-model="state.tableQueryParams.leakage"  clearable placeholder="请输入泄露值"/>
             </el-form-item>
           </el-col>
           <el-col :xs="24" :sm="12" :md="12" :lg="8" :xl="4" class="mb10" v-if="state.showAdvanceQueryUI">
@@ -237,16 +247,17 @@ handleQuery();
         <el-table-column type="index" label="序号" width="55" align="center"/>
         <el-table-column prop='operator' label='操作员' show-overflow-tooltip />
         <el-table-column prop='date' label='检测日期' show-overflow-tooltip />
+        <el-table-column prop='time' label='检测时间' show-overflow-tooltip />
         <el-table-column prop='shiftId' label='班次' :formatter="(row: any) => row.shiftFkDisplayName" show-overflow-tooltip />
         <el-table-column prop='pressureHoldTime' label='保压时间' show-overflow-tooltip />
         <el-table-column prop='pressure' label='气压值' show-overflow-tooltip />
         <el-table-column prop='productTypeId' label='产品类型' :formatter="(row: any) => row.productTypeFkDisplayName" show-overflow-tooltip />
         <el-table-column prop='productStatusId' label='产品状态' :formatter="(row: any) => row.productStatusFkDisplayName" show-overflow-tooltip />
         <el-table-column prop='partStatusId' label='零件状态' :formatter="(row: any) => row.partStatusFkDisplayName" show-overflow-tooltip />
-        <el-table-column prop='ngPositionId' label='Ng位置' :formatter="(row: any) => row.ngPositionFkDisplayName" show-overflow-tooltip />
-        <el-table-column prop='productModel' label='二维码' show-overflow-tooltip />
+        <el-table-column prop='productModel' label='二码码' show-overflow-tooltip />
         <el-table-column prop='steelStamp' label='钢印号' show-overflow-tooltip />
         <el-table-column prop='testResult' label='检测结果' show-overflow-tooltip />
+        <el-table-column prop='ngPositionId' label='Ng位置' :formatter="(row: any) => row.ngPositionFkDisplayName" show-overflow-tooltip />
         <el-table-column prop='leakage' label='泄露值' show-overflow-tooltip />
         <el-table-column prop='images' label='图片URL列表' show-overflow-tooltip />
         <el-table-column prop='userId' label='用户' :formatter="(row: any) => row.userFkDisplayName" show-overflow-tooltip />

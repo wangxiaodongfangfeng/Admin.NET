@@ -482,4 +482,8 @@ export * from './wx-open-id-output';
 export * from './wx-phone-output';
 export * from './yes-no-enum';
 export * from './admin-result-lk-user-inspection-stat-output'
+export * from './lk-product-type-monthly-stat-output'
+export * from './admin-result-list-lk-product-type-monthly-stat-output'
+export * from './lk-user-monthly-stat-output'
+export * from './admin-result-list-lk-user-monthly-stat-output'
 export * from './admin-result-list-lk-product-type-monthly-stat-output'

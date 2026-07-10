@@ -27,6 +27,11 @@ public class LkInspectionRecordOutput
     public string Date { get; set; }    
     
     /// <summary>
+    /// 检测时间
+    /// </summary>
+    public string Time { get; set; }    
+    
+    /// <summary>
     /// 班次
     /// </summary>
     public long ShiftId { get; set; }    
@@ -77,17 +82,7 @@ public class LkInspectionRecordOutput
     public string PartStatusFkDisplayName { get; set; } 
     
     /// <summary>
-    /// Ng位置
-    /// </summary>
-    public long NgPositionId { get; set; }    
-    
-    /// <summary>
-    /// Ng位置 描述
-    /// </summary>
-    public string NgPositionFkDisplayName { get; set; } 
-    
-    /// <summary>
-    /// 二维码
+    /// 二码码
     /// </summary>
     public string? ProductModel { get; set; }    
     
@@ -102,9 +97,19 @@ public class LkInspectionRecordOutput
     public string TestResult { get; set; }    
     
     /// <summary>
+    /// Ng位置
+    /// </summary>
+    public long NgPositionId { get; set; }    
+    
+    /// <summary>
+    /// Ng位置 描述
+    /// </summary>
+    public string NgPositionFkDisplayName { get; set; } 
+    
+    /// <summary>
     /// 泄露值
     /// </summary>
-    public decimal? Leakage { get; set; }    
+    public decimal Leakage { get; set; }    
     
     /// <summary>
     /// 图片URL列表
@@ -112,12 +117,12 @@ public class LkInspectionRecordOutput
     public string? Images { get; set; }    
     
     /// <summary>
-    /// 用户ID
+    /// 用户
     /// </summary>
     public long UserId { get; set; }    
     
     /// <summary>
-    /// 用户ID 描述
+    /// 用户 描述
     /// </summary>
     public string UserFkDisplayName { get; set; } 
     

@@ -22,6 +22,11 @@ public class LkProductTypeDto
     public string Name { get; set; }
     
     /// <summary>
+    /// 产品类型编号
+    /// </summary>
+    public string SerialNo { get; set; }
+    
+    /// <summary>
     /// 是否默认
     /// </summary>
     public bool IsDefault { get; set; }

@@ -22,6 +22,7 @@ const state = reactive({
 const rules = ref<FormRules>({
   operator: [{required: true, message: '请选择操作员！', trigger: 'blur',},],
   date: [{required: true, message: '请选择检测日期！', trigger: 'blur',},],
+  time: [{required: true, message: '请选择检测时间！', trigger: 'blur',},],
   shiftId: [{required: true, message: '请选择班次！', trigger: 'blur',},],
   pressureHoldTime: [{required: true, message: '请选择保压时间！', trigger: 'blur',},],
   pressure: [{required: true, message: '请选择气压值！', trigger: 'blur',},],
@@ -96,7 +97,12 @@ defineExpose({ openDialog });
 					</el-col>
 						<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12" class="mb20" >
 						<el-form-item label="检测日期" prop="date">
-							<el-input v-model="state.ruleForm.date" placeholder="请输入检测日期" maxlength="16" show-word-limit clearable />
+							<el-input v-model="state.ruleForm.date" placeholder="请输入检测日期" maxlength="26" show-word-limit clearable />
+						</el-form-item>
+					</el-col>
+						<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12" class="mb20" >
+						<el-form-item label="检测时间" prop="time">
+							<el-input v-model="state.ruleForm.time" placeholder="请输入检测时间" maxlength="26" show-word-limit clearable />
 						</el-form-item>
 					</el-col>
 						<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12" class="mb20" >
@@ -138,15 +144,8 @@ defineExpose({ openDialog });
 						</el-form-item>
 					</el-col>
 						<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12" class="mb20" >
-						<el-form-item label="Ng位置" prop="ngPositionId">
-							<el-select clearable filterable v-model="state.ruleForm.ngPositionId" placeholder="请选择Ng位置">
-								<el-option v-for="(item,index) in state.dropdownData.ngPositionId" :key="index" :value="item.value" :label="item.label" />
-							</el-select>
-						</el-form-item>
-					</el-col>
-						<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12" class="mb20" >
-						<el-form-item label="二维码" prop="productModel">
-							<el-input v-model="state.ruleForm.productModel" placeholder="请输入二维码" maxlength="64" show-word-limit clearable />
+						<el-form-item label="二码码" prop="productModel">
+							<el-input v-model="state.ruleForm.productModel" placeholder="请输入二码码" maxlength="64" show-word-limit clearable />
 						</el-form-item>
 					</el-col>
 						<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12" class="mb20" >
@@ -157,6 +156,13 @@ defineExpose({ openDialog });
 						<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12" class="mb20" >
 						<el-form-item label="检测结果" prop="testResult">
 							<el-input v-model="state.ruleForm.testResult" placeholder="请输入检测结果" maxlength="8" show-word-limit clearable />
+						</el-form-item>
+					</el-col>
+						<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12" class="mb20" >
+						<el-form-item label="Ng位置" prop="ngPositionId">
+							<el-select clearable filterable v-model="state.ruleForm.ngPositionId" placeholder="请选择Ng位置">
+								<el-option v-for="(item,index) in state.dropdownData.ngPositionId" :key="index" :value="item.value" :label="item.label" />
+							</el-select>
 						</el-form-item>
 					</el-col>
 						<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12" class="mb20" >

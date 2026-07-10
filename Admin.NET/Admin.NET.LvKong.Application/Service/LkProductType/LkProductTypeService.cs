@@ -42,8 +42,9 @@ public partial class LkProductTypeService : IDynamicApiController, ITransient
     {
         input.Keyword = input.Keyword?.Trim();
         var query = _lkProductTypeRep.AsQueryable()
-            .WhereIF(!string.IsNullOrWhiteSpace(input.Keyword), u => u.Name.Contains(input.Keyword) || u.Description.Contains(input.Keyword))
+            .WhereIF(!string.IsNullOrWhiteSpace(input.Keyword), u => u.Name.Contains(input.Keyword) || u.SerialNo.Contains(input.Keyword) || u.Description.Contains(input.Keyword))
             .WhereIF(!string.IsNullOrWhiteSpace(input.Name), u => u.Name.Contains(input.Name.Trim()))
+            .WhereIF(!string.IsNullOrWhiteSpace(input.SerialNo), u => u.SerialNo.Contains(input.SerialNo.Trim()))
             .WhereIF(!string.IsNullOrWhiteSpace(input.Description), u => u.Description.Contains(input.Description.Trim()))
             .WhereIF(input.IsDefault.HasValue, u => u.IsDefault == input.IsDefault)
             .Select<LkProductTypeOutput>();
@@ -171,6 +172,8 @@ public partial class LkProductTypeService : IDynamicApiController, ITransient
                     var storageable = _lkProductTypeRep.Context.Storageable(rows)
                         .SplitError(it => string.IsNullOrWhiteSpace(it.Item.Name), "产品类型名称不能为空")
                         .SplitError(it => it.Item.Name?.Length > 64, "产品类型名称长度不能超过64个字符")
+                        .SplitError(it => string.IsNullOrWhiteSpace(it.Item.SerialNo), "产品类型编号不能为空")
+                        .SplitError(it => it.Item.SerialNo?.Length > 64, "产品类型编号长度不能超过64个字符")
                         .SplitError(it => it.Item.Description?.Length > 256, "描述长度不能超过256个字符")
                         .SplitInsert(_=> true) // 没有设置唯一键代表插入所有数据
                         .ToStorage();
@@ -179,6 +182,7 @@ public partial class LkProductTypeService : IDynamicApiController, ITransient
                     storageable.AsUpdateable.UpdateColumns(it => new
                     {
                         it.Name,
+                        it.SerialNo,
                         it.IsDefault,
                         it.Description,
                     }).ExecuteCommand();// 存在更新

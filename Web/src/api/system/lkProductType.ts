@@ -31,6 +31,8 @@ export interface LkProductType {
 	id: number;
 	// 产品类型名称
 	name?: string;
+	// 产品类型编号
+	serialNo?: string;
 	// 是否默认
 	isDefault?: boolean;
 	// 描述

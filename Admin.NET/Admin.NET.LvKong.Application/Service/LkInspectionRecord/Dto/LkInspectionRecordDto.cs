@@ -37,7 +37,7 @@ public class LkInspectionRecordDto
     public string NgPositionIdFkColumn { get; set; }
     
     /// <summary>
-    /// 用户ID
+    /// 用户
     /// </summary>
     public string UserIdFkColumn { get; set; }
     
@@ -55,6 +55,11 @@ public class LkInspectionRecordDto
     /// 检测日期
     /// </summary>
     public string Date { get; set; }
+    
+    /// <summary>
+    /// 检测时间
+    /// </summary>
+    public string Time { get; set; }
     
     /// <summary>
     /// 班次
@@ -87,12 +92,7 @@ public class LkInspectionRecordDto
     public long PartStatusId { get; set; }
     
     /// <summary>
-    /// Ng位置
-    /// </summary>
-    public long NgPositionId { get; set; }
-    
-    /// <summary>
-    /// 二维码
+    /// 二码码
     /// </summary>
     public string? ProductModel { get; set; }
     
@@ -107,9 +107,14 @@ public class LkInspectionRecordDto
     public string TestResult { get; set; }
     
     /// <summary>
+    /// Ng位置
+    /// </summary>
+    public long NgPositionId { get; set; }
+    
+    /// <summary>
     /// 泄露值
     /// </summary>
-    public decimal? Leakage { get; set; }
+    public decimal Leakage { get; set; }
     
     /// <summary>
     /// 图片URL列表
@@ -117,7 +122,7 @@ public class LkInspectionRecordDto
     public string? Images { get; set; }
     
     /// <summary>
-    /// 用户ID
+    /// 用户
     /// </summary>
     public long UserId { get; set; }
     

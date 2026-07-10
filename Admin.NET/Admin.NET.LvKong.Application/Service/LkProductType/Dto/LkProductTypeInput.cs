@@ -28,6 +28,12 @@ public class LkProductTypeBaseInput
     public virtual string Name { get; set; }
     
     /// <summary>
+    /// 产品类型编号
+    /// </summary>
+    [Required(ErrorMessage = "产品类型编号不能为空")]
+    public virtual string SerialNo { get; set; }
+    
+    /// <summary>
     /// 是否默认
     /// </summary>
     [Required(ErrorMessage = "是否默认不能为空")]
@@ -49,6 +55,11 @@ public class PageLkProductTypeInput : BasePageInput
     /// 产品类型名称
     /// </summary>
     public string Name { get; set; }
+    
+    /// <summary>
+    /// 产品类型编号
+    /// </summary>
+    public string SerialNo { get; set; }
     
     /// <summary>
     /// 是否默认
@@ -77,6 +88,13 @@ public class AddLkProductTypeInput
     [Required(ErrorMessage = "产品类型名称不能为空")]
     [MaxLength(64, ErrorMessage = "产品类型名称字符长度不能超过64")]
     public string Name { get; set; }
+    
+    /// <summary>
+    /// 产品类型编号
+    /// </summary>
+    [Required(ErrorMessage = "产品类型编号不能为空")]
+    [MaxLength(64, ErrorMessage = "产品类型编号字符长度不能超过64")]
+    public string SerialNo { get; set; }
     
     /// <summary>
     /// 是否默认
@@ -124,6 +142,13 @@ public class UpdateLkProductTypeInput
     public string Name { get; set; }
     
     /// <summary>
+    /// 产品类型编号
+    /// </summary>    
+    [Required(ErrorMessage = "产品类型编号不能为空")]
+    [MaxLength(64, ErrorMessage = "产品类型编号字符长度不能超过64")]
+    public string SerialNo { get; set; }
+    
+    /// <summary>
     /// 是否默认
     /// </summary>    
     [Required(ErrorMessage = "是否默认不能为空")]
@@ -156,6 +181,13 @@ public class ImportLkProductTypeInput : BaseImportInput
     [ImporterHeader(Name = "*产品类型名称")]
     [ExporterHeader("*产品类型名称", Format = "", Width = 25, IsBold = true)]
     public string Name { get; set; }
+    
+    /// <summary>
+    /// 产品类型编号
+    /// </summary>
+    [ImporterHeader(Name = "*产品类型编号")]
+    [ExporterHeader("*产品类型编号", Format = "", Width = 25, IsBold = true)]
+    public string SerialNo { get; set; }
     
     /// <summary>
     /// 是否默认

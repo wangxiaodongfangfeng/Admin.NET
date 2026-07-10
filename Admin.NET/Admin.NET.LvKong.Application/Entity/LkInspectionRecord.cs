@@ -29,8 +29,14 @@ public partial class LkInspectionRecord : EntityBase
     /// <summary>
     /// 检测日期
     /// </summary>
-    [SugarColumn(ColumnName = "Date", ColumnDescription = "检测日期", Length = 16)]
+    [SugarColumn(ColumnName = "Date", ColumnDescription = "检测日期", Length = 26)]
     public virtual string Date { get; set; }
+    
+    /// <summary>
+    /// 检测时间
+    /// </summary>
+    [SugarColumn(ColumnName = "Time", ColumnDescription = "检测时间", Length = 26)]
+    public virtual string Time { get; set; }
 
     /// <summary>
     /// 班次ID

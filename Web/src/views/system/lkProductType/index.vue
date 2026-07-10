@@ -117,6 +117,11 @@ handleQuery();
             </el-form-item>
           </el-col>
           <el-col :xs="24" :sm="12" :md="12" :lg="8" :xl="4" class="mb10" v-if="state.showAdvanceQueryUI">
+            <el-form-item label="产品类型编号">
+              <el-input v-model="state.tableQueryParams.serialNo" clearable placeholder="请输入产品类型编号"/>
+            </el-form-item>
+          </el-col>
+          <el-col :xs="24" :sm="12" :md="12" :lg="8" :xl="4" class="mb10" v-if="state.showAdvanceQueryUI">
             <el-form-item label="是否默认">
                   <el-select clearable filterable v-model="state.tableQueryParams.isDefault" placeholder="请选择是否默认"> 
                     <el-option     value="true" label="是" /> 
@@ -160,6 +165,7 @@ handleQuery();
         <el-table-column type="selection" width="40" align="center" v-if="auth('lkProductType:batchDelete') || auth('lkProductType:export')" />
         <el-table-column type="index" label="序号" width="55" align="center"/>
         <el-table-column prop='name' label='产品类型名称' show-overflow-tooltip />
+        <el-table-column prop='serialNo' label='产品类型编号' show-overflow-tooltip />
         <el-table-column prop='isDefault' label='是否默认' show-overflow-tooltip>
           <template #default="scope">
             <el-tag v-if="scope.row.isDefault"> 是 </el-tag>

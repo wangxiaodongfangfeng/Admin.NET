@@ -34,6 +34,12 @@ public class LkInspectionRecordBaseInput
     public virtual string Date { get; set; }
     
     /// <summary>
+    /// 检测时间
+    /// </summary>
+    [Required(ErrorMessage = "检测时间不能为空")]
+    public virtual string Time { get; set; }
+    
+    /// <summary>
     /// 班次
     /// </summary>
     [Required(ErrorMessage = "班次不能为空")]
@@ -70,12 +76,7 @@ public class LkInspectionRecordBaseInput
     public virtual long? PartStatusId { get; set; }
     
     /// <summary>
-    /// Ng位置
-    /// </summary>
-    public virtual long? NgPositionId { get; set; }
-    
-    /// <summary>
-    /// 二维码
+    /// 二码码
     /// </summary>
     public virtual string? ProductModel { get; set; }
     
@@ -91,6 +92,11 @@ public class LkInspectionRecordBaseInput
     public virtual string TestResult { get; set; }
     
     /// <summary>
+    /// Ng位置
+    /// </summary>
+    public virtual long? NgPositionId { get; set; }
+    
+    /// <summary>
     /// 泄露值
     /// </summary>
     public virtual decimal? Leakage { get; set; }
@@ -101,9 +107,9 @@ public class LkInspectionRecordBaseInput
     public virtual string? Images { get; set; }
     
     /// <summary>
-    /// 用户ID
+    /// 用户
     /// </summary>
-    [Required(ErrorMessage = "用户ID不能为空")]
+    [Required(ErrorMessage = "用户不能为空")]
     public virtual long? UserId { get; set; }
     
     /// <summary>
@@ -127,6 +133,11 @@ public class PageLkInspectionRecordInput : BasePageInput
     /// 检测日期
     /// </summary>
     public string Date { get; set; }
+    
+    /// <summary>
+    /// 检测时间
+    /// </summary>
+    public string Time { get; set; }
     
     /// <summary>
     /// 班次
@@ -159,12 +170,7 @@ public class PageLkInspectionRecordInput : BasePageInput
     public long? PartStatusId { get; set; }
     
     /// <summary>
-    /// Ng位置
-    /// </summary>
-    public long? NgPositionId { get; set; }
-    
-    /// <summary>
-    /// 二维码
+    /// 二码码
     /// </summary>
     public string? ProductModel { get; set; }
     
@@ -179,12 +185,22 @@ public class PageLkInspectionRecordInput : BasePageInput
     public string TestResult { get; set; }
     
     /// <summary>
+    /// Ng位置
+    /// </summary>
+    public long? NgPositionId { get; set; }
+    
+    /// <summary>
+    /// 泄露值
+    /// </summary>
+    public decimal? Leakage { get; set; }
+    
+    /// <summary>
     /// 图片URL列表
     /// </summary>
     public string? Images { get; set; }
     
     /// <summary>
-    /// 用户ID
+    /// 用户
     /// </summary>
     public long? UserId { get; set; }
     
@@ -215,8 +231,15 @@ public class AddLkInspectionRecordInput
     /// 检测日期
     /// </summary>
     [Required(ErrorMessage = "检测日期不能为空")]
-    [MaxLength(16, ErrorMessage = "检测日期字符长度不能超过16")]
+    [MaxLength(26, ErrorMessage = "检测日期字符长度不能超过26")]
     public string Date { get; set; }
+    
+    /// <summary>
+    /// 检测时间
+    /// </summary>
+    [Required(ErrorMessage = "检测时间不能为空")]
+    [MaxLength(26, ErrorMessage = "检测时间字符长度不能超过26")]
+    public string Time { get; set; }
     
     /// <summary>
     /// 班次
@@ -255,14 +278,9 @@ public class AddLkInspectionRecordInput
     public long? PartStatusId { get; set; }
     
     /// <summary>
-    /// Ng位置
+    /// 二码码
     /// </summary>
-    public long? NgPositionId { get; set; }
-    
-    /// <summary>
-    /// 二维码
-    /// </summary>
-    [MaxLength(64, ErrorMessage = "二维码字符长度不能超过64")]
+    [MaxLength(64, ErrorMessage = "二码码字符长度不能超过64")]
     public string? ProductModel { get; set; }
     
     /// <summary>
@@ -279,6 +297,11 @@ public class AddLkInspectionRecordInput
     public string TestResult { get; set; }
     
     /// <summary>
+    /// Ng位置
+    /// </summary>
+    public long? NgPositionId { get; set; }
+    
+    /// <summary>
     /// 泄露值
     /// </summary>
     public decimal? Leakage { get; set; }
@@ -289,9 +312,9 @@ public class AddLkInspectionRecordInput
     public string? Images { get; set; }
     
     /// <summary>
-    /// 用户ID
+    /// 用户
     /// </summary>
-    [Required(ErrorMessage = "用户ID不能为空")]
+    [Required(ErrorMessage = "用户不能为空")]
     public long? UserId { get; set; }
     
     /// <summary>
@@ -337,8 +360,15 @@ public class UpdateLkInspectionRecordInput
     /// 检测日期
     /// </summary>    
     [Required(ErrorMessage = "检测日期不能为空")]
-    [MaxLength(16, ErrorMessage = "检测日期字符长度不能超过16")]
+    [MaxLength(26, ErrorMessage = "检测日期字符长度不能超过26")]
     public string Date { get; set; }
+    
+    /// <summary>
+    /// 检测时间
+    /// </summary>    
+    [Required(ErrorMessage = "检测时间不能为空")]
+    [MaxLength(26, ErrorMessage = "检测时间字符长度不能超过26")]
+    public string Time { get; set; }
     
     /// <summary>
     /// 班次
@@ -377,14 +407,9 @@ public class UpdateLkInspectionRecordInput
     public long? PartStatusId { get; set; }
     
     /// <summary>
-    /// Ng位置
+    /// 二码码
     /// </summary>    
-    public long? NgPositionId { get; set; }
-    
-    /// <summary>
-    /// 二维码
-    /// </summary>    
-    [MaxLength(64, ErrorMessage = "二维码字符长度不能超过64")]
+    [MaxLength(64, ErrorMessage = "二码码字符长度不能超过64")]
     public string? ProductModel { get; set; }
     
     /// <summary>
@@ -401,6 +426,11 @@ public class UpdateLkInspectionRecordInput
     public string TestResult { get; set; }
     
     /// <summary>
+    /// Ng位置
+    /// </summary>    
+    public long? NgPositionId { get; set; }
+    
+    /// <summary>
     /// 泄露值
     /// </summary>    
     public decimal? Leakage { get; set; }
@@ -411,9 +441,9 @@ public class UpdateLkInspectionRecordInput
     public string? Images { get; set; }
     
     /// <summary>
-    /// 用户ID
+    /// 用户
     /// </summary>    
-    [Required(ErrorMessage = "用户ID不能为空")]
+    [Required(ErrorMessage = "用户不能为空")]
     public long? UserId { get; set; }
     
     /// <summary>
@@ -461,6 +491,13 @@ public class ImportLkInspectionRecordInput : BaseImportInput
     [ImporterHeader(Name = "*检测日期")]
     [ExporterHeader("*检测日期", Format = "", Width = 25, IsBold = true)]
     public string Date { get; set; }
+    
+    /// <summary>
+    /// 检测时间
+    /// </summary>
+    [ImporterHeader(Name = "*检测时间")]
+    [ExporterHeader("*检测时间", Format = "", Width = 25, IsBold = true)]
+    public string Time { get; set; }
     
     /// <summary>
     /// 班次 关联值
@@ -533,24 +570,10 @@ public class ImportLkInspectionRecordInput : BaseImportInput
     public string PartStatusFkDisplayName { get; set; }
     
     /// <summary>
-    /// Ng位置 关联值
+    /// 二码码
     /// </summary>
-    [ImporterHeader(IsIgnore = true)]
-    [ExporterHeader(IsIgnore = true)]
-    public long? NgPositionId { get; set; }
-    
-    /// <summary>
-    /// Ng位置 文本
-    /// </summary>
-    [ImporterHeader(Name = "Ng位置")]
-    [ExporterHeader("Ng位置", Format = "", Width = 25, IsBold = true)]
-    public string NgPositionFkDisplayName { get; set; }
-    
-    /// <summary>
-    /// 二维码
-    /// </summary>
-    [ImporterHeader(Name = "二维码")]
-    [ExporterHeader("二维码", Format = "", Width = 25, IsBold = true)]
+    [ImporterHeader(Name = "二码码")]
+    [ExporterHeader("二码码", Format = "", Width = 25, IsBold = true)]
     public string? ProductModel { get; set; }
     
     /// <summary>
@@ -568,6 +591,20 @@ public class ImportLkInspectionRecordInput : BaseImportInput
     public string TestResult { get; set; }
     
     /// <summary>
+    /// Ng位置 关联值
+    /// </summary>
+    [ImporterHeader(IsIgnore = true)]
+    [ExporterHeader(IsIgnore = true)]
+    public long? NgPositionId { get; set; }
+    
+    /// <summary>
+    /// Ng位置 文本
+    /// </summary>
+    [ImporterHeader(Name = "Ng位置")]
+    [ExporterHeader("Ng位置", Format = "", Width = 25, IsBold = true)]
+    public string NgPositionFkDisplayName { get; set; }
+    
+    /// <summary>
     /// 泄露值
     /// </summary>
     [ImporterHeader(Name = "泄露值")]
@@ -582,17 +619,17 @@ public class ImportLkInspectionRecordInput : BaseImportInput
     public string? Images { get; set; }
     
     /// <summary>
-    /// 用户ID 关联值
+    /// 用户 关联值
     /// </summary>
     [ImporterHeader(IsIgnore = true)]
     [ExporterHeader(IsIgnore = true)]
     public long? UserId { get; set; }
     
     /// <summary>
-    /// 用户ID 文本
+    /// 用户 文本
     /// </summary>
-    [ImporterHeader(Name = "*用户ID")]
-    [ExporterHeader("*用户ID", Format = "", Width = 25, IsBold = true)]
+    [ImporterHeader(Name = "*用户")]
+    [ExporterHeader("*用户", Format = "", Width = 25, IsBold = true)]
     public string UserFkDisplayName { get; set; }
     
     /// <summary>

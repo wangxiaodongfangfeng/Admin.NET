@@ -21,6 +21,13 @@ public partial class LkProductType : EntityBase
     /// </summary>
     [SugarColumn(ColumnName = "Name", ColumnDescription = "产品类型名称", Length = 64)]
     public virtual string Name { get; set; }
+    
+    
+    /// <summary>
+    /// 产品类型编号
+    /// </summary>
+    [SugarColumn(ColumnName = "SerialNo", ColumnDescription = "产品类型编号", Length = 64)]
+    public virtual string SerialNo { get; set; }
 
     /// <summary>
     /// 是否默认

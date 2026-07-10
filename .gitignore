@@ -48,3 +48,6 @@ Admin.NET/Admin.NET.Application/Configuration/DeepSeek.json
 /Admin.NET/.github
 
 /docker/*
+**/wwwroot/*
+**/publish-linux/*
+**/publish/*

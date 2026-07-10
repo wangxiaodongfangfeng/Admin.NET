@@ -42,9 +42,10 @@ public partial class LkInspectionRecordService : IDynamicApiController, ITransie
     {
         input.Keyword = input.Keyword?.Trim();
         var query = _lkInspectionRecordRep.AsQueryable()
-            .WhereIF(!string.IsNullOrWhiteSpace(input.Keyword), u => u.Operator.Contains(input.Keyword) || u.Date.Contains(input.Keyword) || u.ProductModel.Contains(input.Keyword) || u.SteelStamp.Contains(input.Keyword) || u.TestResult.Contains(input.Keyword) || u.Images.Contains(input.Keyword) || u.Remarks.Contains(input.Keyword))
+            .WhereIF(!string.IsNullOrWhiteSpace(input.Keyword), u => u.Operator.Contains(input.Keyword) || u.Date.Contains(input.Keyword) || u.Time.Contains(input.Keyword) || u.ProductModel.Contains(input.Keyword) || u.SteelStamp.Contains(input.Keyword) || u.TestResult.Contains(input.Keyword) || u.Images.Contains(input.Keyword) || u.Remarks.Contains(input.Keyword))
             .WhereIF(!string.IsNullOrWhiteSpace(input.Operator), u => u.Operator.Contains(input.Operator.Trim()))
             .WhereIF(!string.IsNullOrWhiteSpace(input.Date), u => u.Date.Contains(input.Date.Trim()))
+            .WhereIF(!string.IsNullOrWhiteSpace(input.Time), u => u.Time.Contains(input.Time.Trim()))
             .WhereIF(!string.IsNullOrWhiteSpace(input.ProductModel), u => u.ProductModel.Contains(input.ProductModel.Trim()))
             .WhereIF(!string.IsNullOrWhiteSpace(input.SteelStamp), u => u.SteelStamp.Contains(input.SteelStamp.Trim()))
             .WhereIF(!string.IsNullOrWhiteSpace(input.TestResult), u => u.TestResult.Contains(input.TestResult.Trim()))
@@ -67,6 +68,7 @@ public partial class LkInspectionRecordService : IDynamicApiController, ITransie
                 Id = u.Id,
                 Operator = u.Operator,
                 Date = u.Date,
+                Time = u.Time,
                 ShiftId = u.ShiftId,
                 ShiftFkDisplayName = $"{shift.Name}",
                 PressureHoldTime = u.PressureHoldTime,
@@ -77,11 +79,11 @@ public partial class LkInspectionRecordService : IDynamicApiController, ITransie
                 ProductStatusFkDisplayName = $"{productStatus.Name}",
                 PartStatusId = u.PartStatusId,
                 PartStatusFkDisplayName = $"{partStatus.Name}",
-                NgPositionId = u.NgPositionId,
-                NgPositionFkDisplayName = $"{ngPosition.Name}",
                 ProductModel = u.ProductModel,
                 SteelStamp = u.SteelStamp,
                 TestResult = u.TestResult,
+                NgPositionId = u.NgPositionId,
+                NgPositionFkDisplayName = $"{ngPosition.Name}",
                 Leakage = u.Leakage,
                 Images = u.Images,
                 UserId = u.UserId,
@@ -313,13 +315,13 @@ public partial class LkInspectionRecordService : IDynamicApiController, ITransie
                             if (e.NgPositionId == null) e.Error = "Ng位置链接失败";
                         });
                     }
-                    // 链接 用户ID
+                    // 链接 用户
                     var userIdLabelList = pageItems.Where(x => x.UserFkDisplayName != null).Select(x => x.UserFkDisplayName).Distinct().ToList();
                     if (userIdLabelList.Any()) {
                         var userIdLinkMap = _lkInspectionRecordRep.Context.Queryable<SysUser>().Where(u => userIdLabelList.Contains($"{u.Account}")).ToList().ToDictionary(u => $"{u.Account}", u => u.Id  as long?);
                         pageItems.ForEach(e => {
                             e.UserId = userIdLinkMap.GetValueOrDefault(e.UserFkDisplayName ?? "");
-                            if (e.UserId == null) e.Error = "用户ID链接失败";
+                            if (e.UserId == null) e.Error = "用户链接失败";
                         });
                     }
                     
@@ -343,7 +345,7 @@ public partial class LkInspectionRecordService : IDynamicApiController, ITransie
                             return false;
                         }
                         if (x.UserId == null){
-                            x.Error = "用户ID不能为空";
+                            x.Error = "用户不能为空";
                             return false;
                         }
                         return true;
@@ -353,8 +355,10 @@ public partial class LkInspectionRecordService : IDynamicApiController, ITransie
                         .SplitError(it => string.IsNullOrWhiteSpace(it.Item.Operator), "操作员不能为空")
                         .SplitError(it => it.Item.Operator?.Length > 32, "操作员长度不能超过32个字符")
                         .SplitError(it => string.IsNullOrWhiteSpace(it.Item.Date), "检测日期不能为空")
-                        .SplitError(it => it.Item.Date?.Length > 16, "检测日期长度不能超过16个字符")
-                        .SplitError(it => it.Item.ProductModel?.Length > 64, "二维码长度不能超过64个字符")
+                        .SplitError(it => it.Item.Date?.Length > 26, "检测日期长度不能超过26个字符")
+                        .SplitError(it => string.IsNullOrWhiteSpace(it.Item.Time), "检测时间不能为空")
+                        .SplitError(it => it.Item.Time?.Length > 26, "检测时间长度不能超过26个字符")
+                        .SplitError(it => it.Item.ProductModel?.Length > 64, "二码码长度不能超过64个字符")
                         .SplitError(it => it.Item.SteelStamp?.Length > 64, "钢印号长度不能超过64个字符")
                         .SplitError(it => string.IsNullOrWhiteSpace(it.Item.TestResult), "检测结果不能为空")
                         .SplitError(it => it.Item.TestResult?.Length > 8, "检测结果长度不能超过8个字符")
@@ -367,16 +371,17 @@ public partial class LkInspectionRecordService : IDynamicApiController, ITransie
                     {
                         it.Operator,
                         it.Date,
+                        it.Time,
                         it.ShiftId,
                         it.PressureHoldTime,
                         it.Pressure,
                         it.ProductTypeId,
                         it.ProductStatusId,
                         it.PartStatusId,
-                        it.NgPositionId,
                         it.ProductModel,
                         it.SteelStamp,
                         it.TestResult,
+                        it.NgPositionId,
                         it.Leakage,
                         it.Images,
                         it.UserId,

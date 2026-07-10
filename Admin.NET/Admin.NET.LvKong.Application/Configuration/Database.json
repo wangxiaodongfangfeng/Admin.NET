@@ -8,11 +8,11 @@
     "ConnectionConfigs": [
       {
         //"ConfigId": "1300000000001", // 默认库标识-禁止修改
-        "DbType": "Sqlite", // MySql、SqlServer、Sqlite、Oracle、PostgreSQL、Dm、Kdbndp、Oscar、MySqlConnector、Access、OpenGauss、QuestDB、HG、ClickHouse、GBase、Odbc、Custom
+        "DbType": "MySql", // MySql、SqlServer、Sqlite、Oracle、PostgreSQL、Dm、Kdbndp、Oscar、MySqlConnector、Access、OpenGauss、QuestDB、HG、ClickHouse、GBase、Odbc、Custom
         "DbNickName": "系统库",
-        "ConnectionString": "DataSource=./Admin.NET.db", // Sqlite
+        //"ConnectionString": "DataSource=./Admin.NET.db", // Sqlite
         //"ConnectionString": "PORT=5432;DATABASE=xxx;HOST=localhost;PASSWORD=xxx;USER ID=xxx", // PostgreSQL
-        //"ConnectionString": "Server=192.168.1.19;Database=admin_net_new;Uid=root;Pwd=123456;SslMode=None;AllowLoadLocalInfile=true;AllowUserVariables=true;", // MySql,
+        "ConnectionString": "Server=82.156.215.91;Port=33060;Database=admin_net_test;Uid=root;Pwd=admin_net;SslMode=None;AllowLoadLocalInfile=true;AllowUserVariables=true;", // MySql,
         //"ConnectionString": "User Id=xxx; Password=xxx; Data Source=(DESCRIPTION=(ADDRESS=(PROTOCOL=tcp)(HOST=localhost)(PORT=1521))(CONNECT_DATA=(SERVICE_NAME=ORCL)))", // Oracle
         //"ConnectionString": "Server=localhost;Database=xxx;User Id=xxx;Password=xxx;Encrypt=True;TrustServerCertificate=True;", // SqlServer
 
@@ -38,7 +38,7 @@
           "EnableIncreTable": false // 启用表增量更新（只更新贴了特性[IncreTable]的实体表）
         },
         "SeedSettings": {
-          "EnableInitSeed": true, // 启用种子初始化（若种子没有变化建议关闭）
+          "EnableInitSeed": false, // 启用种子初始化（若种子没有变化建议关闭）
           "EnableIncreSeed": false // 启用种子增量更新（只更新贴了特性[IncreSeed]的种子表）
         }
       }

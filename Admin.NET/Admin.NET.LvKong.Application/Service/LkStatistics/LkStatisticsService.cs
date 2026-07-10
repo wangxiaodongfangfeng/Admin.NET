@@ -27,6 +27,10 @@ public class LkStatisticsService : IDynamicApiController, ITransient
 
     /// <summary>
     /// 统计用户今日检测情况（总数、OK 数、NG 数）🔖
+    /// <remarks>
+    /// 统计天以当日 08:30 为起点、次日 08:30 为终点（即一个自然工作日跨越两个日历日）。
+    /// 使用 Time 字段（格式 HH:mm:ss）与 Date 字段组合判断记录是否属于当前统计天。
+    /// </remarks>
     /// </summary>
     /// <param name="input"></param>
     /// <returns></returns>
@@ -34,12 +38,50 @@ public class LkStatisticsService : IDynamicApiController, ITransient
     [ApiDescriptionSettings(Name = "UserTodayStat"), HttpGet]
     public async Task<LkUserInspectionStatOutput> GetUserTodayStat([FromQuery] LkUserTodayStatInput input)
     {
-        var today = DateTime.Now.ToString("yyyy-MM-dd");
+        // 计算当前统计天的起止边界
+        // 规则：每天 08:30 开始，到次日 08:30 结束
+        var now = DateTime.Now;
+        var shiftStart = now.Date.AddHours(8).AddMinutes(30); // 今日 08:30
+        DateTime statDayStart, statDayEnd;
 
-        var records = await _lkInspectionRecordRep.AsQueryable()
-            .Where(u => u.UserId == input.UserId && u.Date.StartsWith(today))
-            .Select(u => new { u.TestResult })
+        if (now >= shiftStart)
+        {
+            // 当前时间在 08:30 之后 → 统计天从今日 08:30 到明日 08:30
+            statDayStart = shiftStart;
+            statDayEnd   = shiftStart.AddDays(1);
+        }
+        else
+        {
+            // 当前时间在 08:30 之前 → 统计天从昨日 08:30 到今日 08:30
+            statDayStart = shiftStart.AddDays(-1);
+            statDayEnd   = shiftStart;
+        }
+
+        // 统计天覆盖的日历日期字符串（可能跨两天）
+        var dateStart = statDayStart.ToString("yyyy-MM-dd");
+        var dateEnd   = statDayEnd.ToString("yyyy-MM-dd");
+        var cutTime   = "08:30:00"; // 每天的分界时间
+
+        // 拉取可能属于本统计天的记录（Date 在 dateStart 或 dateEnd 当天）
+        var candidates = await _lkInspectionRecordRep.AsQueryable()
+            .Where(u => u.UserId == input.UserId &&
+                        (u.Date.StartsWith(dateStart) || u.Date.StartsWith(dateEnd)))
+            .Select(u => new { u.Date, u.Time, u.TestResult })
             .ToListAsync();
+
+        // 在内存中按 08:30 边界精确过滤
+        // dateStart 当天：Time >= 08:30:00
+        // dateEnd 当天（若跨天）：Time < 08:30:00
+        var records = candidates.Where(r =>
+        {
+            var dateStr = r.Date?.Length >= 10 ? r.Date[..10] : r.Date ?? "";
+            var timeStr = r.Time ?? "00:00:00";
+            if (dateStr == dateStart)
+                return string.Compare(timeStr, cutTime, StringComparison.Ordinal) >= 0;
+            if (dateStr == dateEnd)
+                return string.Compare(timeStr, cutTime, StringComparison.Ordinal) < 0;
+            return false;
+        }).ToList();
 
         var userName = await _lkInspectionRecordRep.Context
             .Queryable<SysUser>()
@@ -51,7 +93,7 @@ public class LkStatisticsService : IDynamicApiController, ITransient
         {
             UserId   = input.UserId,
             UserName = userName,
-            Date     = today,
+            Date     = dateStart, // 统计天以起始日期标识
             Total    = records.Count,
             OkCount  = records.Count(r => r.TestResult.Equals("OK", StringComparison.OrdinalIgnoreCase)),
             NgCount  = records.Count(r => r.TestResult.Equals("NG", StringComparison.OrdinalIgnoreCase)),
@@ -133,6 +175,87 @@ public class LkStatisticsService : IDynamicApiController, ITransient
                 };
             })
             .OrderBy(x => x.ProductTypeName)
+            .ToList();
+
+        return result;
+    }
+
+    /// <summary>
+    /// 按人员统计指定年月的检测总数、OK 数、NG 数及合格率 🔖
+    /// <remarks>
+    /// 月度统计天以每天 08:30 为起点、次日 08:30 为终点。
+    /// 归属月份以统计天的起始日期（即 Date 当 Time>=08:30 时为当天，Time&lt;08:30 时为前一天）所在月为准。
+    /// </remarks>
+    /// </summary>
+    /// <param name="input"></param>
+    /// <returns></returns>
+    [DisplayName("按人员统计月度检测情况")]
+    [ApiDescriptionSettings(Name = "MonthlyUserStat"), HttpGet]
+    public async Task<List<LkUserMonthlyStatOutput>> GetMonthlyUserStat([FromQuery] LkMonthlyUserStatInput input)
+    {
+        var monthPrefix = $"{input.Year:D4}-{input.Month:D2}";
+
+        // 查询范围需覆盖边界跨天情况：
+        //   - 上月最后一天 08:30 后的记录可能归属本月第一个统计天
+        //   - 本月最后一天 08:30 后的记录归属本月最后一个统计天，但次月1日 08:30 前的记录也属于它
+        var firstDayOfMonth  = new DateTime(input.Year, input.Month, 1);
+        var prevMonthLastDay = firstDayOfMonth.AddDays(-1).ToString("yyyy-MM-dd");
+        var nextMonthFirstDay = firstDayOfMonth.AddMonths(1).ToString("yyyy-MM-dd");
+        var cutTime = "08:30:00";
+
+        // 拉取所有可能属于本统计月的记录（含上月最后一天和次月第一天的边界记录）
+        // 字符串 yyyy-MM-dd 格式按字典序比较等同于按日期比较
+        var candidates = await _lkInspectionRecordRep.AsQueryable()
+            .Where(u => u.Date.CompareTo(prevMonthLastDay) >= 0
+                     && u.Date.CompareTo(nextMonthFirstDay) <= 0)
+            .LeftJoin<SysUser>((u, user) => u.UserId == user.Id)
+            .Select((u, user) => new
+            {
+                u.UserId,
+                UserName = user.RealName,
+                u.Date,
+                u.Time,
+                u.TestResult,
+            })
+            .ToListAsync();
+
+        // 内存中精确归属：
+        //   Time >= 08:30 → 统计天起点 = 当天 Date，归属月 = Date 的月份
+        //   Time <  08:30 → 统计天起点 = 前一天，归属月 = (Date - 1天) 的月份
+        var records = candidates.Where(r =>
+        {
+            var dateStr = r.Date?.Length >= 10 ? r.Date[..10] : r.Date ?? "";
+            var timeStr = r.Time ?? "00:00:00";
+
+            if (!DateTime.TryParse(dateStr, out var recordDate)) return false;
+
+            var statDayStart = string.Compare(timeStr, cutTime, StringComparison.Ordinal) >= 0
+                ? recordDate
+                : recordDate.AddDays(-1);
+
+            return statDayStart.Year == input.Year && statDayStart.Month == input.Month;
+        }).ToList();
+
+        // 按用户分组汇总
+        var result = records
+            .GroupBy(r => new { r.UserId, r.UserName })
+            .Select(g =>
+            {
+                var total   = g.Count();
+                var okCount = g.Count(r => r.TestResult.Equals("OK", StringComparison.OrdinalIgnoreCase));
+                var ngCount = g.Count(r => r.TestResult.Equals("NG", StringComparison.OrdinalIgnoreCase));
+                return new LkUserMonthlyStatOutput
+                {
+                    UserId    = g.Key.UserId,
+                    UserName  = g.Key.UserName ?? string.Empty,
+                    YearMonth = monthPrefix,
+                    Total     = total,
+                    OkCount   = okCount,
+                    NgCount   = ngCount,
+                    PassRate  = total == 0 ? 0m : Math.Round((decimal)okCount / total, 4),
+                };
+            })
+            .OrderBy(x => x.UserName)
             .ToList();
 
         return result;

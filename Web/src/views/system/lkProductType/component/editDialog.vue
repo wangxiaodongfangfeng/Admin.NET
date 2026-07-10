@@ -21,6 +21,7 @@ const state = reactive({
 // 自行添加其他规则
 const rules = ref<FormRules>({
   name: [{required: true, message: '请选择产品类型名称！', trigger: 'blur',},],
+  serialNo: [{required: true, message: '请选择产品类型编号！', trigger: 'blur',},],
   isDefault: [{required: true, message: '请选择是否默认！', trigger: 'blur',},],
 });
 
@@ -31,7 +32,7 @@ onMounted(async () => {
 // 打开弹窗
 const openDialog = async (row: any, title: string) => {
 	state.title = title;
-	row = row ?? {  };
+	row = row ?? { isDefault: false, };
 	state.ruleForm = row.id ? await lkProductTypeApi.detail(row.id).then(res => res.data.result) : JSON.parse(JSON.stringify(row));
 	state.showDialog = true;
 };
@@ -77,6 +78,11 @@ defineExpose({ openDialog });
 						<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12" class="mb20" >
 						<el-form-item label="产品类型名称" prop="name">
 							<el-input v-model="state.ruleForm.name" placeholder="请输入产品类型名称" maxlength="64" show-word-limit clearable />
+						</el-form-item>
+					</el-col>
+						<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12" class="mb20" >
+						<el-form-item label="产品类型编号" prop="serialNo">
+							<el-input v-model="state.ruleForm.serialNo" placeholder="请输入产品类型编号" maxlength="64" show-word-limit clearable />
 						</el-form-item>
 					</el-col>
 						<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12" class="mb20" >
