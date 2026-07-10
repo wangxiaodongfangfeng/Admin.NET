@@ -1,0 +1,177 @@
+<template>
+	<el-card shadow="hover">
+		<template #header>
+			<div class="card-header">
+				<span>
+					<el-icon style="display: inline; vertical-align: middle"><ele-DataAnalysis /></el-icon>
+					每日产品类型检测汇总
+				</span>
+				<div class="header-filter">
+					<el-select
+						v-model="selectedStatusId"
+						placeholder="产品状态"
+						size="small"
+						style="width: 110px; margin-right: 6px"
+						:loading="statusLoading"
+						@change="loadData"
+					>
+						<el-option
+							v-for="s in statusList"
+							:key="s.id"
+							:label="s.name"
+							:value="s.id"
+						/>
+					</el-select>
+					<el-date-picker
+						v-model="selectedDate"
+						type="date"
+						placeholder="选择日期"
+						format="YYYY年MM月DD日"
+						value-format="YYYY-MM-DD"
+						:clearable="false"
+						size="small"
+						style="width: 150px"
+						@change="loadData"
+					/>
+				</div>
+			</div>
+		</template>
+
+		<el-table :data="tableData" v-loading="loading" stripe border size="small" style="width: 100%">
+			<el-table-column prop="productTypeName" label="产品类型" min-width="90" show-overflow-tooltip />
+			<el-table-column prop="total" label="总数" align="center" width="64" />
+			<el-table-column prop="okCount" label="OK" align="center" width="60">
+				<template #default="{ row }">
+					<span style="color: var(--el-color-success)">{{ row.okCount }}</span>
+				</template>
+			</el-table-column>
+			<el-table-column prop="ngCount" label="NG" align="center" width="60">
+				<template #default="{ row }">
+					<span style="color: var(--el-color-danger)">{{ row.ngCount }}</span>
+				</template>
+			</el-table-column>
+			<el-table-column prop="passRate" label="合格率" align="center" width="90">
+				<template #default="{ row }">
+					<el-progress
+						:percentage="toPercent(row.passRate)"
+						:color="rateColor(row.passRate)"
+						:stroke-width="6"
+						:show-text="false"
+						style="margin-bottom: 2px"
+					/>
+					<span :style="{ color: rateColor(row.passRate), fontSize: '12px' }">
+						{{ formatRate(row.passRate) }}
+					</span>
+				</template>
+			</el-table-column>
+		</el-table>
+
+		<div v-if="!loading && tableData.length === 0" class="empty-tip">
+			<el-empty description="暂无数据" :image-size="60" />
+		</div>
+	</el-card>
+</template>
+
+<script lang="ts">
+export default {
+	title: '每日产品类型汇总',
+	icon: 'ele-DataAnalysis',
+	description: '按产品类型统计指定统计天（08:30~次日08:30）的检测总数、OK数、NG数及合格率，支持产品状态筛选',
+};
+</script>
+
+<script setup lang="ts" name="dailyProductTypeStat">
+import { ref, onMounted } from 'vue';
+import { getAPI } from '/@/utils/axios-utils';
+import { LkStatisticsApi } from '/@/api-services/api';
+import { LkProductTypeDailyStatOutput } from '/@/api-services/models';
+import { useLkProductStatusApi, LkProductStatus } from '/@/api/system/lkProductStatus';
+
+// 默认日期：按 08:30 规则计算当前统计天起始日期
+const computeDefaultDate = (): string => {
+	const now = new Date();
+	const cutoff = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 8, 30, 0);
+	const target = now >= cutoff ? now : new Date(now.getTime() - 86400000);
+	return `${target.getFullYear()}-${String(target.getMonth() + 1).padStart(2, '0')}-${String(target.getDate()).padStart(2, '0')}`;
+};
+
+const selectedDate = ref<string>(computeDefaultDate());
+const selectedStatusId = ref<number | undefined>(undefined);
+const statusList = ref<LkProductStatus[]>([]);
+const tableData = ref<LkProductTypeDailyStatOutput[]>([]);
+const loading = ref(false);
+const statusLoading = ref(false);
+
+// 加载产品状态列表，并自动选中默认项
+const loadStatusList = async () => {
+	statusLoading.value = true;
+	try {
+		const res = await useLkProductStatusApi().page({ page: 1, pageSize: 100 });
+		const items: LkProductStatus[] = res.data?.result?.items ?? [];
+		statusList.value = items;
+		// 优先选默认项，否则选第一项
+		const def = items.find((s) => s.isDefault) ?? items[0];
+		if (def) selectedStatusId.value = def.id;
+	} catch {
+		statusList.value = [];
+	} finally {
+		statusLoading.value = false;
+	}
+};
+
+const loadData = async () => {
+	loading.value = true;
+	try {
+		const res = await getAPI(LkStatisticsApi).apiLkStatisticsDailyProductTypeStatGet(
+			selectedDate.value,
+			selectedStatusId.value,
+		);
+		tableData.value = res.data?.result ?? [];
+	} catch {
+		tableData.value = [];
+	} finally {
+		loading.value = false;
+	}
+};
+
+const toPercent = (rate?: number) => {
+	if (rate == null) return 0;
+	return Math.min(100, Math.round(rate * 100));
+};
+
+const formatRate = (rate?: number) => {
+	if (rate == null) return '-';
+	return (rate * 100).toFixed(1) + '%';
+};
+
+const rateColor = (rate?: number) => {
+	if (rate == null) return '#909399';
+	if (rate >= 0.95) return '#67c23a';
+	if (rate >= 0.8) return '#e6a23c';
+	return '#f56c6c';
+};
+
+onMounted(async () => {
+	await loadStatusList();
+	await loadData();
+});
+</script>
+
+<style scoped>
+.card-header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	flex-wrap: wrap;
+	gap: 6px;
+}
+.header-filter {
+	display: flex;
+	align-items: center;
+	flex-wrap: wrap;
+	gap: 4px;
+}
+.empty-tip {
+	padding: 8px 0;
+}
+</style>

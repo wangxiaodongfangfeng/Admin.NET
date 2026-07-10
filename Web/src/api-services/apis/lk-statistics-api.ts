@@ -18,7 +18,9 @@ import { Configuration } from '../configuration';
 // @ts-ignore
 import { BASE_PATH, COLLECTION_FORMATS, RequestArgs, BaseAPI, RequiredError } from '../base';
 import { AdminResultListLkProductTypeMonthlyStatOutput } from '../models';
+import { AdminResultListLkProductTypeDailyStatOutput } from '../models';
 import { AdminResultListLkUserMonthlyStatOutput } from '../models';
+import { AdminResultListLkUserDailyStatOutput } from '../models';
 import { AdminResultLkUserInspectionStatOutput } from '../models';
 /**
  * LkStatisticsApi - axios parameter creator
@@ -228,6 +230,62 @@ export const LkStatisticsApiAxiosParamCreator = function (configuration?: Config
                 options: localVarRequestOptions,
             };
         },
+        /**
+         * @summary 按人员统计每日检测汇总 🔖
+         * @param {string} [date] 统计天起始日期 yyyy-MM-dd，不传时按 08:30 规则自动计算
+         * @throws {RequiredError}
+         */
+        apiLkStatisticsDailyUserStatGet: async (date?: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/api/lkStatistics/dailyUserStat`;
+            const localVarUrlObj = new URL(localVarPath, 'https://example.com');
+            let baseOptions;
+            if (configuration) { baseOptions = configuration.baseOptions; }
+            const localVarRequestOptions: AxiosRequestConfig = { method: 'GET', ...baseOptions, ...options };
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+            if (configuration && configuration.accessToken) {
+                const accessToken = typeof configuration.accessToken === 'function'
+                    ? await configuration.accessToken() : await configuration.accessToken;
+                localVarHeaderParameter["Authorization"] = "Bearer " + accessToken;
+            }
+            if (date !== undefined) { localVarQueryParameter['Date'] = date; }
+            const query = new URLSearchParams(localVarUrlObj.search);
+            for (const key in localVarQueryParameter) { query.set(key, localVarQueryParameter[key]); }
+            for (const key in options.params) { query.set(key, options.params[key]); }
+            localVarUrlObj.search = (new URLSearchParams(query)).toString();
+            const headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers };
+            return { url: localVarUrlObj.pathname + localVarUrlObj.search + localVarUrlObj.hash, options: localVarRequestOptions };
+        },
+        /**
+         * @summary 按产品类型统计每日检测汇总 🔖
+         * @param {string} [date] 统计天起始日期 yyyy-MM-dd，不传时按 08:30 规则自动计算
+         * @param {number} [productStatusId] 产品状态ID，不传时使用默认产品状态
+         * @throws {RequiredError}
+         */
+        apiLkStatisticsDailyProductTypeStatGet: async (date?: string, productStatusId?: number, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/api/lkStatistics/dailyProductTypeStat`;
+            const localVarUrlObj = new URL(localVarPath, 'https://example.com');
+            let baseOptions;
+            if (configuration) { baseOptions = configuration.baseOptions; }
+            const localVarRequestOptions: AxiosRequestConfig = { method: 'GET', ...baseOptions, ...options };
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+            if (configuration && configuration.accessToken) {
+                const accessToken = typeof configuration.accessToken === 'function'
+                    ? await configuration.accessToken() : await configuration.accessToken;
+                localVarHeaderParameter["Authorization"] = "Bearer " + accessToken;
+            }
+            if (date !== undefined) { localVarQueryParameter['Date'] = date; }
+            if (productStatusId !== undefined) { localVarQueryParameter['ProductStatusId'] = productStatusId; }
+            const query = new URLSearchParams(localVarUrlObj.search);
+            for (const key in localVarQueryParameter) { query.set(key, localVarQueryParameter[key]); }
+            for (const key in options.params) { query.set(key, options.params[key]); }
+            localVarUrlObj.search = (new URLSearchParams(query)).toString();
+            const headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers };
+            return { url: localVarUrlObj.pathname + localVarUrlObj.search + localVarUrlObj.hash, options: localVarRequestOptions };
+        },
     }
 };
 
@@ -295,6 +353,26 @@ export const LkStatisticsApiFp = function(configuration?: Configuration) {
                 return axios.request(axiosRequestArgs);
             };
         },
+        /**
+         * @summary 按人员统计每日检测汇总 🔖
+         */
+        async apiLkStatisticsDailyUserStatGet(date?: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => Promise<AxiosResponse<AdminResultListLkUserDailyStatOutput>>> {
+            const localVarAxiosArgs = await LkStatisticsApiAxiosParamCreator(configuration).apiLkStatisticsDailyUserStatGet(date, options);
+            return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
+                const axiosRequestArgs: AxiosRequestConfig = { ...localVarAxiosArgs.options, url: basePath + localVarAxiosArgs.url };
+                return axios.request(axiosRequestArgs);
+            };
+        },
+        /**
+         * @summary 按产品类型统计每日检测汇总 🔖
+         */
+        async apiLkStatisticsDailyProductTypeStatGet(date?: string, productStatusId?: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => Promise<AxiosResponse<AdminResultListLkProductTypeDailyStatOutput>>> {
+            const localVarAxiosArgs = await LkStatisticsApiAxiosParamCreator(configuration).apiLkStatisticsDailyProductTypeStatGet(date, productStatusId, options);
+            return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
+                const axiosRequestArgs: AxiosRequestConfig = { ...localVarAxiosArgs.options, url: basePath + localVarAxiosArgs.url };
+                return axios.request(axiosRequestArgs);
+            };
+        },
     }
 };
 
@@ -345,6 +423,18 @@ export const LkStatisticsApiFactory = function (configuration?: Configuration, b
          */
         async apiLkStatisticsUserTotalStatGet(userId?: number, options?: AxiosRequestConfig): Promise<AxiosResponse<AdminResultLkUserInspectionStatOutput>> {
             return LkStatisticsApiFp(configuration).apiLkStatisticsUserTotalStatGet(userId, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * @summary 按人员统计每日检测汇总 🔖
+         */
+        async apiLkStatisticsDailyUserStatGet(date?: string, options?: AxiosRequestConfig): Promise<AxiosResponse<AdminResultListLkUserDailyStatOutput>> {
+            return LkStatisticsApiFp(configuration).apiLkStatisticsDailyUserStatGet(date, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * @summary 按产品类型统计每日检测汇总 🔖
+         */
+        async apiLkStatisticsDailyProductTypeStatGet(date?: string, productStatusId?: number, options?: AxiosRequestConfig): Promise<AxiosResponse<AdminResultListLkProductTypeDailyStatOutput>> {
+            return LkStatisticsApiFp(configuration).apiLkStatisticsDailyProductTypeStatGet(date, productStatusId, options).then((request) => request(axios, basePath));
         },
     };
 };
@@ -401,5 +491,19 @@ export class LkStatisticsApi extends BaseAPI {
      */
     public async apiLkStatisticsUserTotalStatGet(userId?: number, options?: AxiosRequestConfig) : Promise<AxiosResponse<AdminResultLkUserInspectionStatOutput>> {
         return LkStatisticsApiFp(this.configuration).apiLkStatisticsUserTotalStatGet(userId, options).then((request) => request(this.axios, this.basePath));
+    }
+    /**
+     * @summary 按人员统计每日检测汇总 🔖
+     * @memberof LkStatisticsApi
+     */
+    public async apiLkStatisticsDailyUserStatGet(date?: string, options?: AxiosRequestConfig): Promise<AxiosResponse<AdminResultListLkUserDailyStatOutput>> {
+        return LkStatisticsApiFp(this.configuration).apiLkStatisticsDailyUserStatGet(date, options).then((request) => request(this.axios, this.basePath));
+    }
+    /**
+     * @summary 按产品类型统计每日检测汇总 🔖
+     * @memberof LkStatisticsApi
+     */
+    public async apiLkStatisticsDailyProductTypeStatGet(date?: string, productStatusId?: number, options?: AxiosRequestConfig): Promise<AxiosResponse<AdminResultListLkProductTypeDailyStatOutput>> {
+        return LkStatisticsApiFp(this.configuration).apiLkStatisticsDailyProductTypeStatGet(date, productStatusId, options).then((request) => request(this.axios, this.basePath));
     }
 }

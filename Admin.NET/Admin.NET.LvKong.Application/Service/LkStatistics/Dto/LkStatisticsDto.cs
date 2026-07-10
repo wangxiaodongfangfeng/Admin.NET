@@ -143,6 +143,127 @@ public class LkProductTypeMonthlyStatOutput
 }
 
 /// <summary>
+/// 按人员每日检测统计 - 查询参数
+/// </summary>
+public class LkDailyUserStatInput
+{
+    /// <summary>
+    /// 统计天的起始日期，格式 yyyy-MM-dd。
+    /// 不传时由服务端按 08:30 规则自动计算当前统计天。
+    /// </summary>
+    public string? Date { get; set; }
+}
+
+/// <summary>
+/// 单个人员的每日检测统计结果
+/// </summary>
+public class LkUserDailyStatOutput
+{
+    /// <summary>
+    /// 用户ID
+    /// </summary>
+    public long UserId { get; set; }
+
+    /// <summary>
+    /// 用户姓名
+    /// </summary>
+    public string UserName { get; set; }
+
+    /// <summary>
+    /// 统计天起始日期，格式 yyyy-MM-dd
+    /// </summary>
+    public string Date { get; set; }
+
+    /// <summary>
+    /// 检测总数
+    /// </summary>
+    public int Total { get; set; }
+
+    /// <summary>
+    /// OK 数量
+    /// </summary>
+    public int OkCount { get; set; }
+
+    /// <summary>
+    /// NG 数量
+    /// </summary>
+    public int NgCount { get; set; }
+
+    /// <summary>
+    /// 合格率（保留4位小数，例如 0.9523 表示 95.23%）
+    /// </summary>
+    public decimal PassRate { get; set; }
+}
+
+/// <summary>
+/// 按产品类型每日检测统计 - 查询参数
+/// </summary>
+public class LkDailyProductTypeStatInput
+{
+    /// <summary>
+    /// 统计天的起始日期，格式 yyyy-MM-dd。
+    /// 不传时由服务端按 08:30 规则自动计算当前统计天。
+    /// </summary>
+    public string? Date { get; set; }
+
+    /// <summary>
+    /// 产品状态ID，不传时使用数据库中标记为默认（IsDefault=true）的产品状态。
+    /// </summary>
+    public long? ProductStatusId { get; set; }
+}
+
+/// <summary>
+/// 单个产品类型的每日检测统计结果
+/// </summary>
+public class LkProductTypeDailyStatOutput
+{
+    /// <summary>
+    /// 产品类型ID
+    /// </summary>
+    public long ProductTypeId { get; set; }
+
+    /// <summary>
+    /// 产品类型名称
+    /// </summary>
+    public string ProductTypeName { get; set; }
+
+    /// <summary>
+    /// 统计天起始日期，格式 yyyy-MM-dd
+    /// </summary>
+    public string Date { get; set; }
+
+    /// <summary>
+    /// 产品状态ID
+    /// </summary>
+    public long ProductStatusId { get; set; }
+
+    /// <summary>
+    /// 产品状态名称
+    /// </summary>
+    public string ProductStatusName { get; set; }
+
+    /// <summary>
+    /// 检测总数
+    /// </summary>
+    public int Total { get; set; }
+
+    /// <summary>
+    /// OK 数量
+    /// </summary>
+    public int OkCount { get; set; }
+
+    /// <summary>
+    /// NG 数量
+    /// </summary>
+    public int NgCount { get; set; }
+
+    /// <summary>
+    /// 合格率（保留4位小数，例如 0.9523 表示 95.23%）
+    /// </summary>
+    public decimal PassRate { get; set; }
+}
+
+/// <summary>
 /// 用户检测统计结果
 /// </summary>
 public class LkUserInspectionStatOutput
