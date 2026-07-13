@@ -18,6 +18,7 @@
 						style="width: 140px"
 						@change="loadData"
 					/>
+					<el-button size="small" :icon="Download" :loading="exporting" @click="handleExport" style="margin-left:6px">导出</el-button>
 				</div>
 			</div>
 		</template>
@@ -67,6 +68,7 @@ export default {
 
 <script setup lang="ts" name="monthlyUserStat">
 import { ref, onMounted } from 'vue';
+import { Download } from '@element-plus/icons-vue';
 import { getAPI } from '/@/utils/axios-utils';
 import { LkStatisticsApi } from '/@/api-services/api';
 import { LkUserMonthlyStatOutput } from '/@/api-services/models';
@@ -78,6 +80,7 @@ const defaultMonth = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart
 const selectedMonth = ref<string>(defaultMonth);
 const tableData = ref<LkUserMonthlyStatOutput[]>([]);
 const loading = ref(false);
+const exporting = ref(false);
 
 const parseYearMonth = (val: string): { year: number; month: number } => {
 	const [y, m] = val.split('-');
@@ -117,6 +120,22 @@ const rateColor = (rate?: number) => {
 onMounted(() => {
 	loadData();
 });
+
+const handleExport = async () => {
+	exporting.value = true;
+	try {
+		const { year, month } = parseYearMonth(selectedMonth.value);
+		const res = await getAPI(LkStatisticsApi).apiLkStatisticsExportMonthlyUserStatPost(year, month);
+		const url = URL.createObjectURL(new Blob([res.data as any]));
+		const a = document.createElement('a');
+		a.href = url;
+		a.download = `人员月度统计_${selectedMonth.value}.xlsx`;
+		a.click();
+		URL.revokeObjectURL(url);
+	} finally {
+		exporting.value = false;
+	}
+};
 </script>
 
 <style scoped>

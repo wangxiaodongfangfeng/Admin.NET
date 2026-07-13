@@ -322,6 +322,89 @@ public class LkStatisticsService : IDynamicApiController, ITransient
             .ToList();
     }
 
+    // ── 导出 Excel ────────────────────────────────────────────────────────────
+
+    /// <summary>
+    /// 导出按人员月度检测统计 🔖
+    /// </summary>
+    [DisplayName("导出按人员月度检测统计")]
+    [ApiDescriptionSettings(Name = "ExportMonthlyUserStat"), HttpPost, NonUnify]
+    public async Task<IActionResult> ExportMonthlyUserStat([FromBody] LkMonthlyUserStatInput input)
+    {
+        var data = await GetMonthlyUserStat(input);
+        var list = data.Select(r => new ExportLkUserMonthlyStatOutput
+        {
+            UserName     = r.UserName,
+            YearMonth    = r.YearMonth,
+            Total        = r.Total,
+            OkCount      = r.OkCount,
+            NgCount      = r.NgCount,
+            PassRateText = (r.PassRate * 100).ToString("F1") + "%",
+        }).ToList();
+        return ExcelHelper.ExportTemplate(list, $"人员月度统计_{input.Year:D4}{input.Month:D2}");
+    }
+
+    /// <summary>
+    /// 导出按产品类型月度检测统计 🔖
+    /// </summary>
+    [DisplayName("导出按产品类型月度检测统计")]
+    [ApiDescriptionSettings(Name = "ExportMonthlyProductTypeStat"), HttpPost, NonUnify]
+    public async Task<IActionResult> ExportMonthlyProductTypeStat([FromBody] LkMonthlyProductTypeStatInput input)
+    {
+        var data = await GetMonthlyProductTypeStat(input);
+        var list = data.Select(r => new ExportLkProductTypeMonthlyStatOutput
+        {
+            ProductTypeName = r.ProductTypeName,
+            YearMonth       = r.YearMonth,
+            Total           = r.Total,
+            OkCount         = r.OkCount,
+            NgCount         = r.NgCount,
+            PassRateText    = (r.PassRate * 100).ToString("F1") + "%",
+        }).ToList();
+        return ExcelHelper.ExportTemplate(list, $"产品类型月度统计_{input.Year:D4}{input.Month:D2}");
+    }
+
+    /// <summary>
+    /// 导出按人员每日检测统计 🔖
+    /// </summary>
+    [DisplayName("导出按人员每日检测统计")]
+    [ApiDescriptionSettings(Name = "ExportDailyUserStat"), HttpPost, NonUnify]
+    public async Task<IActionResult> ExportDailyUserStat([FromBody] LkDailyUserStatInput input)
+    {
+        var data = await GetDailyUserStat(input);
+        var list = data.Select(r => new ExportLkUserDailyStatOutput
+        {
+            UserName     = r.UserName,
+            Date         = r.Date,
+            Total        = r.Total,
+            OkCount      = r.OkCount,
+            NgCount      = r.NgCount,
+            PassRateText = (r.PassRate * 100).ToString("F1") + "%",
+        }).ToList();
+        return ExcelHelper.ExportTemplate(list, $"人员每日统计_{data.FirstOrDefault()?.Date ?? input.Date ?? "unknown"}");
+    }
+
+    /// <summary>
+    /// 导出按产品类型每日检测统计 🔖
+    /// </summary>
+    [DisplayName("导出按产品类型每日检测统计")]
+    [ApiDescriptionSettings(Name = "ExportDailyProductTypeStat"), HttpPost, NonUnify]
+    public async Task<IActionResult> ExportDailyProductTypeStat([FromBody] LkDailyProductTypeStatInput input)
+    {
+        var data = await GetDailyProductTypeStat(input);
+        var list = data.Select(r => new ExportLkProductTypeDailyStatOutput
+        {
+            ProductTypeName   = r.ProductTypeName,
+            Date              = r.Date,
+            ProductStatusName = r.ProductStatusName,
+            Total             = r.Total,
+            OkCount           = r.OkCount,
+            NgCount           = r.NgCount,
+            PassRateText      = (r.PassRate * 100).ToString("F1") + "%",
+        }).ToList();
+        return ExcelHelper.ExportTemplate(list, $"产品类型每日统计_{data.FirstOrDefault()?.Date ?? input.Date ?? "unknown"}");
+    }
+
     // ── 私有辅助 ──────────────────────────────────────────────────────────────
 
     /// <summary>

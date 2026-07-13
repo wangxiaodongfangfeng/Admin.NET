@@ -18,6 +18,7 @@
 						style="width: 150px"
 						@change="loadData"
 					/>
+					<el-button size="small" :icon="Download" :loading="exporting" @click="handleExport" style="margin-left:6px">导出</el-button>
 				</div>
 			</div>
 		</template>
@@ -67,6 +68,7 @@ export default {
 
 <script setup lang="ts" name="dailyUserStat">
 import { ref, onMounted } from 'vue';
+import { Download } from '@element-plus/icons-vue';
 import { getAPI } from '/@/utils/axios-utils';
 import { LkStatisticsApi } from '/@/api-services/api';
 import { LkUserDailyStatOutput } from '/@/api-services/models';
@@ -82,6 +84,7 @@ const computeDefaultDate = (): string => {
 const selectedDate = ref<string>(computeDefaultDate());
 const tableData = ref<LkUserDailyStatOutput[]>([]);
 const loading = ref(false);
+const exporting = ref(false);
 
 const loadData = async () => {
 	loading.value = true;
@@ -113,6 +116,21 @@ const rateColor = (rate?: number) => {
 };
 
 onMounted(() => loadData());
+
+const handleExport = async () => {
+	exporting.value = true;
+	try {
+		const res = await getAPI(LkStatisticsApi).apiLkStatisticsExportDailyUserStatPost(selectedDate.value);
+		const url = URL.createObjectURL(new Blob([res.data as any]));
+		const a = document.createElement('a');
+		a.href = url;
+		a.download = `人员每日统计_${selectedDate.value}.xlsx`;
+		a.click();
+		URL.revokeObjectURL(url);
+	} finally {
+		exporting.value = false;
+	}
+};
 </script>
 
 <style scoped>

@@ -506,4 +506,88 @@ export class LkStatisticsApi extends BaseAPI {
     public async apiLkStatisticsDailyProductTypeStatGet(date?: string, productStatusId?: number, options?: AxiosRequestConfig): Promise<AxiosResponse<AdminResultListLkProductTypeDailyStatOutput>> {
         return LkStatisticsApiFp(this.configuration).apiLkStatisticsDailyProductTypeStatGet(date, productStatusId, options).then((request) => request(this.axios, this.basePath));
     }
+    /**
+     * @summary 导出按人员月度检测统计 🔖
+     * @memberof LkStatisticsApi
+     */
+    public async apiLkStatisticsExportMonthlyUserStatPost(year: number, month: number, options?: AxiosRequestConfig): Promise<AxiosResponse<Blob>> {
+        const localVarPath = `/api/lkStatistics/exportMonthlyUserStat`;
+        const localVarUrlObj = new URL(localVarPath, 'https://example.com');
+        let baseOptions: any;
+        if (this.configuration) { baseOptions = this.configuration.baseOptions; }
+        const localVarRequestOptions: AxiosRequestConfig = { method: 'POST', responseType: 'blob', ...baseOptions, ...options };
+        const localVarHeaderParameter: any = {};
+        if (this.configuration?.accessToken) {
+            const accessToken = typeof this.configuration.accessToken === 'function'
+                ? await this.configuration.accessToken() : await this.configuration.accessToken;
+            localVarHeaderParameter['Authorization'] = 'Bearer ' + accessToken;
+        }
+        localVarHeaderParameter['Content-Type'] = 'application/json';
+        localVarRequestOptions.headers = { ...localVarHeaderParameter, ...options?.headers };
+        localVarRequestOptions.data = JSON.stringify({ year, month });
+        return this.axios.request({ ...localVarRequestOptions, url: this.basePath + localVarUrlObj.pathname });
+    }
+    /**
+     * @summary 导出按产品类型月度检测统计 🔖
+     * @memberof LkStatisticsApi
+     */
+    public async apiLkStatisticsExportMonthlyProductTypeStatPost(year: number, month: number, options?: AxiosRequestConfig): Promise<AxiosResponse<Blob>> {
+        const localVarPath = `/api/lkStatistics/exportMonthlyProductTypeStat`;
+        const localVarUrlObj = new URL(localVarPath, 'https://example.com');
+        let baseOptions: any;
+        if (this.configuration) { baseOptions = this.configuration.baseOptions; }
+        const localVarRequestOptions: AxiosRequestConfig = { method: 'POST', responseType: 'blob', ...baseOptions, ...options };
+        const localVarHeaderParameter: any = {};
+        if (this.configuration?.accessToken) {
+            const accessToken = typeof this.configuration.accessToken === 'function'
+                ? await this.configuration.accessToken() : await this.configuration.accessToken;
+            localVarHeaderParameter['Authorization'] = 'Bearer ' + accessToken;
+        }
+        localVarHeaderParameter['Content-Type'] = 'application/json';
+        localVarRequestOptions.headers = { ...localVarHeaderParameter, ...options?.headers };
+        localVarRequestOptions.data = JSON.stringify({ year, month });
+        return this.axios.request({ ...localVarRequestOptions, url: this.basePath + localVarUrlObj.pathname });
+    }
+    /**
+     * @summary 导出按人员每日检测统计 🔖
+     * @memberof LkStatisticsApi
+     */
+    public async apiLkStatisticsExportDailyUserStatPost(date?: string, options?: AxiosRequestConfig): Promise<AxiosResponse<Blob>> {
+        const localVarPath = `/api/lkStatistics/exportDailyUserStat`;
+        const localVarUrlObj = new URL(localVarPath, 'https://example.com');
+        let baseOptions: any;
+        if (this.configuration) { baseOptions = this.configuration.baseOptions; }
+        const localVarRequestOptions: AxiosRequestConfig = { method: 'POST', responseType: 'blob', ...baseOptions, ...options };
+        const localVarHeaderParameter: any = {};
+        if (this.configuration?.accessToken) {
+            const accessToken = typeof this.configuration.accessToken === 'function'
+                ? await this.configuration.accessToken() : await this.configuration.accessToken;
+            localVarHeaderParameter['Authorization'] = 'Bearer ' + accessToken;
+        }
+        localVarHeaderParameter['Content-Type'] = 'application/json';
+        localVarRequestOptions.headers = { ...localVarHeaderParameter, ...options?.headers };
+        localVarRequestOptions.data = JSON.stringify({ date });
+        return this.axios.request({ ...localVarRequestOptions, url: this.basePath + localVarUrlObj.pathname });
+    }
+    /**
+     * @summary 导出按产品类型每日检测统计 🔖
+     * @memberof LkStatisticsApi
+     */
+    public async apiLkStatisticsExportDailyProductTypeStatPost(date?: string, productStatusId?: number, options?: AxiosRequestConfig): Promise<AxiosResponse<Blob>> {
+        const localVarPath = `/api/lkStatistics/exportDailyProductTypeStat`;
+        const localVarUrlObj = new URL(localVarPath, 'https://example.com');
+        let baseOptions: any;
+        if (this.configuration) { baseOptions = this.configuration.baseOptions; }
+        const localVarRequestOptions: AxiosRequestConfig = { method: 'POST', responseType: 'blob', ...baseOptions, ...options };
+        const localVarHeaderParameter: any = {};
+        if (this.configuration?.accessToken) {
+            const accessToken = typeof this.configuration.accessToken === 'function'
+                ? await this.configuration.accessToken() : await this.configuration.accessToken;
+            localVarHeaderParameter['Authorization'] = 'Bearer ' + accessToken;
+        }
+        localVarHeaderParameter['Content-Type'] = 'application/json';
+        localVarRequestOptions.headers = { ...localVarHeaderParameter, ...options?.headers };
+        localVarRequestOptions.data = JSON.stringify({ date, productStatusId });
+        return this.axios.request({ ...localVarRequestOptions, url: this.basePath + localVarUrlObj.pathname });
+    }
 }

@@ -33,6 +33,7 @@
 						style="width: 150px"
 						@change="loadData"
 					/>
+					<el-button size="small" :icon="Download" :loading="exporting" @click="handleExport" style="margin-left:6px">导出</el-button>
 				</div>
 			</div>
 		</template>
@@ -82,6 +83,7 @@ export default {
 
 <script setup lang="ts" name="dailyProductTypeStat">
 import { ref, onMounted } from 'vue';
+import { Download } from '@element-plus/icons-vue';
 import { getAPI } from '/@/utils/axios-utils';
 import { LkStatisticsApi } from '/@/api-services/api';
 import { LkProductTypeDailyStatOutput } from '/@/api-services/models';
@@ -101,6 +103,7 @@ const statusList = ref<LkProductStatus[]>([]);
 const tableData = ref<LkProductTypeDailyStatOutput[]>([]);
 const loading = ref(false);
 const statusLoading = ref(false);
+const exporting = ref(false);
 
 // 加载产品状态列表，并自动选中默认项
 const loadStatusList = async () => {
@@ -155,6 +158,24 @@ onMounted(async () => {
 	await loadStatusList();
 	await loadData();
 });
+
+const handleExport = async () => {
+	exporting.value = true;
+	try {
+		const res = await getAPI(LkStatisticsApi).apiLkStatisticsExportDailyProductTypeStatPost(
+			selectedDate.value,
+			selectedStatusId.value,
+		);
+		const url = URL.createObjectURL(new Blob([res.data as any]));
+		const a = document.createElement('a');
+		a.href = url;
+		a.download = `产品类型每日统计_${selectedDate.value}.xlsx`;
+		a.click();
+		URL.revokeObjectURL(url);
+	} finally {
+		exporting.value = false;
+	}
+};
 </script>
 
 <style scoped>

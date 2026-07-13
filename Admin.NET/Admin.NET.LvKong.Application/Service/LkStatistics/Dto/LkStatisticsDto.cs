@@ -4,6 +4,8 @@
 //
 // 不得利用本项目从事危害国家安全、扰乱社会秩序、侵犯他人合法权益等法律法规禁止的活动！任何基于本项目二次开发而产生的一切法律纠纷和责任，我们不承担任何责任！
 
+using Magicodes.ExporterAndImporter.Core;
+
 namespace Admin.NET.LvKong.Application;
 
 /// <summary>
@@ -297,4 +299,103 @@ public class LkUserInspectionStatOutput
     /// NG 数量
     /// </summary>
     public int NgCount { get; set; }
+}
+
+/// <summary>
+/// 按人员月度检测统计 - 导出 Excel 用
+/// </summary>
+public class ExportLkUserMonthlyStatOutput
+{
+    [ExporterHeader(DisplayName = "人员姓名")]
+    public string UserName { get; set; }
+
+    [ExporterHeader(DisplayName = "统计年月")]
+    public string YearMonth { get; set; }
+
+    [ExporterHeader(DisplayName = "检测总数")]
+    public int Total { get; set; }
+
+    [ExporterHeader(DisplayName = "OK 数量")]
+    public int OkCount { get; set; }
+
+    [ExporterHeader(DisplayName = "NG 数量")]
+    public int NgCount { get; set; }
+
+    [ExporterHeader(DisplayName = "合格率")]
+    public string PassRateText { get; set; }
+}
+
+/// <summary>
+/// 按产品类型月度检测统计 - 导出 Excel 用
+/// </summary>
+public class ExportLkProductTypeMonthlyStatOutput
+{
+    [ExporterHeader(DisplayName = "产品类型")]
+    public string ProductTypeName { get; set; }
+
+    [ExporterHeader(DisplayName = "统计年月")]
+    public string YearMonth { get; set; }
+
+    [ExporterHeader(DisplayName = "检测总数")]
+    public int Total { get; set; }
+
+    [ExporterHeader(DisplayName = "OK 数量")]
+    public int OkCount { get; set; }
+
+    [ExporterHeader(DisplayName = "NG 数量")]
+    public int NgCount { get; set; }
+
+    [ExporterHeader(DisplayName = "合格率")]
+    public string PassRateText { get; set; }
+}
+
+/// <summary>
+/// 按人员每日检测统计 - 导出 Excel 用
+/// </summary>
+public class ExportLkUserDailyStatOutput
+{
+    [ExporterHeader(DisplayName = "人员姓名")]
+    public string UserName { get; set; }
+
+    [ExporterHeader(DisplayName = "统计日期")]
+    public string Date { get; set; }
+
+    [ExporterHeader(DisplayName = "检测总数")]
+    public int Total { get; set; }
+
+    [ExporterHeader(DisplayName = "OK 数量")]
+    public int OkCount { get; set; }
+
+    [ExporterHeader(DisplayName = "NG 数量")]
+    public int NgCount { get; set; }
+
+    [ExporterHeader(DisplayName = "合格率")]
+    public string PassRateText { get; set; }
+}
+
+/// <summary>
+/// 按产品类型每日检测统计 - 导出 Excel 用
+/// </summary>
+public class ExportLkProductTypeDailyStatOutput
+{
+    [ExporterHeader(DisplayName = "产品类型")]
+    public string ProductTypeName { get; set; }
+
+    [ExporterHeader(DisplayName = "统计日期")]
+    public string Date { get; set; }
+
+    [ExporterHeader(DisplayName = "产品状态")]
+    public string ProductStatusName { get; set; }
+
+    [ExporterHeader(DisplayName = "检测总数")]
+    public int Total { get; set; }
+
+    [ExporterHeader(DisplayName = "OK 数量")]
+    public int OkCount { get; set; }
+
+    [ExporterHeader(DisplayName = "NG 数量")]
+    public int NgCount { get; set; }
+
+    [ExporterHeader(DisplayName = "合格率")]
+    public string PassRateText { get; set; }
 }
