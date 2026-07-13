@@ -23,7 +23,8 @@
 			</div>
 		</template>
 
-		<el-table :data="tableData" v-loading="loading" stripe border size="small" style="width: 100%">
+		<el-table :data="tableData" v-loading="loading" stripe border size="small" style="width: 100%"
+			show-summary :summary-method="getSummary">
 			<el-table-column prop="userName" label="人员" min-width="90" show-overflow-tooltip />
 			<el-table-column prop="total" label="总数" align="center" width="64" />
 			<el-table-column prop="okCount" label="OK" align="center" width="60">
@@ -116,6 +117,14 @@ const rateColor = (rate?: number) => {
 };
 
 onMounted(() => loadData());
+
+const getSummary = () => {
+	const total  = tableData.value.reduce((s, r) => s + (r.total  ?? 0), 0);
+	const ok     = tableData.value.reduce((s, r) => s + (r.okCount ?? 0), 0);
+	const ng     = tableData.value.reduce((s, r) => s + (r.ngCount ?? 0), 0);
+	const rate   = total === 0 ? '-' : ((ok / total) * 100).toFixed(1) + '%';
+	return ['合计', String(total), String(ok), String(ng), rate];
+};
 
 const handleExport = async () => {
 	exporting.value = true;

@@ -115,15 +115,14 @@ public class LkStatisticsService : IDynamicApiController, ITransient
             .LeftJoin<LkProductType>((u, pt) => u.ProductTypeId == pt.Id)
             .Select((u, pt) => new
             {
-                u.ProductTypeId,
                 ProductTypeName = pt.Name,
                 u.TestResult,
             })
             .ToListAsync();
 
-        // 按产品类型分组汇总
+        // 按产品类型名称分组汇总（同名视为同一类型，忽略 ProductTypeId 差异）
         var result = records
-            .GroupBy(r => new { r.ProductTypeId, r.ProductTypeName })
+            .GroupBy(r => r.ProductTypeName ?? string.Empty)
             .Select(g =>
             {
                 var total   = g.Count();
@@ -131,8 +130,8 @@ public class LkStatisticsService : IDynamicApiController, ITransient
                 var ngCount = g.Count(r => r.TestResult.Equals("NG", StringComparison.OrdinalIgnoreCase));
                 return new LkProductTypeMonthlyStatOutput
                 {
-                    ProductTypeId   = g.Key.ProductTypeId,
-                    ProductTypeName = g.Key.ProductTypeName ?? string.Empty,
+                    ProductTypeId   = 0, // 按名称合并后不再对应单一 ID
+                    ProductTypeName = g.Key,
                     YearMonth       = monthPrefix,
                     Total           = total,
                     OkCount         = okCount,
@@ -140,7 +139,8 @@ public class LkStatisticsService : IDynamicApiController, ITransient
                     PassRate        = total == 0 ? 0m : Math.Round((decimal)okCount / total, 4),
                 };
             })
-            .OrderBy(x => x.ProductTypeName)
+            .OrderByDescending(x => x.Total)
+            .ThenBy(x => x.ProductTypeName)
             .ToList();
 
         return result;
@@ -187,7 +187,8 @@ public class LkStatisticsService : IDynamicApiController, ITransient
                     PassRate  = total == 0 ? 0m : Math.Round((decimal)okCount / total, 4),
                 };
             })
-            .OrderBy(x => x.UserName)
+            .OrderByDescending(x => x.Total)
+            .ThenBy(x => x.UserName)
             .ToList();
 
         return result;
@@ -240,7 +241,8 @@ public class LkStatisticsService : IDynamicApiController, ITransient
                     PassRate = total == 0 ? 0m : Math.Round((decimal)okCount / total, 4),
                 };
             })
-            .OrderBy(x => x.UserName)
+            .OrderByDescending(x => x.Total)
+            .ThenBy(x => x.UserName)
             .ToList();
     }
 
@@ -288,7 +290,6 @@ public class LkStatisticsService : IDynamicApiController, ITransient
             .LeftJoin<LkProductType>((u, pt) => u.ProductTypeId == pt.Id)
             .Select((u, pt) => new
             {
-                u.ProductTypeId,
                 ProductTypeName = pt.Name,
                 u.Date,
                 u.Time,
@@ -299,7 +300,7 @@ public class LkStatisticsService : IDynamicApiController, ITransient
         var records = candidates.Where(r => IsInStatDay(r.Date, r.Time, dateStart, dateEnd, cutTime)).ToList();
 
         return records
-            .GroupBy(r => new { r.ProductTypeId, r.ProductTypeName })
+            .GroupBy(r => r.ProductTypeName ?? string.Empty)
             .Select(g =>
             {
                 var total   = g.Count();
@@ -307,8 +308,8 @@ public class LkStatisticsService : IDynamicApiController, ITransient
                 var ngCount = g.Count(r => r.TestResult.Equals("NG", StringComparison.OrdinalIgnoreCase));
                 return new LkProductTypeDailyStatOutput
                 {
-                    ProductTypeId     = g.Key.ProductTypeId,
-                    ProductTypeName   = g.Key.ProductTypeName ?? string.Empty,
+                    ProductTypeId     = 0, // 按名称合并后不再对应单一 ID
+                    ProductTypeName   = g.Key,
                     Date              = dateStart,
                     ProductStatusId   = productStatusId,
                     ProductStatusName = productStatusName,
@@ -318,7 +319,8 @@ public class LkStatisticsService : IDynamicApiController, ITransient
                     PassRate          = total == 0 ? 0m : Math.Round((decimal)okCount / total, 4),
                 };
             })
-            .OrderBy(x => x.ProductTypeName)
+            .OrderByDescending(x => x.Total)
+            .ThenBy(x => x.ProductTypeName)
             .ToList();
     }
 
@@ -381,6 +383,22 @@ public class LkStatisticsService : IDynamicApiController, ITransient
             NgCount      = r.NgCount,
             PassRateText = (r.PassRate * 100).ToString("F1") + "%",
         }).ToList();
+
+        // 追加合计行
+        var sumTotal  = list.Sum(r => r.Total);
+        var sumOk     = list.Sum(r => r.OkCount);
+        var sumNg     = list.Sum(r => r.NgCount);
+        var sumRate   = sumTotal == 0 ? "0.0%" : ((decimal)sumOk / sumTotal * 100).ToString("F1") + "%";
+        list.Add(new ExportLkUserDailyStatOutput
+        {
+            UserName     = "合计",
+            Date         = data.FirstOrDefault()?.Date ?? input.Date ?? string.Empty,
+            Total        = sumTotal,
+            OkCount      = sumOk,
+            NgCount      = sumNg,
+            PassRateText = sumRate,
+        });
+
         return ExcelHelper.ExportTemplate(list, $"人员每日统计_{data.FirstOrDefault()?.Date ?? input.Date ?? "unknown"}");
     }
 
@@ -402,6 +420,24 @@ public class LkStatisticsService : IDynamicApiController, ITransient
             NgCount           = r.NgCount,
             PassRateText      = (r.PassRate * 100).ToString("F1") + "%",
         }).ToList();
+
+        // 追加合计行
+        var sumTotal  = list.Sum(r => r.Total);
+        var sumOk     = list.Sum(r => r.OkCount);
+        var sumNg     = list.Sum(r => r.NgCount);
+        var sumRate   = sumTotal == 0 ? "0.0%" : ((decimal)sumOk / sumTotal * 100).ToString("F1") + "%";
+        var firstRow  = data.FirstOrDefault();
+        list.Add(new ExportLkProductTypeDailyStatOutput
+        {
+            ProductTypeName   = "合计",
+            Date              = firstRow?.Date ?? input.Date ?? string.Empty,
+            ProductStatusName = firstRow?.ProductStatusName ?? string.Empty,
+            Total             = sumTotal,
+            OkCount           = sumOk,
+            NgCount           = sumNg,
+            PassRateText      = sumRate,
+        });
+
         return ExcelHelper.ExportTemplate(list, $"产品类型每日统计_{data.FirstOrDefault()?.Date ?? input.Date ?? "unknown"}");
     }
 
