@@ -49,7 +49,7 @@ export interface LkInspectionRecord {
 	productStatusId?: number;
 	// 零件状态
 	partStatusId?: number;
-	// 二码码
+	// 二维码
 	productModel: string;
 	// 钢印号
 	steelStamp: string;

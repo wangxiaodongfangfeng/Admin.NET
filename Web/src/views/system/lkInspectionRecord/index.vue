@@ -172,8 +172,8 @@ handleQuery();
             </el-form-item>
           </el-col>
           <el-col :xs="24" :sm="12" :md="12" :lg="8" :xl="4" class="mb10" v-if="state.showAdvanceQueryUI">
-            <el-form-item label="二码码">
-              <el-input v-model="state.tableQueryParams.productModel" clearable placeholder="请输入二码码"/>
+            <el-form-item label="二维码">
+              <el-input v-model="state.tableQueryParams.productModel" clearable placeholder="请输入二维码"/>
             </el-form-item>
           </el-col>
           <el-col :xs="24" :sm="12" :md="12" :lg="8" :xl="4" class="mb10" v-if="state.showAdvanceQueryUI">
@@ -254,7 +254,7 @@ handleQuery();
         <el-table-column prop='productTypeId' label='产品类型' :formatter="(row: any) => row.productTypeFkDisplayName" show-overflow-tooltip />
         <el-table-column prop='productStatusId' label='产品状态' :formatter="(row: any) => row.productStatusFkDisplayName" show-overflow-tooltip />
         <el-table-column prop='partStatusId' label='零件状态' :formatter="(row: any) => row.partStatusFkDisplayName" show-overflow-tooltip />
-        <el-table-column prop='productModel' label='二码码' show-overflow-tooltip />
+        <el-table-column prop='productModel' label='二维码' show-overflow-tooltip />
         <el-table-column prop='steelStamp' label='钢印号' show-overflow-tooltip />
         <el-table-column prop='testResult' label='检测结果' show-overflow-tooltip />
         <el-table-column prop='ngPositionId' label='Ng位置' :formatter="(row: any) => row.ngPositionFkDisplayName" show-overflow-tooltip />
