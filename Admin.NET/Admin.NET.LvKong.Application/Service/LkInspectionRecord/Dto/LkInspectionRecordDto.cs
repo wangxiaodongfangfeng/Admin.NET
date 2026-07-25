@@ -112,9 +112,9 @@ public class LkInspectionRecordDto
     public long NgPositionId { get; set; }
     
     /// <summary>
-    /// 泄露值
+    /// 泄露值，null 表示未检测/未记录，0 表示已检测且无泄露
     /// </summary>
-    public decimal Leakage { get; set; }
+    public decimal? Leakage { get; set; }
     
     /// <summary>
     /// 图片URL列表

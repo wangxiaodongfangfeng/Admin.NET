@@ -57,8 +57,8 @@ export interface LkInspectionRecord {
 	testResult?: string;
 	// Ng位置
 	ngPositionId: number;
-	// 泄露值
-	leakage: number;
+	// 泄露值，null 表示未检测/未记录，0 表示已检测且无泄露
+	leakage?: number | null;
 	// 图片URL列表
 	images: string;
 	// 用户

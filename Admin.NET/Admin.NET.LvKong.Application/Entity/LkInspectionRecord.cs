@@ -100,10 +100,10 @@ public partial class LkInspectionRecord : EntityBase
     public virtual string TestResult { get; set; }
 
     /// <summary>
-    /// 泄露值(ml/min)
+    /// 泄露值(ml/min)，null 表示未检测/未记录，0 表示已检测且无泄露
     /// </summary>
-    [SugarColumn(ColumnName = "Leakage", ColumnDescription = "泄露值", DecimalDigits = 2)]
-    public virtual decimal Leakage { get; set; }
+    [SugarColumn(ColumnName = "Leakage", ColumnDescription = "泄露值", DecimalDigits = 2, IsNullable = true)]
+    public virtual decimal? Leakage { get; set; }
 
     /// <summary>
     /// 图片URL列表(JSON数组)

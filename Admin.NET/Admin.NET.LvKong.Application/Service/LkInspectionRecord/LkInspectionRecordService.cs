@@ -141,14 +141,14 @@ public partial class LkInspectionRecordService : IDynamicApiController, ITransie
     {
         try
         {
-            // 条件：新记录有有效二维码，且泄漏值不为 0
-            if (string.IsNullOrWhiteSpace(newRecord.ProductModel) || newRecord.Leakage == 0)
+            // 条件：新记录有有效二维码，且泄漏值不为 null 且不为 0（null=未检测，0=无泄漏）
+            if (string.IsNullOrWhiteSpace(newRecord.ProductModel) || newRecord.Leakage == null || newRecord.Leakage == 0)
                 return;
 
-            // 查找相同二维码、泄漏值为 0 的旧记录（排除自身）
+            // 查找相同二维码、泄漏值为 null 的旧记录（排除自身）
             var staleRecords = await _lkInspectionRecordRep.AsQueryable()
                 .Where(r => r.ProductModel == newRecord.ProductModel
-                         && r.Leakage == 0
+                         && r.Leakage == null
                          && r.Id != newRecord.Id)
                 .ToListAsync();
 
