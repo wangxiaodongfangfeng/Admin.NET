@@ -51,3 +51,4 @@ Admin.NET/Admin.NET.Application/Configuration/DeepSeek.json
 **/wwwroot/*
 **/publish-linux/*
 **/publish/*
+**/publish-*/*
