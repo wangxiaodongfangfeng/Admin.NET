@@ -1,0 +1,45 @@
+{
+  // 本配置文件在 pack / deploy 时自动读取
+  // 所有路径支持绝对路径或相对路径（相对于本工具所在目录）
+
+  // ── pack 配置 ──────────────────────────────────────────────────────────────
+  // dotnet publish 输出目录（Windows 发布）
+  "PublishDir": "../publish",
+
+  // npm run build 输出目录
+  "WebDistDir": "../Web/dist",
+
+  // pack 生成的 zip 输出目录（不存在则自动创建）
+  "PackageOutputDir": "../packages",
+
+  // ── deploy 配置 ────────────────────────────────────────────────────────────
+  // 远程更新包下载地址（支持 http / https）
+  // 留空时跳过下载，直接从 DeployPackageDir 查找本地 zip
+  // 示例：
+  //   "PackageDownloadUrl": "https://your-server.com/releases/latest/AdminNET_package.zip"
+  //   "PackageDownloadUrl": "http://192.168.1.100:8080/packages/AdminNET_package_latest.zip"
+  "PackageDownloadUrl": "",
+
+  // 下载凭证（Basic Auth），留空表示不需要认证
+  "DownloadUsername": "",
+  "DownloadPassword": "",
+
+  // 下载超时时间（秒），默认 300 秒
+  "DownloadTimeoutSeconds": 300,
+
+  // 下载后的 zip 保存目录；留空时使用 DeployPackageDir
+  "DownloadSaveDir": "",
+
+  // zip 包所在目录（PackageDownloadUrl 为空时从这里找最新的 zip）
+  "DeployPackageDir": "../packages",
+
+  // 目标服务器上的服务安装目录
+  "ServiceDir": "C:\\Users\\Administrator\\Documents\\publish",
+
+  // Windows 服务名称
+  "ServiceName": "AdminNETService",
+
+  // 备份目标目录（父目录），子目录名为 AppBak + yyyyMMdd
+  // 留空则默认使用当前用户的 Documents 文件夹
+  "BackupBaseDir": ""
+}
