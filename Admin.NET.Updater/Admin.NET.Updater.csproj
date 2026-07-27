@@ -1,26 +1,25 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFrameworks>net8.0-windows;net10.0-windows</TargetFrameworks>
+    <!--
+      Linux 开发机：编译 net10.0（跳过所有 Windows 专属代码）
+      Windows 目标：编译 net8.0-windows（完整功能，含服务安装/停止/启动）
+    -->
+    <TargetFrameworks>net10.0;net8.0-windows</TargetFrameworks>
     <AssemblyName>upgrader</AssemblyName>
     <RootNamespace>AdminNetUpdater</RootNamespace>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
-    <Optimize>true</Optimize>
-    <!-- Single-file self-contained publish -->
-    <SelfContained>false</SelfContained>
   </PropertyGroup>
 
-  <ItemGroup>
-    <!-- Windows 服务控制 API -->
-    <PackageReference Include="System.ServiceProcess.ServiceController" Version="8.0.0" />
+  <!-- Windows 专属包：仅在 Windows TFM 下引入 -->
+  <ItemGroup Condition="$(TargetFramework.Contains('-windows'))">
+    <PackageReference Include="Microsoft.Extensions.Hosting.WindowsServices" Version="8.0.1" />
   </ItemGroup>
 
   <ItemGroup>
-    <!-- 将 updater.json 随 exe 一起输出 -->
-    <Content Include="updater.json">
+    <Content Update="updater.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

@@ -34,12 +34,26 @@
   "DeployPackageDir": "../packages",
 
   // 目标服务器上的服务安装目录
+  // Windows 示例: "C:\\Users\\Administrator\\Documents\\publish"
+  // Linux 示例:   "/opt/adminnet/publish"
   "ServiceDir": "C:\\Users\\Administrator\\Documents\\publish",
 
-  // Windows 服务名称
+  // Windows 服务名称 / Linux systemd 服务单元名称（不含 .service 后缀）
+  // Windows 示例: "AdminNETService"
+  // Linux 示例:   "adminnet"  （对应 /etc/systemd/system/adminnet.service）
   "ServiceName": "AdminNETService",
 
   // 备份目标目录（父目录），子目录名为 AppBak + yyyyMMdd
   // 留空则默认使用当前用户的 Documents 文件夹
-  "BackupBaseDir": ""
+  "BackupBaseDir": "",
+
+  // ── web server 配置 ────────────────────────────────────────────────────────
+  // upgrader server / Windows 服务 监听端口，默认 9000
+  "WebServerPort": 9000,
+
+  // upgrader 自身注册为 Windows 服务时的服务名（与 ServiceName 区分）
+  "UpdaterServiceName": "AdminNETUpdaterService",
+
+  // upgrader 服务在服务管理器中显示的名称
+  "UpdaterServiceDisplayName": "Admin.NET Updater Service"
 }

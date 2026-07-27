@@ -46,6 +46,24 @@ public class Config
     [JsonPropertyName("BackupBaseDir")]
     public string BackupBaseDir { get; set; } = "";
 
+    // ── web server ───────────────────────────────────────────────────────────
+    /// <summary>upgrader server / Windows 服务监听端口，默认 9000</summary>
+    [JsonPropertyName("WebServerPort")]
+    public int WebServerPort { get; set; } = 9000;
+
+    /// <summary>
+    /// 将 upgrader 自身注册为 Windows 服务时使用的服务名。
+    /// 默认 AdminNETUpdaterService，与 ServiceName（被管理的应用服务）区分开。
+    /// </summary>
+    [JsonPropertyName("UpdaterServiceName")]
+    public string UpdaterServiceName { get; set; } = "AdminNETUpdaterService";
+
+    /// <summary>
+    /// 将 upgrader 自身注册为 Windows 服务时使用的显示名称。
+    /// </summary>
+    [JsonPropertyName("UpdaterServiceDisplayName")]
+    public string UpdaterServiceDisplayName { get; set; } = "Admin.NET Updater Service";
+
     // ── helpers ──────────────────────────────────────────────────────────────
 
     /// <summary>

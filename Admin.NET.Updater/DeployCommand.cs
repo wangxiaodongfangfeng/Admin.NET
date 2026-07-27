@@ -1,191 +1,191 @@
 using System.IO.Compression;
 using System.Net.Http.Headers;
 using System.Runtime.InteropServices;
-using System.ServiceProcess;
 using System.Text;
 
 namespace AdminNetUpdater;
 
 /// <summary>
-/// upgrader deploy
-///
-/// 流程：
-///   1. 若配置了 PackageDownloadUrl，从远程下载最新 zip
-///   2. 找到本地最新 zip
-///   3. 停止 Windows 服务
-///   4. 备份原服务目录
-///   5. 替换后端 dll/pdb/xml
-///   6. 清理 wwwroot（保留 upload/），复制新前端
-///   7. 启动 Windows 服务
+/// upgrader deploy — CLI 入口 + API 共用核心逻辑
 /// </summary>
 public static class DeployCommand
 {
     private const string BackendPrefix = "Admin.NET.LvKong.Application";
-    private static readonly TimeSpan ServiceTimeout = TimeSpan.FromSeconds(60);
 
+    // ── CLI 入口 ──────────────────────────────────────────────────────────────
+
+    /// <summary>CLI 调用入口，日志输出到控制台</summary>
     public static int Run(Config cfg)
     {
-        if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-        {
-            Log.Error("deploy 命令仅支持 Windows 平台（需要操作 Windows 服务）");
-            return 1;
-        }
 
-        Log.Step("Deploy — 开始部署");
-
-        // 1. 下载更新包（如果配置了远程地址）────────────────────────────────
+        // 1. 下载（如果配置了远程地址）
         if (!string.IsNullOrWhiteSpace(cfg.PackageDownloadUrl))
         {
-            if (!DownloadPackage(cfg, out var downloadedPath))
+            if (!DownloadPackage(cfg, out var downloadedPath,
+                    progress: (pct, dl, total) =>
+                    {
+                        if (total > 0)
+                            Console.Write($"\r  进度: {pct:F1}%  ({dl / 1048576.0:F1} / {total / 1048576.0:F1} MB)   ");
+                        else
+                            Console.Write($"\r  已下载: {dl / 1048576.0:F1} MB   ");
+                    }))
                 return 1;
-            Log.Ok($"已下载: {downloadedPath}");
+            Console.WriteLine();
         }
         else
         {
             Log.Info("PackageDownloadUrl 未配置，跳过下载，直接使用本地包");
         }
 
-        // 2. 找本地最新 zip ──────────────────────────────────────────────────
-        var saveDir = cfg.ResolvedDownloadSaveDir;
-        var zipPath = FindLatestPackage(saveDir);
+        // 2. 执行 deploy 核心逻辑
+        bool success = RunCore(cfg,
+            log:  (level, msg) => LogToConsole(level, msg),
+            zipOverride: null);
+
+        return success ? 0 : 1;
+    }
+
+    // ── API 调用入口 ──────────────────────────────────────────────────────────
+
+    /// <summary>
+    /// API 调用入口：使用指定的 zip 文件执行 deploy，日志通过回调推送。
+    /// </summary>
+    /// <param name="cfg">配置</param>
+    /// <param name="zipPath">要部署的 zip 文件路径（API 上传后的临时路径）</param>
+    /// <param name="logCallback">日志回调：(level, message) — level: info/ok/warn/error/step/done</param>
+    public static Task<bool> RunFromApi(Config cfg, string zipPath, Action<string, string> logCallback)
+    {
+        return Task.Run(() => RunCore(cfg, logCallback, zipPath));
+    }
+
+    // ── 核心逻辑 ──────────────────────────────────────────────────────────────
+
+    private static bool RunCore(Config cfg, Action<string, string> log, string? zipOverride)
+    {
+        log("step", "Deploy — 开始部署");
+
+        // 1. 确定要使用的 zip
+        string? zipPath = zipOverride;
         if (zipPath == null)
         {
-            // 也搜 DeployPackageDir（两者可能不同）
-            zipPath = FindLatestPackage(cfg.ResolvedDeployPackageDir);
+            var saveDir = cfg.ResolvedDownloadSaveDir;
+            zipPath = FindLatestPackage(saveDir)
+                   ?? FindLatestPackage(cfg.ResolvedDeployPackageDir);
+
+            if (zipPath == null)
+            {
+                log("error", $"找不到任何 AdminNET_package_*.zip，已搜索: {saveDir}");
+                return false;
+            }
         }
-        if (zipPath == null)
-        {
-            Log.Error($"找不到任何 AdminNET_package_*.zip");
-            Log.Error($"  已搜索: {saveDir}");
-            if (saveDir != cfg.ResolvedDeployPackageDir)
-                Log.Error($"  已搜索: {cfg.ResolvedDeployPackageDir}");
-            return 1;
-        }
-        Log.Info($"使用包: {Path.GetFileName(zipPath)}");
+        log("info", $"使用包: {Path.GetFileName(zipPath)}");
 
         var serviceDir  = cfg.ServiceDir;
         var serviceName = cfg.ServiceName;
 
         if (!Directory.Exists(serviceDir))
         {
-            Log.Error($"服务目录不存在: {serviceDir}");
-            return 1;
+            log("error", $"服务目录不存在: {serviceDir}");
+            return false;
         }
 
-        // 3. 解压 zip 到临时目录 ─────────────────────────────────────────────
+        // 2. 解压
         var tempDir = Path.Combine(Path.GetTempPath(), $"AdminNET_deploy_{DateTime.Now:yyyyMMdd_HHmmss}");
-        Log.Step($"解压到临时目录: {tempDir}");
-        ZipFile.ExtractToDirectory(zipPath, tempDir);
-        Log.Ok("解压完成");
+        log("step", $"解压到临时目录: {tempDir}");
+        try { ZipFile.ExtractToDirectory(zipPath, tempDir); }
+        catch (Exception ex) { log("error", $"解压失败: {ex.Message}"); return false; }
+        log("ok", "解压完成");
 
-        var backendStagingDir  = Path.Combine(tempDir, "backend");
-        var frontendStagingDir = Path.Combine(tempDir, "frontend");
+        var backendDir  = Path.Combine(tempDir, "backend");
+        var frontendDir = Path.Combine(tempDir, "frontend");
 
-        if (!Directory.Exists(backendStagingDir))
+        if (!Directory.Exists(backendDir))
         {
-            Log.Error("zip 包中缺少 backend/ 目录，包文件可能损坏");
-            Cleanup(tempDir);
-            return 1;
+            log("error", "zip 包中缺少 backend/ 目录，包文件可能损坏");
+            Cleanup(tempDir, log); return false;
         }
-        if (!Directory.Exists(frontendStagingDir))
+        if (!Directory.Exists(frontendDir))
         {
-            Log.Error("zip 包中缺少 frontend/ 目录，包文件可能损坏");
-            Cleanup(tempDir);
-            return 1;
+            log("error", "zip 包中缺少 frontend/ 目录，包文件可能损坏");
+            Cleanup(tempDir, log); return false;
         }
 
-        // 4. 停止服务 ────────────────────────────────────────────────────────
-        Log.Step($"停止服务: {serviceName}");
-        if (!StopService(serviceName))
-        {
-            Cleanup(tempDir);
-            return 1;
-        }
+        // 3. 停止服务
+        log("step", $"停止服务: {serviceName}");
+        if (!ServiceControl.Stop(serviceName, log)) { Cleanup(tempDir, log); return false; }
 
         try
         {
-            // 5. 备份 ────────────────────────────────────────────────────────
-            Log.Step("备份原文件");
-            var backupDir = CreateBackup(cfg, serviceDir);
-            Log.Ok($"备份目录: {backupDir}");
+            // 4. 备份
+            log("step", "备份原文件");
+            var backupDir = CreateBackup(cfg, serviceDir, log);
+            log("ok", $"备份目录: {backupDir}");
 
-            // 6a. 替换后端文件 ─────────────────────────────────────────────
-            Log.Step("替换后端文件");
-            var backendFiles = Directory.GetFiles(backendStagingDir);
+            // 5. 替换后端
+            log("step", "替换后端文件");
+            var backendFiles = Directory.GetFiles(backendDir);
             if (backendFiles.Length == 0)
             {
-                Log.Warn("backend/ 目录为空，跳过后端更新");
+                log("warn", "backend/ 目录为空，跳过后端更新");
             }
             else
             {
                 foreach (var src in backendFiles)
                 {
-                    var dest = Path.Combine(serviceDir, Path.GetFileName(src));
-                    File.Copy(src, dest, overwrite: true);
-                    Log.Ok($"  ← {Path.GetFileName(src)}");
+                    File.Copy(src, Path.Combine(serviceDir, Path.GetFileName(src)), overwrite: true);
+                    log("ok", $"  ← {Path.GetFileName(src)}");
                 }
             }
 
-            // 6b. 更新前端 wwwroot ─────────────────────────────────────────
-            Log.Step("更新前端 wwwroot");
+            // 6. 更新前端 wwwroot
+            log("step", "更新前端 wwwroot");
             var wwwrootDir = Path.Combine(serviceDir, "wwwroot");
             Directory.CreateDirectory(wwwrootDir);
 
-            Log.Info("清理 wwwroot（保留 upload/）...");
+            log("info", "清理 wwwroot（保留 upload/）...");
             FileHelper.CleanDirectory(wwwrootDir, keepDirNames: new[] { "upload" });
-            Log.Ok("清理完成");
+            log("ok", "清理完成");
 
-            Log.Info("复制新前端文件...");
-            FileHelper.CopyDirectory(frontendStagingDir, wwwrootDir);
-            var fileCount = Directory.GetFiles(frontendStagingDir, "*", SearchOption.AllDirectories).Length;
-            Log.Ok($"复制完成，共 {fileCount} 个文件");
+            log("info", "复制新前端文件...");
+            FileHelper.CopyDirectory(frontendDir, wwwrootDir);
+            var count = Directory.GetFiles(frontendDir, "*", SearchOption.AllDirectories).Length;
+            log("ok", $"复制完成，共 {count} 个文件");
         }
         catch (Exception ex)
         {
-            Log.Error($"部署过程中出错: {ex.Message}");
-            Log.Warn("文件替换可能不完整，请检查后手动启动服务");
-            Cleanup(tempDir);
-            StartService(serviceName);
-            return 1;
+            log("error", $"部署过程中出错: {ex.Message}");
+            log("warn", "文件替换可能不完整，请检查后手动启动服务");
+            Cleanup(tempDir, log);
+            ServiceControl.Start(serviceName, log);
+            return false;
         }
 
-        // 7. 启动服务 ────────────────────────────────────────────────────────
-        Log.Step($"启动服务: {serviceName}");
-        if (!StartService(serviceName))
-        {
-            Cleanup(tempDir);
-            return 1;
-        }
+        // 7. 启动服务
+        log("step", $"启动服务: {serviceName}");
+        if (!ServiceControl.Start(serviceName, log)) { Cleanup(tempDir, log); return false; }
 
-        // 8. 清理临时目录 ────────────────────────────────────────────────────
-        Cleanup(tempDir);
+        // 8. 清理临时目录
+        Cleanup(tempDir, log);
 
-        Log.Done($"部署成功！服务 [{serviceName}] 已运行");
-        return 0;
+        log("done", $"部署成功！服务 [{serviceName}] 已运行");
+        return true;
     }
 
-    // ── 下载 ──────────────────────────────────────────────────────────────────
+    // ── 下载（CLI 使用） ──────────────────────────────────────────────────────
 
-    /// <summary>
-    /// 从 PackageDownloadUrl 下载 zip，保存到 ResolvedDownloadSaveDir。
-    /// 返回 true 时 downloadedPath 为本地路径，false 时为 null。
-    /// </summary>
-    private static bool DownloadPackage(Config cfg, out string downloadedPath)
+    public static bool DownloadPackage(Config cfg, out string downloadedPath,
+        Action<double, long, long>? progress = null)
     {
         downloadedPath = null!;
-
         var url     = cfg.PackageDownloadUrl;
         var saveDir = cfg.ResolvedDownloadSaveDir;
         Directory.CreateDirectory(saveDir);
 
-        // 从 URL 解析文件名，无法解析时用时间戳命名
         var urlFileName = Path.GetFileName(new Uri(url).LocalPath);
         if (string.IsNullOrWhiteSpace(urlFileName) || !urlFileName.EndsWith(".zip", StringComparison.OrdinalIgnoreCase))
             urlFileName = $"AdminNET_package_{DateTime.Now:yyyyMMdd_HHmmss}.zip";
 
         var savePath = Path.Combine(saveDir, urlFileName);
-
-        Log.Step($"下载更新包");
         Log.Info($"  URL : {url}");
         Log.Info($"  保存: {savePath}");
 
@@ -193,182 +193,97 @@ public static class DeployCommand
         {
             using var handler = new HttpClientHandler
             {
-                // 允许自签证书（内网服务器常见），生产环境可按需改为 false
                 ServerCertificateCustomValidationCallback =
                     HttpClientHandler.DangerousAcceptAnyServerCertificateValidator,
             };
+            using var client = new HttpClient(handler) { Timeout = TimeSpan.FromSeconds(cfg.DownloadTimeoutSeconds) };
 
-            using var client = new HttpClient(handler)
-            {
-                Timeout = TimeSpan.FromSeconds(cfg.DownloadTimeoutSeconds),
-            };
-
-            // Basic Auth
             if (!string.IsNullOrWhiteSpace(cfg.DownloadUsername))
             {
-                var credentials = Convert.ToBase64String(
-                    Encoding.UTF8.GetBytes($"{cfg.DownloadUsername}:{cfg.DownloadPassword}"));
-                client.DefaultRequestHeaders.Authorization =
-                    new AuthenticationHeaderValue("Basic", credentials);
-                Log.Info($"  认证: Basic ({cfg.DownloadUsername})");
+                var cred = Convert.ToBase64String(Encoding.UTF8.GetBytes($"{cfg.DownloadUsername}:{cfg.DownloadPassword}"));
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", cred);
             }
 
-            // 带进度显示的下载
             using var response = client.GetAsync(url, HttpCompletionOption.ResponseHeadersRead).GetAwaiter().GetResult();
             response.EnsureSuccessStatusCode();
 
-            var totalBytes = response.Content.Headers.ContentLength;
-            var totalMb    = totalBytes.HasValue ? $"{totalBytes.Value / 1024.0 / 1024.0:F1} MB" : "未知大小";
-            Log.Info($"  文件大小: {totalMb}");
+            var totalBytes = response.Content.Headers.ContentLength ?? 0;
+            using var src  = response.Content.ReadAsStreamAsync().GetAwaiter().GetResult();
+            using var dest = File.Create(savePath);
 
-            using var srcStream  = response.Content.ReadAsStreamAsync().GetAwaiter().GetResult();
-            using var destStream = File.Create(savePath);
-
-            var buffer      = new byte[81920]; // 80 KB chunks
-            long downloaded = 0;
+            var buf  = new byte[81920];
+            long dl  = 0;
             int  read;
-            var  lastReport = DateTime.Now;
+            var  last = DateTime.Now;
 
-            while ((read = srcStream.Read(buffer, 0, buffer.Length)) > 0)
+            while ((read = src.Read(buf, 0, buf.Length)) > 0)
             {
-                destStream.Write(buffer, 0, read);
-                downloaded += read;
-
-                // 每秒更新一次进度
-                if ((DateTime.Now - lastReport).TotalSeconds >= 1)
+                dest.Write(buf, 0, read);
+                dl += read;
+                if ((DateTime.Now - last).TotalSeconds >= 0.5 && progress != null)
                 {
-                    if (totalBytes.HasValue)
-                    {
-                        var pct = downloaded * 100.0 / totalBytes.Value;
-                        Console.Write($"\r  进度: {pct:F1}%  ({downloaded / 1024.0 / 1024.0:F1} / {totalBytes.Value / 1024.0 / 1024.0:F1} MB)   ");
-                    }
-                    else
-                    {
-                        Console.Write($"\r  已下载: {downloaded / 1024.0 / 1024.0:F1} MB   ");
-                    }
-                    lastReport = DateTime.Now;
+                    var pct = totalBytes > 0 ? dl * 100.0 / totalBytes : 0;
+                    progress(pct, dl, totalBytes);
+                    last = DateTime.Now;
                 }
             }
+            progress?.Invoke(100, dl, dl);
 
-            Console.WriteLine(); // 换行，结束进度行
-            Log.Ok($"下载完成: {savePath}  ({new FileInfo(savePath).Length / 1024.0 / 1024.0:F2} MB)");
+            Log.Ok($"下载完成: {savePath}  ({new FileInfo(savePath).Length / 1048576.0:F2} MB)");
             downloadedPath = savePath;
             return true;
         }
-        catch (TaskCanceledException)
-        {
-            Log.Error($"下载超时（超过 {cfg.DownloadTimeoutSeconds} 秒）");
-            return false;
-        }
-        catch (Exception ex)
-        {
-            Log.Error($"下载失败: {ex.Message}");
-            return false;
-        }
+        catch (TaskCanceledException) { Log.Error($"下载超时（{cfg.DownloadTimeoutSeconds}s）"); return false; }
+        catch (Exception ex)          { Log.Error($"下载失败: {ex.Message}"); return false; }
     }
 
-    // ── 私有辅助 ──────────────────────────────────────────────────────────────
+    // ── 辅助方法 ──────────────────────────────────────────────────────────────
 
-    private static string? FindLatestPackage(string dir)
+    public static string? FindLatestPackage(string dir)
     {
         if (!Directory.Exists(dir)) return null;
-        return Directory
-            .EnumerateFiles(dir, "AdminNET_package_*.zip")
-            .OrderByDescending(f => File.GetLastWriteTime(f))
+        return Directory.EnumerateFiles(dir, "AdminNET_package_*.zip")
+            .OrderByDescending(File.GetLastWriteTime)
             .FirstOrDefault();
     }
 
-    private static string CreateBackup(Config cfg, string serviceDir)
+    private static string CreateBackup(Config cfg, string serviceDir, Action<string, string> log)
     {
-        var bakBase = cfg.ResolvedBackupBaseDir;
-        var bakName = $"AppBak{DateTime.Now:yyyyMMdd}";
-        var bakDir  = Path.Combine(bakBase, bakName);
+        var bakDir = Path.Combine(cfg.ResolvedBackupBaseDir, $"AppBak{DateTime.Now:yyyyMMdd}");
         Directory.CreateDirectory(bakDir);
 
-        foreach (var file in Directory.EnumerateFiles(serviceDir)
+        foreach (var f in Directory.EnumerateFiles(serviceDir)
             .Where(f => Path.GetFileName(f).StartsWith(BackendPrefix, StringComparison.OrdinalIgnoreCase)))
         {
-            FileHelper.CopyFileTo(file, Path.Combine(bakDir, "backend"));
-            Log.Info($"  backed up: {Path.GetFileName(file)}");
+            FileHelper.CopyFileTo(f, Path.Combine(bakDir, "backend"));
+            log("info", $"  backed up: {Path.GetFileName(f)}");
         }
 
-        var wwwrootSrc = Path.Combine(serviceDir, "wwwroot");
-        if (Directory.Exists(wwwrootSrc))
+        var wwwSrc = Path.Combine(serviceDir, "wwwroot");
+        if (Directory.Exists(wwwSrc))
         {
-            FileHelper.CopyDirectory(wwwrootSrc, Path.Combine(bakDir, "wwwroot"));
-            Log.Info("  backed up: wwwroot/");
+            FileHelper.CopyDirectory(wwwSrc, Path.Combine(bakDir, "wwwroot"));
+            log("info", "  backed up: wwwroot/");
         }
-
         return bakDir;
     }
 
-    private static bool StopService(string name)
+    private static void Cleanup(string tempDir, Action<string, string> log)
     {
-        try
-        {
-            using var sc = new ServiceController(name);
-            if (sc.Status == ServiceControllerStatus.Stopped)
-            {
-                Log.Info($"服务 [{name}] 已停止，无需操作");
-                return true;
-            }
-            Log.Info($"正在停止服务 [{name}]（当前状态: {sc.Status}）...");
-            sc.Stop();
-            sc.WaitForStatus(ServiceControllerStatus.Stopped, ServiceTimeout);
-            Log.Ok($"服务 [{name}] 已停止");
-            return true;
-        }
-        catch (InvalidOperationException ex) when (ex.Message.Contains("does not exist"))
-        {
-            Log.Warn($"服务 [{name}] 不存在，跳过停止步骤");
-            return true;
-        }
-        catch (Exception ex)
-        {
-            Log.Error($"停止服务失败: {ex.Message}");
-            return false;
-        }
+        try { if (Directory.Exists(tempDir)) Directory.Delete(tempDir, true); }
+        catch { log("warn", $"临时目录清理失败: {tempDir}"); }
     }
 
-    private static bool StartService(string name)
+    private static void LogToConsole(string level, string msg)
     {
-        try
+        switch (level)
         {
-            using var sc = new ServiceController(name);
-            if (sc.Status == ServiceControllerStatus.Running)
-            {
-                Log.Info($"服务 [{name}] 已在运行");
-                return true;
-            }
-            Log.Info($"正在启动服务 [{name}]...");
-            sc.Start();
-            sc.WaitForStatus(ServiceControllerStatus.Running, ServiceTimeout);
-            Log.Ok($"服务 [{name}] 已启动");
-            return true;
-        }
-        catch (InvalidOperationException ex) when (ex.Message.Contains("does not exist"))
-        {
-            Log.Warn($"服务 [{name}] 不存在，跳过启动步骤");
-            return true;
-        }
-        catch (Exception ex)
-        {
-            Log.Error($"启动服务失败: {ex.Message}");
-            return false;
-        }
-    }
-
-    private static void Cleanup(string tempDir)
-    {
-        try
-        {
-            if (Directory.Exists(tempDir))
-                Directory.Delete(tempDir, recursive: true);
-        }
-        catch
-        {
-            Log.Warn($"临时目录清理失败: {tempDir}，可手动删除");
+            case "step": Log.Step(msg); break;
+            case "ok":   Log.Ok(msg);   break;
+            case "warn": Log.Warn(msg); break;
+            case "error":Log.Error(msg);break;
+            case "done": Log.Done(msg); break;
+            default:     Log.Info(msg); break;
         }
     }
 }
-
