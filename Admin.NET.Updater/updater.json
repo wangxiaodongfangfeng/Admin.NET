@@ -55,5 +55,9 @@
   "UpdaterServiceName": "AdminNETUpdaterService",
 
   // upgrader 服务在服务管理器中显示的名称
-  "UpdaterServiceDisplayName": "Admin.NET Updater Service"
+  "UpdaterServiceDisplayName": "Admin.NET Updater Service",
+
+  // 部署密码哈希（BCrypt 格式），由 upgrader setpassword 命令生成
+  // 留空表示无需密码验证（仅限受信任内网环境）
+  "DeployPasswordHash": ""
 }

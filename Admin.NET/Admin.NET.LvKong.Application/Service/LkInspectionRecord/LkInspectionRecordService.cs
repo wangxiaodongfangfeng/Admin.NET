@@ -7,6 +7,7 @@
 using Admin.NET.Core.Service;
 using Microsoft.AspNetCore.Http;
 using Furion.DatabaseAccessor;
+using Furion.EventBus;
 using Furion.FriendlyException;
 using Mapster;
 using SqlSugar;
@@ -24,11 +25,16 @@ public partial class LkInspectionRecordService : IDynamicApiController, ITransie
 {
     private readonly SqlSugarRepository<LkInspectionRecord> _lkInspectionRecordRep;
     private readonly ISqlSugarClient _sqlSugarClient;
+    private readonly IEventPublisher _eventPublisher;
 
-    public LkInspectionRecordService(SqlSugarRepository<LkInspectionRecord> lkInspectionRecordRep, ISqlSugarClient sqlSugarClient)
+    public LkInspectionRecordService(
+        SqlSugarRepository<LkInspectionRecord> lkInspectionRecordRep,
+        ISqlSugarClient sqlSugarClient,
+        IEventPublisher eventPublisher)
     {
         _lkInspectionRecordRep = lkInspectionRecordRep;
-        _sqlSugarClient = sqlSugarClient;
+        _sqlSugarClient        = sqlSugarClient;
+        _eventPublisher        = eventPublisher;
     }
 
     /// <summary>
@@ -85,6 +91,7 @@ public partial class LkInspectionRecordService : IDynamicApiController, ITransie
                 NgPositionId = u.NgPositionId,
                 NgPositionFkDisplayName = $"{ngPosition.Name}",
                 Leakage = u.Leakage,
+                TestCount = u.TestCount,
                 Images = u.Images,
                 UserId = u.UserId,
                 UserFkDisplayName = $"{user.Account}",
@@ -124,48 +131,10 @@ public partial class LkInspectionRecordService : IDynamicApiController, ITransie
         var ok = await _lkInspectionRecordRep.InsertAsync(entity);
         if (!ok) return 0;
 
-        // 仅当配置开启时才执行异步回填（默认 true）
-        var enableAutoUpdate = App.GetConfig<bool>("AppSettings:EnableAutoUpdateLeakage", true);
-        if (enableAutoUpdate)
-            _ = BackfillLeakageAsync(entity);
+        // 发布新增事件，由扩展订阅者处理业务逻辑（TestCount 计算、Leakage 回填等）
+        await _eventPublisher.PublishAsync(LkInspectionRecordEventTypeEnum.Add, entity);
 
         return entity.Id;
-    }
-
-    /// <summary>
-    /// 插入完成后异步执行：
-    /// 若新记录的 ProductModel 不为空且 Leakage != 0，
-    /// 则将库中相同 ProductModel 但 Leakage == 0 的旧记录一并更新为新泄漏值。
-    /// </summary>
-    private async Task BackfillLeakageAsync(LkInspectionRecord newRecord)
-    {
-        try
-        {
-            // 条件：新记录有有效二维码，且泄漏值不为 null 且不为 0（null=未检测，0=无泄漏）
-            if (string.IsNullOrWhiteSpace(newRecord.ProductModel) || newRecord.Leakage == null || newRecord.Leakage == 0)
-                return;
-
-            // 查找相同二维码、泄漏值为 null 的旧记录（排除自身）
-            var staleRecords = await _lkInspectionRecordRep.AsQueryable()
-                .Where(r => r.ProductModel == newRecord.ProductModel
-                         && r.Leakage == null
-                         && r.Id != newRecord.Id)
-                .ToListAsync();
-
-            if (staleRecords.Count == 0) return;
-
-            // 批量更新 Leakage 字段
-            foreach (var r in staleRecords)
-                r.Leakage = newRecord.Leakage;
-
-            await _lkInspectionRecordRep.AsUpdateable(staleRecords)
-                .UpdateColumns(r => new { r.Leakage })
-                .ExecuteCommandAsync();
-        }
-        catch
-        {
-            // 后台任务失败不影响主流程，静默忽略
-        }
     }
 
     /// <summary>

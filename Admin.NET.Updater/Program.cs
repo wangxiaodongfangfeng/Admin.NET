@@ -30,7 +30,7 @@ if (command is "-h" or "--help" or "help")
     return 0;
 }
 
-var validCommands = new HashSet<string> { "pack", "deploy", "server" };
+var validCommands = new HashSet<string> { "pack", "deploy", "server", "setpassword" };
 #if WINDOWS
 validCommands.Add("install");
 validCommands.Add("uninstall");
@@ -50,6 +50,7 @@ return command switch
     "pack"    => PackCommand.Run(cfg),
     "deploy"  => DeployCommand.Run(cfg),
     "server"  => await RunServer(cfg, args[1..]),
+    "setpassword" => PasswordCommand.Run(cfg),
 #if WINDOWS
     "install"   => ServiceInstaller.Install(cfg),
     "uninstall" => ServiceInstaller.Uninstall(cfg),
@@ -82,6 +83,7 @@ static void PrintHelp()
       upgrader pack        — 将后端和前端产物打包为 zip
       upgrader deploy      — 停服 → 备份 → 部署最新 zip → 启服
       upgrader server      — 启动 Web 管理服务器（调试用，前台运行）
+      upgrader setpassword — 设置/清除部署密码
     """);
 #if WINDOWS
     Console.WriteLine("""

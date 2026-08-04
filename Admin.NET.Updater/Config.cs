@@ -52,6 +52,14 @@ public class Config
     public int WebServerPort { get; set; } = 9000;
 
     /// <summary>
+    /// 触发部署操作所需的密码哈希（BCrypt格式）。
+    /// 留空表示不需要密码验证（仅限内网信任环境）。
+    /// 使用命令 upgrader setpassword 设置密码。
+    /// </summary>
+    [JsonPropertyName("DeployPasswordHash")]
+    public string DeployPasswordHash { get; set; } = "";
+
+    /// <summary>
     /// 将 upgrader 自身注册为 Windows 服务时使用的服务名。
     /// 默认 AdminNETUpdaterService，与 ServiceName（被管理的应用服务）区分开。
     /// </summary>

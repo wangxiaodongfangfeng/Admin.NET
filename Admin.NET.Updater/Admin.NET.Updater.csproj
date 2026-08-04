@@ -13,13 +13,19 @@
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
-  <!-- Windows 专属包：仅在 Windows TFM 下引入 -->
-  <ItemGroup Condition="$(TargetFramework.Contains('-windows'))">
-    <PackageReference Include="Microsoft.Extensions.Hosting.WindowsServices" Version="8.0.1" />
+  <ItemGroup>
+    <!-- Windows 服务宿主支持（含 SCM 生命周期 + ServiceController） -->
+    <PackageReference Include="Microsoft.Extensions.Hosting.WindowsServices" Version="8.0.1" Condition="$(TargetFramework.Contains('-windows'))" />
+    <!-- 密码哈希 -->
+    <PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
   </ItemGroup>
 
   <ItemGroup>
     <Content Update="updater.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <!-- wwwroot 随 exe 输出（Web SDK 已自动包含，Update 确保复制策略） -->
+    <Content Update="wwwroot\**\*">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

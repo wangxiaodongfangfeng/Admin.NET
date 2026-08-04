@@ -110,8 +110,9 @@ public class LkStatisticsService : IDynamicApiController, ITransient
         var monthPrefix = $"{input.Year:D4}-{input.Month:D2}";
 
         // 查询该月所有记录，仅取需要的字段
+        // 只统计每个二维码的第一次试气（TestCount == 1）
         var records = await _lkInspectionRecordRep.AsQueryable()
-            .Where(u => u.Date.StartsWith(monthPrefix))
+            .Where(u => u.Date.StartsWith(monthPrefix) && u.TestCount == 1)
             .LeftJoin<LkProductType>((u, pt) => u.ProductTypeId == pt.Id)
             .Select((u, pt) => new
             {
@@ -286,7 +287,8 @@ public class LkStatisticsService : IDynamicApiController, ITransient
 
         var candidates = await _lkInspectionRecordRep.AsQueryable()
             .Where(u => u.Date.CompareTo(dateStart) >= 0 && u.Date.CompareTo(dateEnd) <= 0
-                     && u.ProductStatusId == productStatusId)
+                     && u.ProductStatusId == productStatusId
+                     && u.TestCount == 1)
             .LeftJoin<LkProductType>((u, pt) => u.ProductTypeId == pt.Id)
             .Select((u, pt) => new
             {
@@ -343,6 +345,21 @@ public class LkStatisticsService : IDynamicApiController, ITransient
             NgCount      = r.NgCount,
             PassRateText = (r.PassRate * 100).ToString("F1") + "%",
         }).ToList();
+
+        // 追加合计行
+        var sumTotal = list.Sum(r => r.Total);
+        var sumOk    = list.Sum(r => r.OkCount);
+        var sumNg    = list.Sum(r => r.NgCount);
+        list.Add(new ExportLkUserMonthlyStatOutput
+        {
+            UserName     = "合计",
+            YearMonth    = $"{input.Year:D4}-{input.Month:D2}",
+            Total        = sumTotal,
+            OkCount      = sumOk,
+            NgCount      = sumNg,
+            PassRateText = sumTotal == 0 ? "0.0%" : ((decimal)sumOk / sumTotal * 100).ToString("F1") + "%",
+        });
+
         return ExcelHelper.ExportTemplate(list, $"人员月度统计_{input.Year:D4}{input.Month:D2}");
     }
 
@@ -363,6 +380,21 @@ public class LkStatisticsService : IDynamicApiController, ITransient
             NgCount         = r.NgCount,
             PassRateText    = (r.PassRate * 100).ToString("F1") + "%",
         }).ToList();
+
+        // 追加合计行
+        var sumTotal = list.Sum(r => r.Total);
+        var sumOk    = list.Sum(r => r.OkCount);
+        var sumNg    = list.Sum(r => r.NgCount);
+        list.Add(new ExportLkProductTypeMonthlyStatOutput
+        {
+            ProductTypeName = "合计",
+            YearMonth       = $"{input.Year:D4}-{input.Month:D2}",
+            Total           = sumTotal,
+            OkCount         = sumOk,
+            NgCount         = sumNg,
+            PassRateText    = sumTotal == 0 ? "0.0%" : ((decimal)sumOk / sumTotal * 100).ToString("F1") + "%",
+        });
+
         return ExcelHelper.ExportTemplate(list, $"产品类型月度统计_{input.Year:D4}{input.Month:D2}");
     }
 

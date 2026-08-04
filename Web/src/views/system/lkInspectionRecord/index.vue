@@ -259,6 +259,7 @@ handleQuery();
         <el-table-column prop='testResult' label='检测结果' show-overflow-tooltip />
         <el-table-column prop='ngPositionId' label='Ng位置' :formatter="(row: any) => row.ngPositionFkDisplayName" show-overflow-tooltip />
         <el-table-column prop='leakage' label='泄露值' show-overflow-tooltip />
+        <el-table-column prop='testCount' label='试气次数' show-overflow-tooltip />
         <el-table-column prop='images' label='图片URL列表' show-overflow-tooltip />
         <el-table-column prop='userId' label='用户' :formatter="(row: any) => row.userFkDisplayName" show-overflow-tooltip />
         <el-table-column prop='remarks' label='备注' show-overflow-tooltip />

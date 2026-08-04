@@ -59,6 +59,8 @@ export interface LkInspectionRecord {
 	ngPositionId: number;
 	// 泄露值，null 表示未检测/未记录，0 表示已检测且无泄露
 	leakage?: number | null;
+	// 试气次数（同一二维码的第 N 次检测）
+	testCount?: number;
 	// 图片URL列表
 	images: string;
 	// 用户
