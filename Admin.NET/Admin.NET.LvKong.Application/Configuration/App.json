@@ -8,7 +8,9 @@
     "InjectSpecificationDocument": true, // 生产环境是否开启Swagger
     "ExternalAssemblies": [ "plugins" ], // 插件目录
     "VirtualPath": "", // 二级虚拟目录
-    "EnableAutoUpdateLeakage": true // 新增记录时是否自动将泄漏值回填到相同二维码的历史记录
+    "EnableAutoUpdateLeakage": true, // 新增记录时是否自动将泄漏值回填到相同二维码的历史记录
+    "MesApiUrl": "", // MES 泄漏值查询接口地址，例如 http://mes.example.com/api/leakage
+    "MesApiTimeoutSeconds": 10 // MES 接口超时时间（秒）
   },
   "DynamicApiControllerSettings": {
     //"DefaultRoutePrefix": "api", // 默认路由前缀
