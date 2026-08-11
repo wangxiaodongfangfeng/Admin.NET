@@ -187,50 +187,48 @@ public partial class LkInspectionRecordService : IDynamicApiController, ITransie
     [ApiDescriptionSettings(Name = "DropdownData"), HttpPost]
     public async Task<Dictionary<string, dynamic>> DropdownData(DropdownDataLkInspectionRecordInput input)
     {
-        var shiftIdData = await _lkInspectionRecordRep.Context.Queryable<LkShift>()
-            .InnerJoinIF<LkInspectionRecord>(input.FromPage, (u, r) => u.Id == r.ShiftId)
-            .Select(u => new {
-                Value = u.Id,
-                Label = $"{u.Name}"
-            }).ToListAsync();
-        var productTypeIdData = await _lkInspectionRecordRep.Context.Queryable<LkProductType>()
-            .InnerJoinIF<LkInspectionRecord>(input.FromPage, (u, r) => u.Id == r.ProductTypeId)
-            .Select(u => new {
-                Value = u.Id,
-                Label = $"{u.Name}"
-            }).ToListAsync();
-        var productStatusIdData = await _lkInspectionRecordRep.Context.Queryable<LkProductStatus>()
-            .InnerJoinIF<LkInspectionRecord>(input.FromPage, (u, r) => u.Id == r.ProductStatusId)
-            .Select(u => new {
-                Value = u.Id,
-                Label = $"{u.Name}"
-            }).ToListAsync();
-        var partStatusIdData = await _lkInspectionRecordRep.Context.Queryable<LkPartStatus>()
-            .InnerJoinIF<LkInspectionRecord>(input.FromPage, (u, r) => u.Id == r.PartStatusId)
-            .Select(u => new {
-                Value = u.Id,
-                Label = $"{u.Name}"
-            }).ToListAsync();
-        var ngPositionIdData = await _lkInspectionRecordRep.Context.Queryable<LkNgPosition>()
-            .InnerJoinIF<LkInspectionRecord>(input.FromPage, (u, r) => u.Id == r.NgPositionId)
-            .Select(u => new {
-                Value = u.Id,
-                Label = $"{u.Name}"
-            }).ToListAsync();
-        var userIdData = await _lkInspectionRecordRep.Context.Queryable<SysUser>()
-            .InnerJoinIF<LkInspectionRecord>(input.FromPage, (u, r) => u.Id == r.UserId)
-            .Select(u => new {
-                Value = u.Id,
-                Label = $"{u.Account}"
-            }).ToListAsync();
+        // 字典表本身数据量极小（几十行），直接全量查即可。
+        // FromPage 参数保留以兼容前端调用，逻辑上不再按检测记录过滤：
+        //   - 字典表全量查一次性加载，前端按需显示即可
+        //   - 避免对 Lk_InspectionRecord 大表做任何关联查询
+        var shiftIdData = await _lkInspectionRecordRep.Context
+            .Queryable<LkShift>()
+            .Select(u => new { Value = u.Id, Label = u.Name })
+            .ToListAsync();
+
+        var productTypeIdData = await _lkInspectionRecordRep.Context
+            .Queryable<LkProductType>()
+            .Select(u => new { Value = u.Id, Label = u.Name })
+            .ToListAsync();
+
+        var productStatusIdData = await _lkInspectionRecordRep.Context
+            .Queryable<LkProductStatus>()
+            .Select(u => new { Value = u.Id, Label = u.Name })
+            .ToListAsync();
+
+        var partStatusIdData = await _lkInspectionRecordRep.Context
+            .Queryable<LkPartStatus>()
+            .Select(u => new { Value = u.Id, Label = u.Name })
+            .ToListAsync();
+
+        var ngPositionIdData = await _lkInspectionRecordRep.Context
+            .Queryable<LkNgPosition>()
+            .Select(u => new { Value = u.Id, Label = u.Name })
+            .ToListAsync();
+
+        var userIdData = await _lkInspectionRecordRep.Context
+            .Queryable<SysUser>()
+            .Select(u => new { Value = u.Id, Label = u.Account })
+            .ToListAsync();
+
         return new Dictionary<string, dynamic>
         {
-            { "shiftId", shiftIdData },
-            { "productTypeId", productTypeIdData },
+            { "shiftId",         shiftIdData },
+            { "productTypeId",   productTypeIdData },
             { "productStatusId", productStatusIdData },
-            { "partStatusId", partStatusIdData },
-            { "ngPositionId", ngPositionIdData },
-            { "userId", userIdData },
+            { "partStatusId",    partStatusIdData },
+            { "ngPositionId",    ngPositionIdData },
+            { "userId",          userIdData },
         };
     }
     
