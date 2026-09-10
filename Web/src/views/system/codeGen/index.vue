@@ -192,7 +192,7 @@ const syncCodeGen = async (row: any) => {
     cancelButtonText: '取消',
     type: 'warning',
   }).then(async () => {
-	await getAPI(SysCodeGenApi).apiSysCodeFieldGenPost(row);
+	await getAPI(SysCodeGenApi).apiSysCodeGenSyncFieldPost(row);
     handleQuery();
     ElMessage.success('同步字段列表成功');
   }).catch(() => {});

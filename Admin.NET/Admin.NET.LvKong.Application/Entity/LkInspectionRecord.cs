@@ -109,7 +109,7 @@ public partial class LkInspectionRecord : EntityBase
     /// 试气次数：同一二维码（ProductModel）的第 N 次检测，从 1 开始自增。
     /// ProductModel 为空时固定为 1。
     /// </summary>
-    [SugarColumn(ColumnName = "TestCount", ColumnDescription = "试气次数", DefaultValue = "1")]
+    [SugarColumn(ColumnName = "TestCount", ColumnDescription = "试气次数", DefaultValue = "1",IsNullable = true)]
     public virtual int TestCount { get; set; } = 1;
 
     /// <summary>
